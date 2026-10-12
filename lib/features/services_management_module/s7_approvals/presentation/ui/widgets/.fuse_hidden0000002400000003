@@ -1,0 +1,661 @@
+part of 'approval_request_card.dart';
+
+// Split from approval_request_card.dart to keep files <700 LOC.
+
+class _ApprovalRequestCardState extends State<ApprovalRequestCard> {
+  final TextEditingController rejectController = TextEditingController();
+  final TextEditingController approveController = TextEditingController();
+  late final employeeEntity;
+  late final MainCoreDepartmentCubit departmentController;
+  late final MainCoreEmployeeController employeeController;
+
+  @override
+  void initState() {
+    super.initState();
+    employeeEntity = AppControllers.employee.employeeEntity!;
+    departmentController = context.read<MainCoreDepartmentCubit>();
+    employeeController = AppControllers.employee;
+  }
+
+  String _stateAsset(String state) {
+    switch (state.toLowerCase()) {
+      case 'done':
+        return 'assets/icons_assets/services_assets/status_done_badge_green.svg';
+      case 'approved':
+        return 'assets/icons_assets/main_icons_assets/status_approved_check_green.svg';
+      case 'pending':
+        return 'assets/icons_assets/main_icons_assets/status_pending_check_cross_orange.svg';
+      case 'rejected':
+        return 'assets/icons_assets/main_icons_assets/status_rejected_stamp_red.svg';
+      case 'cancel':
+        return 'assets/icons_assets/services_assets/cancel_x_circle_red.svg';
+      case 'inprogress':
+        return 'assets/icons_assets/services_assets/work_in_progress_badge_yellow.svg';
+      case 'branchsla':
+      case 'breached sla':
+        return 'assets/icons_assets/services_assets/sla_breached_clock_white.svg';
+      default:
+        return 'assets/icons_assets/main_icons_assets/status_pending_check_cross_orange.svg';
+    }
+  }
+
+  Widget _stateBadge({
+    required String label,
+    required String state,
+    required Color color,
+  }) {
+    final asset = _stateAsset(state);
+
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8.r),
+        border: Border.all(color: color, width: 1),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SvgPicture.asset(
+            asset,
+            width: 24.sp,
+            height: 24.sp,
+            fit: BoxFit.scaleDown,
+          ),
+          SizedBox(width: 8.w),
+          Text(
+            label,
+            style: StyleText.fontSize16Weight500.copyWith(color: color),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String getLocalizedDurationUnit(
+      BuildContext context,
+      String? rawUnit, {
+        num? quantity,
+      }) {
+    if (rawUnit == null || rawUnit.trim().isEmpty) return '';
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+    final k = rawUnit.trim().toLowerCase();
+
+    if (RegExp(r'[\u0600-\u06FF]').hasMatch(rawUnit)) return rawUnit;
+
+    String canonical;
+    switch (k) {
+      case 'h':
+      case 'hr':
+      case 'hrs':
+      case 'hour':
+      case 'hours':
+        canonical = 'hours';
+        break;
+      case 'm':
+      case 'min':
+      case 'mins':
+      case 'minute':
+      case 'minutes':
+        canonical = 'minutes';
+        break;
+      case 's':
+      case 'sec':
+      case 'secs':
+      case 'second':
+      case 'seconds':
+        canonical = 'seconds';
+        break;
+      case 'w':
+      case 'wk':
+      case 'wks':
+      case 'week':
+      case 'weeks':
+        canonical = 'weeks';
+        break;
+      case 'd':
+      case 'day':
+      case 'days':
+        canonical = 'days';
+        break;
+      case 'mo':
+      case 'month':
+      case 'months':
+        canonical = 'months';
+        break;
+      case 'y':
+      case 'yr':
+      case 'yrs':
+      case 'year':
+      case 'years':
+        canonical = 'years';
+        break;
+      default:
+        return rawUnit;
+    }
+
+    final isSingular = (quantity == null) ? false : (quantity == 1);
+
+    String result;
+    if (!isArabic) {
+      switch (canonical) {
+        case 'hours':
+          result = isSingular ? 'hour' : 'hours';
+        case 'minutes':
+          result = isSingular ? 'minute' : 'minutes';
+        case 'seconds':
+          result = isSingular ? 'second' : 'seconds';
+        case 'weeks':
+          result = isSingular ? 'week' : 'weeks';
+        case 'days':
+          result = isSingular ? 'day' : 'days';
+        case 'months':
+          result = isSingular ? 'month' : 'months';
+        case 'years':
+          result = isSingular ? 'year' : 'years';
+        default:
+          result = rawUnit;
+      }
+    } else {
+      switch (canonical) {
+        case 'hours':
+          result = isSingular ? 'ساعة' : 'ساعات';
+        case 'minutes':
+          result = isSingular ? 'دقيقة' : 'دقائق';
+        case 'seconds':
+          result = isSingular ? 'ثانية' : 'ثوانٍ';
+        case 'weeks':
+          result = isSingular ? 'أسبوع' : 'أسابيع';
+        case 'days':
+          result = isSingular ? 'يوم' : 'أيام';
+        case 'months':
+          result = isSingular ? 'شهر' : 'أشهر';
+        case 'years':
+          result = isSingular ? 'سنة' : 'سنوات';
+        default:
+          result = rawUnit;
+      }
+    }
+
+    return result;
+  }
+
+  bool _isMyTurn(ServicesHistoryModel service, String? myEmail) {
+
+    if (myEmail == null || myEmail.isEmpty) {
+      return false;
+    }
+
+    final serviceStatus = (service.currentState ?? '').toLowerCase().trim();
+
+    if (serviceStatus == 'cancel' || serviceStatus == 'cancelled') {
+      return false;
+    }
+
+    if (serviceStatus == 'done' || serviceStatus == 'completed') {
+      return false;
+    }
+
+    final list = service.currentApprovalCycle;
+
+    final hasCancelled = list.any((approver) {
+      final state = (approver.state ?? '').toLowerCase().trim();
+      return (state == 'cancel' || state == 'cancelled');
+    });
+
+    if (hasCancelled) {
+      return false;
+    }
+
+    final myIndex = list.indexWhere((e) => (e.email ?? '').toLowerCase() == myEmail.toLowerCase());
+
+    if (myIndex == -1) {
+      return false;
+    }
+
+    final myState = (list[myIndex].state ?? '').toLowerCase().trim();
+
+    if (myState == 'approved') {
+      return false;
+    }
+
+    if (myState == 'rejected') {
+      return false;
+    }
+
+    if (myState == 'cancel' || myState == 'cancelled') {
+      return false;
+    }
+
+    final isMyStateActionable = (myState.isEmpty || myState == 'normal' || myState == 'pending');
+
+    if (!isMyStateActionable) {
+      return false;
+    }
+
+    for (int i = 0; i < myIndex; i++) {
+      final prev = (list[i].state ?? '').toLowerCase().trim();
+
+      if (prev != 'approved') {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  String myActionOf(ServicesHistoryModel service, String myEmail) {
+
+    final serviceStatus = (service.currentState ?? '').toLowerCase().trim();
+
+    if (serviceStatus == 'cancel' || serviceStatus == 'cancelled') {
+      return 'cancel';
+    }
+
+    final list = service.currentApprovalCycle;
+
+    final cancelledApprover = list.firstWhere(
+          (approver) {
+        final state = (approver.state ?? '').toLowerCase().trim();
+        return state == 'cancel' || state == 'cancelled';
+      },
+      orElse: () => list.first,
+    );
+
+    final cancelledState = (cancelledApprover.state ?? '').toLowerCase().trim();
+    if (cancelledState == 'cancel' || cancelledState == 'cancelled') {
+      return 'cancel';
+    }
+
+    final i = list.indexWhere((e) => (e.email ?? '').toLowerCase() == myEmail.toLowerCase());
+
+    if (i == -1) {
+      return 'pending';
+    }
+
+    final s = (list[i].state ?? '').toLowerCase().trim();
+
+    String result;
+    if (s.isEmpty || s == 'normal') {
+      result = 'pending';
+    } else if (s == 'approved') {
+      result = 'approved';
+    } else if (s == 'rejected') {
+      result = 'rejected';
+    } else if (s == 'cancel' || s == 'cancelled') {
+      result = 'cancel';
+    } else {
+      result = 'pending';
+    }
+
+    return result;
+  }
+
+  String localizedMyAction(BuildContext context, String act) {
+    final t = S.of(context);
+    final result = switch (act) {
+      'approved' => t.Approved,
+      'rejected' => t.Rejected,
+      'cancel' || 'cancelled' => t.canceled,
+      _ => t.Pending
+    };
+    return result;
+  }
+
+  Color myActionColor(BuildContext context, String act) {
+    Color result;
+    switch (act) {
+      case 'approved':
+        result = AppColors.lightGreen;
+      case 'rejected':
+        result = AppColors.red;
+      case 'cancel':
+      case 'cancelled':
+        result = AppColors.darkRed!;
+      default:
+        result = AppColors.orange;
+    }
+    return result;
+  }
+
+  void _showRejectDialog(
+    BuildContext context, {
+    required String displayServiceName,
+    required String displayRequesterName,
+  }) {
+    CustomDialogManager.showDialogFlow(
+      customReasonTitle: S.of(context).reasonOfRejection,
+      context: context,
+      confirmLottie: 'assets/lottie_assets/main_lottie_assets/lottie_rejected.json',
+      confirmTitle: S.of(context).RejectRequest,
+      confirmSubtitle: S.of(context).AreYouSureYouWantToRejectThisRequest,
+      confirmYesText: S.of(context).yes,
+      confirmNoText: S.of(context).no,
+      onConfirm: () async => true,
+      comment: true,
+      commentRequired: true,
+      commentController: rejectController,
+      commentSubmitText: S.of(context).submit,
+      commentDiscardText: S.of(context).discard,
+      onCommentSubmit: () async {
+        final email = employeeEntity.email;
+        final serviceId = widget.service.currentId;
+
+        // B2 FIX: return false on every failure path so the manager does not
+        // show a false "Rejected" success when the mutation was lost.
+        if (email == null || email.isEmpty) {
+          return false;
+        }
+
+        final cubit = ServicesManagerCubit.get(context);
+        final firestoreDocId = cubit.serviceIdToFirestoreDocId[serviceId] ?? serviceId;
+
+        final succeeded = await widget.cubit.reject(
+          firestoreDocId: firestoreDocId ?? '',
+          approverEmail: email,
+          comment: rejectController.text,
+          displayServiceName: displayServiceName,
+          displayRequesterName: displayRequesterName,
+          requesterEmail: widget.service.currentEmailRequester,
+        );
+        if (!succeeded) return false;
+
+        cubit.getAllServices();
+        cubit.getMyRequestServices();
+        cubit.loadProviderPerDocument();
+        cubit.getMyApprovalServices(email);
+        widget.onRefresh();
+        if (mounted) setState(() {});
+        return true;
+      },
+      onSuccessDismissed: () {
+        final cubit = ServicesManagerCubit.get(context);
+        cubit.getAllServices();
+        cubit.getMyRequestServices();
+        cubit.loadProviderPerDocument();
+        cubit.getMyApprovalServices(employeeEntity.email);
+        widget.onRefresh();
+        setState(() {});
+      },
+      successLottie: 'assets/lottie_assets/main_lottie_assets/lottie_rejected.json',
+      successTitle: S.of(context).RejectRequest,
+      successSubtitle: S.of(context).YouSuccessfullyRejectedThisRequest,
+    );
+  }
+
+  void _showApproveDialog(
+    BuildContext context, {
+    required String displayServiceName,
+    required String displayRequesterName,
+  }) {
+    CustomDialogManager.showDialogFlow(
+      context: context,
+      customReasonTitle: S.of(context).reasonOfApproval,
+      confirmLottie: 'assets/lottie_assets/main_lottie_assets/lottie_approved.json',
+      confirmTitle: S.of(context).ApproveRequest,
+      confirmSubtitle: S.of(context).AreYouSureYouWantToApproveThisRequest,
+      confirmYesText: S.of(context).yes,
+      confirmNoText: S.of(context).no,
+      onConfirm: () async => true,
+      comment: true,
+      // Approval now requires a justification, same as rejection —
+      // Submit was previously live over an empty field.
+      commentRequired: true,
+      commentController: approveController,
+      commentSubmitText: S.of(context).submit,
+      commentDiscardText: S.of(context).discard,
+      onCommentSubmit: () async {
+        final email = employeeEntity.email;
+        final serviceId = widget.service.currentId;
+
+        // B2 FIX: return false on failure paths so no false "Approved" success.
+        if (email == null || email.isEmpty) {
+          return false;
+        }
+
+        final cubit = ServicesManagerCubit.get(context);
+        final firestoreDocId = cubit.serviceIdToFirestoreDocId[serviceId] ?? serviceId;
+
+        final approvalCycle = widget.service.currentApprovalCycle
+            .map((e) => (email: e.email ?? '', state: e.state))
+            .toList();
+
+        final succeeded = await widget.cubit.approve(
+          firestoreDocId: firestoreDocId ?? '',
+          approverEmail: email,
+          comment: approveController.text,
+          displayServiceName: displayServiceName,
+          displayRequesterName: displayRequesterName,
+          requesterEmail: widget.service.currentEmailRequester,
+          approvalCycle: approvalCycle,
+        );
+        if (!succeeded) return false;
+
+        cubit.getAllServices();
+        cubit.getMyRequestServices();
+        cubit.loadProviderPerDocument();
+        cubit.getMyApprovalServices(email);
+        widget.onRefresh();
+        if (mounted) setState(() {});
+        return true;
+      },
+      onSuccessDismissed: () {
+        final cubit = ServicesManagerCubit.get(context);
+        cubit.getAllServices();
+        cubit.getMyRequestServices();
+        cubit.loadProviderPerDocument();
+        cubit.getMyApprovalServices(employeeEntity.email);
+        widget.onRefresh();
+        setState(() {});
+      },
+      successLottie: 'assets/lottie_assets/main_lottie_assets/lottie_approved.json',
+      successTitle: S.of(context).Successful,
+      successSubtitle: S.of(context).YouSuccessfullyApprovedThisRequest,
+    );
+  }
+
+  @override
+  void didUpdateWidget(covariant ApprovalRequestCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.service.currentId != widget.service.currentId) {
+      approveController.clear();
+      rejectController.clear();
+      setState(() {});
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    final light = Theme.of(context).brightness == Brightness.light;
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+
+    final myEmail = (employeeEntity.email ?? '').toLowerCase();
+    final myAction = myActionOf(widget.service, myEmail);
+    final myActionLabel = localizedMyAction(context, myAction);
+    final myActionClr = myActionColor(context, myAction);
+
+    final serviceState = (widget.service.currentState ?? '').toLowerCase().trim();
+
+    final isServiceCancelled = (serviceState == 'cancel' || serviceState == 'cancelled');
+    final isServiceDone = (serviceState == 'done');
+    final isMyActionCancelled = (myAction == 'cancel' || myAction == 'cancelled');
+
+    final isTerminalState = isServiceCancelled || isServiceDone || isMyActionCancelled;
+
+    final isMyTurnResult = _isMyTurn(widget.service, myEmail);
+
+    // "Approve And Reject" is the permission behind the two buttons, so it
+    // joins the existing turn/state conditions rather than replacing them: a
+    // role without it still sees the card and its state badge, just no actions.
+    final canAct = !isTerminalState &&
+        (myAction == 'pending') &&
+        isMyTurnResult &&
+        ServicesModuleAccess.canApproveAndReject;
+
+    final dateRequested = widget.service.timestamps.isNotEmpty
+        ? DateTime.fromMillisecondsSinceEpoch(widget.service.timestamps.first)
+        : DateTime.now();
+
+    return GestureDetector(
+      onTap: () {
+        HapticController.low(); // card tap
+        navigateTo(
+          context,
+          ServicesApprovalDetailsToggle(
+            index: 0,
+            approvalModel: widget.service,
+          ),
+        );
+      },
+      child: FutureBuilder<Map<String, String>>(
+        future: CreateServicesHelper.getServiceDetailsFromCreateServices(
+        departments: context.read<MainCoreDepartmentCubit>(),
+          parentServiceId: widget.service.currentParentServiceId , // ✅ CORRECT!              ? widget.service.currentId
+          emailRequester: widget.service.currentEmailRequester ?? '',
+        ),
+        builder: (context, snapshot) {
+          // ✅ Default values - Get from controller
+          String displayServiceName = '';
+          String displayDepartment = '-';
+          String displayDuration = '';
+          String displayJobTitle = '-';
+          String displayRequesterName = '-';
+
+          // ✅ Get requester data from MainCoreEmployeeController
+          final requesterEmail = widget.service.currentEmailRequester ?? '';
+
+          if (requesterEmail.isNotEmpty) {
+            // Get full name from controller
+            displayRequesterName = employeeController.getEmployeeNameEnglishArabic(requesterEmail, !isArabic);
+
+            // Get employee data from controller
+            final employee = employeeController.getLocaleEmployee(requesterEmail);
+            if (employee != null) {
+
+              // Get job title
+              displayJobTitle = isArabic
+                  ? (employee.titleInArabic ?? employee.title ?? '-')
+                  : (employee.title ?? '-');
+
+              // Get department from controller
+              if (employee.departmentId != null && employee.departmentId!.isNotEmpty) {
+                displayDepartment = isArabic
+                    ? (departmentController.getArabicDepartmentNameFromDepartmentId(departmentId: employee.departmentId!) ?? '-')
+                    : (departmentController.getEnglishDepartmentNameFromDepartmentId(departmentId: employee.departmentId!) ?? '-');
+              }
+            }
+          }
+
+          // Get service name (try snapshot first, fallback to model)
+          // Get service name (try snapshot first, fallback to model)
+          if (snapshot.hasData && snapshot.data != null) {
+            final serviceData = snapshot.data!;
+
+            if (isArabic) {
+              // ✅ FIXED: Use camelCase key
+              if (serviceData.containsKey('serviceNameArabic') &&
+                  serviceData['serviceNameArabic'] != null &&
+                  serviceData['serviceNameArabic']!.isNotEmpty) {
+                displayServiceName = serviceData['serviceNameArabic']!;
+              }
+            } else {
+              // ✅ FIXED: Use camelCase key
+              if (serviceData.containsKey('serviceNameEnglish') &&
+                  serviceData['serviceNameEnglish'] != null &&
+                  serviceData['serviceNameEnglish']!.isNotEmpty) {
+                displayServiceName = serviceData['serviceNameEnglish']!;
+              }
+            }
+
+            // Get duration from snapshot
+            if (serviceData.containsKey('duration') &&
+                serviceData['duration'] != null &&
+                serviceData['duration']!.isNotEmpty &&
+                serviceData.containsKey('unit') &&
+                serviceData['unit'] != null &&
+                serviceData['unit']!.isNotEmpty) {
+              final durationValue = serviceData['duration']!;
+              final unitValue = serviceData['unit']!;
+              final localizedUnit = getLocalizedDurationUnit(context, unitValue, quantity: int.tryParse(durationValue));
+              displayDuration = '$durationValue $localizedUnit';
+            }
+          }
+
+          // Fallback to model if snapshot empty
+          if (displayServiceName.isEmpty) {
+            displayServiceName = isArabic
+                ? (widget.service.currentServiceNameArabic ?? widget.service.currentServiceNameEnglish ?? '-')
+                : (widget.service.currentServiceNameEnglish ?? '-');
+          }
+
+          if (displayDuration.isEmpty) {
+            final durationValue = widget.service.currentDurationOfServices ?? '';
+            final unitValue = widget.service.currentSelectedDurationUnit ?? '';
+            if (durationValue.isNotEmpty && unitValue.isNotEmpty) {
+              final localizedUnit = getLocalizedDurationUnit(context, unitValue);
+              displayDuration = '$durationValue $localizedUnit';
+            }
+          }
+
+          return Container(
+            padding: EdgeInsets.only(right: 15.w, left: 15.w, top: 15.h),
+            decoration: BoxDecoration(
+              color: AppColors.card,
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ApprovalRequestCardHeader(
+                  imageUrl: widget.service.currentImageUrl,
+                  displayServiceName: displayServiceName,
+                  displayRequesterName: displayRequesterName,
+                  displayDepartment: displayDepartment,
+                  displayJobTitle: displayJobTitle,
+                  displayDuration: displayDuration,
+                  dateRequested: dateRequested,
+                  isArabic: isArabic,
+                ),
+
+                if (canAct) ...[
+                  ApprovalRequestCardActionButtons(
+                    isLightMode: light,
+                    onRejectTap: () => _showRejectDialog(
+                      context,
+                      displayServiceName: displayServiceName,
+                      displayRequesterName: displayRequesterName,
+                    ),
+                    onApproveTap: () => _showApproveDialog(
+                      context,
+                      displayServiceName: displayServiceName,
+                      displayRequesterName: displayRequesterName,
+                    ),
+                  ),
+                ],
+
+                if (!canAct) ...[
+                  Center(
+                    child: _stateBadge(
+                      label: myActionLabel,
+                      state: myAction,
+                      color: myActionClr,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    rejectController.dispose();
+    approveController.dispose();
+    super.dispose();
+  }
+}

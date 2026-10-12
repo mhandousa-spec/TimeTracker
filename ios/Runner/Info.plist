@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>Knowticed+</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>Knowticed Plus</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(FLUTTER_BUILD_NAME)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<!-- ADDED 23/9/2026. Answers the export-compliance question in App Store
+	     Connect: the app only uses standard encryption (HTTPS, Keychain, AES
+	     via package:encrypt), which is exempt. -->
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<!-- ADDED 9/9/2026. Text of the iOS location prompt.
+
+	     REQUIRED, not optional: geolocator throws
+	     PermissionDefinitionsNotFoundException out of
+	     GeolocatorApple.requestPermission the moment the app asks for a
+	     position without it, and because the only caller
+	     (SystemLogsController.systemLogsAction) is a fire-and-forget
+	     `void ... async`, that throw surfaced as an uncaught async error in
+	     runZonedGuarded and the activity log was never written.
+
+	     WhenInUse, not Always: the app reads the position once per logged
+	     action while the user is on screen (system_logs_repository.addActivityLog
+	     stores lat/long on the log entry). It never tracks in the background, so
+	     NSLocationAlwaysUsageDescription would ask for more than is used. -->
+	<!-- UPDATED 8/10/2026: wording now names the Time Tracker check-in use (Apple review asks for the real purpose). -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Knowticed Plus uses your location when you check in or out in Time Tracker, to confirm you are at your assigned work location, and to record where actions in the activity log were performed.</string>
+	<!-- ADDED 23/9/2026. Permission prompts for every plugin that touches a
+	     protected resource on iOS. iOS terminates the app the moment it
+	     accesses one of these without the matching key. -->
+	<!-- image_picker (ImageSource.camera) -->
+	<key>NSCameraUsageDescription</key>
+	<string>Knowticed Plus uses the camera so you can take photos and attach them to messages, comments and forms.</string>
+	<!-- image_picker (ImageSource.gallery, pickMultipleMedia) -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Knowticed Plus needs access to your photos so you can attach images and videos to messages, comments and forms.</string>
+	<!-- saving images / exported files to Photos (share_plus, printing) -->
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Knowticed Plus saves images and exported files to your photo library when you choose to.</string>
+	<!-- audio_waveforms / record: voice notes in chat -->
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Knowticed Plus needs the microphone so you can record voice messages in chat.</string>
+	<!-- flutter_contacts / Permission.contacts: share a contact in chat -->
+	<key>NSContactsUsageDescription</key>
+	<string>Knowticed Plus accesses your contacts so you can share a contact in chat.</string>
+	<!-- local_auth: biometric login -->
+	<key>NSFaceIDUsageDescription</key>
+	<string>Knowticed Plus uses Face ID so you can sign in quickly and securely.</string>
+	<!-- firebase_messaging / flutter_local_notifications: push notifications
+	     delivered while the app is in the background. -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
+	<!-- url_launcher: lets canLaunchUrl() answer for these schemes. -->
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>mailto</string>
+		<string>tel</string>
+		<string>sms</string>
+		<string>https</string>
+		<string>http</string>
+	</array>
+	<!-- Downloaded / exported files show up in the Files app under
+	     "On My iPhone > Knowticed Plus". -->
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<false/>
+		<key>UISceneConfigurations</key>
+		<dict>
+			<key>UIWindowSceneSessionRoleApplication</key>
+			<array>
+				<dict>
+					<key>UISceneClassName</key>
+					<string>UIWindowScene</string>
+					<key>UISceneConfigurationName</key>
+					<string>flutter</string>
+					<key>UISceneDelegateClassName</key>
+					<string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
+					<key>UISceneStoryboardFile</key>
+					<string>Main</string>
+				</dict>
+			</array>
+		</dict>
+	</dict>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+</dict>
+</plist>

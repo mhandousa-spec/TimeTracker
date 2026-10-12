@@ -1,0 +1,341 @@
+/// Module: services_management_module
+/// Description: Approval-details page — approve/reject action buttons and
+///              the comment-reason display rows. The approve/reject mutation
+///              (approval-cycle patch, Firestore write, notification
+///              fan-out) is delegated to ApprovalRequestDetailsCubit; this
+///              file only builds the dialog + reads the permission gate.
+/// Author: Knowticed Team
+/// Date: 2026-07-02
+/// Dependencies: ApprovalRequestDetailsCubit
+/// Revision History: 2026-07-02 — renamed from
+///                    approval_request_details.body_actions.dart and moved
+///                    every try/catch + direct Firestore call into
+///                    ApprovalRequestDetailsCubit.approve()/reject() (audit
+///                    fix item 1).
+part of 'approval_request_details.dart';
+
+// Auto-extracted to keep files under 600 lines.
+extension _ApprovalBodyActions on _ApprovalDetailsScreenState {
+  Widget _buildApprovalActions(BuildContext context, String? myState, String displayServiceName) {
+    // "Approve And Reject" off → the details page is still readable, it just
+    // offers no way to act on the request.
+    if (!ServicesModuleAccess.canApproveAndReject) return const SizedBox();
+
+    return widget.fromTable
+                                ? SizedBox()
+                                : ApprovalButtons(
+                              myState: myState,
+                              documentState: currentState,
+                              onApprove: () {
+                                CustomDialogManager.showDialogFlow(
+                                  confirmWidth: 411,
+                                  context: context,
+                                  customReasonTitle:
+                                  S.of(context).reasonOfApproval,
+                                  confirmLottie:
+                                  'assets/lottie_assets/main_lottie_assets/lottie_approved.json',
+                                  confirmTitle:
+                                  S.of(context).ApproveRequest,
+                                  confirmSubtitle: S
+                                      .of(context)
+                                      .AreYouSureYouWantToApproveThisRequest,
+                                  confirmYesText: S.of(context).yes,
+                                  confirmNoText: S.of(context).no,
+                                  onConfirm: () async => true,
+                                  comment: true,
+                                  // Approval now requires a justification, same as rejection —
+                                  // Submit was previously live over an empty field.
+                                  commentRequired: true,
+                                  commentController: approveController,
+                                  commentSubmitText: S.of(context).submit,
+                                  commentDiscardText: S.of(context).discard,
+                                  onCommentSubmit: () async {
+                                    final email = employeeFunctionHelper.email;
+
+                                    // B2 FIX: return false on failure so no false success.
+                                    if (email == null || email.isEmpty) {
+                                      return false;
+                                    }
+
+                                    final ok = await context.read<ApprovalRequestDetailsCubit>().approve(
+                                      approverEmail: email,
+                                      comment: approveController.text,
+                                      displayServiceName: displayServiceName,
+                                      displayRequesterName: widget.approvalModel.currentServiceNameEnglish ?? '',
+                                    );
+                                    if (!ok) return false;
+
+                                    final cubit = ServicesManagerCubit.get(context);
+                                    cubit.getAllServices();
+                                    cubit.getMyRequestServices();
+                                    cubit.loadProviderPerDocument();
+                                    await cubit.getMyApprovalServices(email);
+
+                                    if (mounted) setState(() {});
+                                    return true;
+                                  },
+                                  successLottie:
+                                  'assets/lottie_assets/main_lottie_assets/lottie_approved.json',
+                                  successTitle: S.of(context).Successful,
+                                  successSubtitle: S
+                                      .of(context)
+                                      .YouSuccessfullyApprovedThisRequest,
+                                  onSuccessDismissed: () {
+                                    Future.delayed(
+                                        const Duration(seconds: 1), () {
+                                      navigateTo(context, ApprovalToggle());
+                                    });
+                                  },
+                                );
+                              },
+                              onReject: () {
+                                CustomDialogManager.showDialogFlow(
+                                  confirmWidth: 411,
+                                  context: context,
+                                  customReasonTitle:
+                                  S.of(context).reasonOfRejection,
+                                  confirmLottie:
+                                  'assets/lottie_assets/main_lottie_assets/lottie_rejected.json',
+                                  confirmTitle: S.of(context).RejectRequest,
+                                  confirmSubtitle: S
+                                      .of(context)
+                                      .AreYouSureYouWantToRejectThisRequest,
+                                  confirmYesText: S.of(context).yes,
+                                  confirmNoText: S.of(context).no,
+                                  onConfirm: () async => true,
+                                  comment: true,
+                                  commentRequired: true,
+                                  commentController: rejectController,
+                                  commentSubmitText: S.of(context).submit,
+                                  commentDiscardText: S.of(context).discard,
+                                  onCommentSubmit: () async {
+                                    final email = employeeFunctionHelper.email;
+
+                                    // B2 FIX: return false on failure so no false success.
+                                    if (email == null || email.isEmpty) {
+                                      return false;
+                                    }
+
+                                    final ok = await context.read<ApprovalRequestDetailsCubit>().reject(
+                                      approverEmail: email,
+                                      comment: rejectController.text,
+                                      displayServiceName: displayServiceName,
+                                    );
+                                    if (!ok) return false;
+
+                                    final cubit = ServicesManagerCubit.get(context);
+                                    cubit.getAllServices();
+                                    cubit.getMyRequestServices();
+                                    cubit.loadProviderPerDocument();
+                                    cubit.getMyApprovalServices(email);
+
+                                    if (mounted) setState(() {});
+                                    return true;
+                                  },
+                                  successLottie:
+                                  'assets/lottie_assets/main_lottie_assets/lottie_rejected.json',
+                                  successTitle: S.of(context).RejectRequest,
+                                  successSubtitle: S
+                                      .of(context)
+                                      .YouSuccessfullyRejectedThisRequest,
+                                  onSuccessDismissed: () {
+                                    Future.delayed(
+                                        const Duration(seconds: 1), () {
+                                      navigateTo(context, ApprovalToggle());
+                                    });
+                                  },
+                                );
+                              },
+                            );
+  }
+
+  List<Widget> _buildCommentReasons(BuildContext context) {
+    final isMobile = ContextExtension(context).isPhone;
+    return [
+                            if (cancelReason != null && cancelReason!.isNotEmpty)
+                              Padding(
+                                padding: EdgeInsets.only(top: 12.h),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(top: 0.sp),
+                                      child: SvgPicture.asset(
+                                        "assets/icons_assets/main_icons_assets/status_pulse_line.svg",
+                                        width: 16.sp,
+                                        height: 16.sp,
+                                        fit: BoxFit.cover,
+                                        color: AppColors.red,
+                                      ),
+                                    ),
+                                    SizedBox(width: 6.sp),
+                                    Expanded(
+                                      child: RichText(
+                                        text: TextSpan(
+                                          style: StyleText.fontSize14Weight500
+                                              .copyWith(
+                                            color: Theme.of(context).brightness ==
+                                                Brightness.light
+                                                ? AppColors.red
+                                                : AppColors.secondaryText,
+                                          ),
+                                          children: [
+                                            TextSpan(
+                                              text:
+                                              "${S.of(context).ReasonOfCancelation}: ",
+                                              style: StyleText.fontSize14Weight500
+                                                  .copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColors.red,
+                                              ),
+                                            ),
+                                            TextSpan(
+                                              text: FormatHelper.capitalize(
+                                                  cancelReason!),
+                                              style: StyleText.fontSize14Weight500
+                                                  .copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColors.text,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                            if (rejectCommentText.isNotEmpty)
+                              Padding(
+                                padding: EdgeInsets.only(top: 12.h),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SvgPicture.asset(
+                                      "assets/icons_assets/main_icons_assets/status_pulse_line.svg",
+                                      width: isMobile ? 12.sp : 16.sp,
+                                      height: isMobile ? 12.sp : 16.sp,
+                                      color: AppColors.red,
+                                    ),
+                                    SizedBox(width: 6.sp),
+                                    Expanded(
+                                      child: RichText(
+                                        text: TextSpan(
+                                          style: StyleText.fontSize14Weight500
+                                              .copyWith(
+                                            color: AppColors.red,
+                                          ),
+                                          children: [
+                                            TextSpan(
+                                              text:
+                                              "${S.of(context).ReasonOfRejection} ",
+                                              style: isMobile
+                                                  ? StyleText.fontSize12Weight500
+                                                  .copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColors.red,
+                                              )
+                                                  : StyleText.fontSize14Weight500
+                                                  .copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColors.red,
+                                              ),
+                                            ),
+                                            TextSpan(
+                                              text: FormatHelper.capitalize(
+                                                  rejectCommentText),
+                                              style: isMobile
+                                                  ? StyleText.fontSize12Weight500
+                                                  .copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColors.text,
+                                              )
+                                                  : StyleText.fontSize14Weight500
+                                                  .copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColors.text,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                            if (approveCommentText.isNotEmpty)
+                              Padding(
+                                padding: EdgeInsets.only(top: 12.h),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SvgPicture.asset(
+                                      "assets/icons_assets/main_icons_assets/status_pulse_line.svg",
+                                      width: isMobile ? 12.sp : 16.sp,
+                                      height: isMobile ? 12.sp : 16.sp,
+                                      color: AppColors.lightGreen,
+                                    ),
+                                    SizedBox(width: 6.sp),
+                                    Expanded(
+                                      child: RichText(
+                                        text: TextSpan(
+                                          style: StyleText.fontSize14Weight500
+                                              .copyWith(
+                                            color: AppColors.lightGreen,
+                                          ),
+                                          children: [
+                                            TextSpan(
+                                              text:
+                                              "${S.of(context).ReasonOfApprove} ",
+                                              // FIXED 9/9/2026 — the PHONE
+                                              // branch painted this label
+                                              // `AppColors.red`, left over from
+                                              // the rejection block above that
+                                              // this one was copied from. Every
+                                              // other part of the approved row
+                                              // — the pulse icon, the wide
+                                              // branch, the parent TextSpan —
+                                              // was already `lightGreen`, so on
+                                              // a phone an APPROVED request
+                                              // announced its reason in the
+                                              // rejection colour.
+                                              style: isMobile
+                                                  ? StyleText.fontSize12Weight500
+                                                  .copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColors.lightGreen,
+                                              )
+                                                  : StyleText.fontSize14Weight500
+                                                  .copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColors.lightGreen,
+                                              ),
+                                            ),
+                                            TextSpan(
+                                              text: FormatHelper.capitalize(
+                                                  approveCommentText),
+                                              style: isMobile
+                                                  ? StyleText.fontSize12Weight500
+                                                  .copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColors.text,
+                                              )
+                                                  : StyleText.fontSize14Weight500
+                                                  .copyWith(
+                                                  fontWeight:
+                                                  FontWeight.bold,
+                                                  color: AppColors.text),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+    ];
+  }
+
+}

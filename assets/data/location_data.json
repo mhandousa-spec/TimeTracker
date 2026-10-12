@@ -1,0 +1,2380 @@
+{
+  "schema": 1,
+  "readme": "Country -> state/governorate -> city data for the location dropdowns. Keyed by ISO 3166-1 alpha-2. The COUNTRY list itself does NOT come from this file - it comes from the country_picker package, so every country in the world is offered. This file only supplies the states and cities under a country. A country missing from 'countries' simply has no state/city options yet; add a new entry with the same shape and it works with no code change. 'name' is English, 'name_ar' is Arabic; the service picks by the app locale and falls back to 'name' when 'name_ar' is absent.",
+  "countries": {
+    "KW": {
+      "name": "Kuwait",
+      "name_ar": "الكويت",
+      "states": [
+        {
+          "code": "KU",
+          "name": "Al Asimah",
+          "name_ar": "العاصمة",
+          "cities": [
+            {
+              "name": "Kuwait City",
+              "name_ar": "مدينة الكويت"
+            },
+            {
+              "name": "Sharq",
+              "name_ar": "شرق"
+            },
+            {
+              "name": "Dasman",
+              "name_ar": "دسمان"
+            },
+            {
+              "name": "Qibla",
+              "name_ar": "قبلة"
+            },
+            {
+              "name": "Shuwaikh",
+              "name_ar": "الشويخ"
+            },
+            {
+              "name": "Kaifan",
+              "name_ar": "كيفان"
+            },
+            {
+              "name": "Adailiya",
+              "name_ar": "العديلية"
+            },
+            {
+              "name": "Rawda",
+              "name_ar": "الروضة"
+            },
+            {
+              "name": "Shamiya",
+              "name_ar": "الشامية"
+            },
+            {
+              "name": "Faiha",
+              "name_ar": "الفيحاء"
+            },
+            {
+              "name": "Dasma",
+              "name_ar": "الدسمة"
+            },
+            {
+              "name": "Mansuriya",
+              "name_ar": "المنصورية"
+            },
+            {
+              "name": "Abdullah Al-Salem",
+              "name_ar": "ضاحية عبدالله السالم"
+            },
+            {
+              "name": "Khaldiya",
+              "name_ar": "الخالدية"
+            },
+            {
+              "name": "Qadsiya",
+              "name_ar": "القادسية"
+            },
+            {
+              "name": "Nuzha",
+              "name_ar": "النزهة"
+            },
+            {
+              "name": "Sulaibikhat",
+              "name_ar": "الصليبخات"
+            },
+            {
+              "name": "Doha",
+              "name_ar": "الدوحة"
+            },
+            {
+              "name": "Jaber Al-Ahmad",
+              "name_ar": "جابر الأحمد"
+            },
+            {
+              "name": "Granada",
+              "name_ar": "غرناطة"
+            },
+            {
+              "name": "Sulaibiya Agricultural",
+              "name_ar": "الصليبية الزراعية"
+            }
+          ]
+        },
+        {
+          "code": "HA",
+          "name": "Hawalli",
+          "name_ar": "حولي",
+          "cities": [
+            {
+              "name": "Hawalli",
+              "name_ar": "حولي"
+            },
+            {
+              "name": "Salmiya",
+              "name_ar": "السالمية"
+            },
+            {
+              "name": "Jabriya",
+              "name_ar": "الجابرية"
+            },
+            {
+              "name": "Bayan",
+              "name_ar": "بيان"
+            },
+            {
+              "name": "Mishref",
+              "name_ar": "مشرف"
+            },
+            {
+              "name": "Salwa",
+              "name_ar": "سلوى"
+            },
+            {
+              "name": "Rumaithiya",
+              "name_ar": "الرميثية"
+            },
+            {
+              "name": "Shaab",
+              "name_ar": "الشعب"
+            },
+            {
+              "name": "Maidan Hawalli",
+              "name_ar": "ميدان حولي"
+            },
+            {
+              "name": "Zahra",
+              "name_ar": "الزهراء"
+            },
+            {
+              "name": "Siddiq",
+              "name_ar": "الصديق"
+            },
+            {
+              "name": "Mubarak Al-Abdullah",
+              "name_ar": "مبارك العبدالله"
+            },
+            {
+              "name": "Hitteen",
+              "name_ar": "حطين"
+            },
+            {
+              "name": "Salam",
+              "name_ar": "السلام"
+            },
+            {
+              "name": "Bidaa",
+              "name_ar": "البدع"
+            }
+          ]
+        },
+        {
+          "code": "FA",
+          "name": "Al Farwaniyah",
+          "name_ar": "الفروانية",
+          "cities": [
+            {
+              "name": "Farwaniya",
+              "name_ar": "الفروانية"
+            },
+            {
+              "name": "Jleeb Al-Shuyoukh",
+              "name_ar": "جليب الشيوخ"
+            },
+            {
+              "name": "Khaitan",
+              "name_ar": "خيطان"
+            },
+            {
+              "name": "Ardiya",
+              "name_ar": "العارضية"
+            },
+            {
+              "name": "Rabiya",
+              "name_ar": "الرابية"
+            },
+            {
+              "name": "Andalous",
+              "name_ar": "الأندلس"
+            },
+            {
+              "name": "Rehab",
+              "name_ar": "الرحاب"
+            },
+            {
+              "name": "Firdous",
+              "name_ar": "الفردوس"
+            },
+            {
+              "name": "Ishbiliya",
+              "name_ar": "إشبيلية"
+            },
+            {
+              "name": "Abdullah Al-Mubarak",
+              "name_ar": "عبدالله المبارك"
+            },
+            {
+              "name": "Sabah Al-Nasser",
+              "name_ar": "صباح الناصر"
+            },
+            {
+              "name": "Riggae",
+              "name_ar": "الرقعي"
+            },
+            {
+              "name": "Omariya",
+              "name_ar": "العمرية"
+            },
+            {
+              "name": "Dhajeej",
+              "name_ar": "ضجيج"
+            },
+            {
+              "name": "Airport Area",
+              "name_ar": "منطقة المطار"
+            }
+          ]
+        },
+        {
+          "code": "MU",
+          "name": "Mubarak Al-Kabeer",
+          "name_ar": "مبارك الكبير",
+          "cities": [
+            {
+              "name": "Mubarak Al-Kabeer",
+              "name_ar": "مبارك الكبير"
+            },
+            {
+              "name": "Sabah Al-Salem",
+              "name_ar": "صباح السالم"
+            },
+            {
+              "name": "Adan",
+              "name_ar": "العدان"
+            },
+            {
+              "name": "Qurain",
+              "name_ar": "القرين"
+            },
+            {
+              "name": "Qusour",
+              "name_ar": "القصور"
+            },
+            {
+              "name": "Messila",
+              "name_ar": "المسيلة"
+            },
+            {
+              "name": "Abu Ftaira",
+              "name_ar": "أبو فطيرة"
+            },
+            {
+              "name": "Funaitees",
+              "name_ar": "الفنيطيس"
+            },
+            {
+              "name": "Sabhan",
+              "name_ar": "صبحان"
+            },
+            {
+              "name": "Wista",
+              "name_ar": "الوسطى"
+            },
+            {
+              "name": "Misref Area",
+              "name_ar": "المسايل"
+            }
+          ]
+        },
+        {
+          "code": "AH",
+          "name": "Al Ahmadi",
+          "name_ar": "الأحمدي",
+          "cities": [
+            {
+              "name": "Ahmadi",
+              "name_ar": "الأحمدي"
+            },
+            {
+              "name": "Fahaheel",
+              "name_ar": "الفحيحيل"
+            },
+            {
+              "name": "Mangaf",
+              "name_ar": "المنقف"
+            },
+            {
+              "name": "Abu Halifa",
+              "name_ar": "أبو حليفة"
+            },
+            {
+              "name": "Fintas",
+              "name_ar": "الفنطاس"
+            },
+            {
+              "name": "Mahboula",
+              "name_ar": "المهبولة"
+            },
+            {
+              "name": "Riqqa",
+              "name_ar": "الرقة"
+            },
+            {
+              "name": "Egaila",
+              "name_ar": "العقيلة"
+            },
+            {
+              "name": "Sabahiya",
+              "name_ar": "الصباحية"
+            },
+            {
+              "name": "Wafra",
+              "name_ar": "الوفرة"
+            },
+            {
+              "name": "Zour",
+              "name_ar": "الزور"
+            },
+            {
+              "name": "Khiran",
+              "name_ar": "الخيران"
+            },
+            {
+              "name": "Ali Sabah Al-Salem",
+              "name_ar": "علي صباح السالم"
+            },
+            {
+              "name": "Hadiya",
+              "name_ar": "هدية"
+            },
+            {
+              "name": "Jaber Al-Ali",
+              "name_ar": "جابر العلي"
+            },
+            {
+              "name": "Sabah Al-Ahmad City",
+              "name_ar": "مدينة صباح الأحمد"
+            },
+            {
+              "name": "Shuaiba",
+              "name_ar": "الشعيبة"
+            }
+          ]
+        },
+        {
+          "code": "JA",
+          "name": "Al Jahra",
+          "name_ar": "الجهراء",
+          "cities": [
+            {
+              "name": "Jahra",
+              "name_ar": "الجهراء"
+            },
+            {
+              "name": "Saad Al-Abdullah",
+              "name_ar": "سعد العبدالله"
+            },
+            {
+              "name": "Naeem",
+              "name_ar": "النعيم"
+            },
+            {
+              "name": "Naseem",
+              "name_ar": "النسيم"
+            },
+            {
+              "name": "Oyoun",
+              "name_ar": "العيون"
+            },
+            {
+              "name": "Qasr",
+              "name_ar": "القصر"
+            },
+            {
+              "name": "Waha",
+              "name_ar": "الواحة"
+            },
+            {
+              "name": "Taima",
+              "name_ar": "تيماء"
+            },
+            {
+              "name": "Sulaibiya",
+              "name_ar": "الصليبية"
+            },
+            {
+              "name": "Amghara",
+              "name_ar": "أمغرة"
+            },
+            {
+              "name": "Abdali",
+              "name_ar": "العبدلي"
+            },
+            {
+              "name": "Bar Jahra",
+              "name_ar": "بر الجهراء"
+            },
+            {
+              "name": "Kabd",
+              "name_ar": "كبد"
+            }
+          ]
+        }
+      ]
+    },
+    "SA": {
+      "name": "Saudi Arabia",
+      "name_ar": "المملكة العربية السعودية",
+      "states": [
+        {
+          "code": "01",
+          "name": "Riyadh",
+          "name_ar": "الرياض",
+          "cities": [
+            {
+              "name": "Riyadh",
+              "name_ar": "الرياض"
+            },
+            {
+              "name": "Diriyah",
+              "name_ar": "الدرعية"
+            },
+            {
+              "name": "Al Kharj",
+              "name_ar": "الخرج"
+            },
+            {
+              "name": "Al Majmaah",
+              "name_ar": "المجمعة"
+            },
+            {
+              "name": "Al Zulfi",
+              "name_ar": "الزلفي"
+            },
+            {
+              "name": "Wadi Al-Dawasir",
+              "name_ar": "وادي الدواسر"
+            },
+            {
+              "name": "Afif",
+              "name_ar": "عفيف"
+            },
+            {
+              "name": "Dawadmi",
+              "name_ar": "الدوادمي"
+            },
+            {
+              "name": "Shaqra",
+              "name_ar": "شقراء"
+            }
+          ]
+        },
+        {
+          "code": "02",
+          "name": "Makkah",
+          "name_ar": "مكة المكرمة",
+          "cities": [
+            {
+              "name": "Mecca",
+              "name_ar": "مكة المكرمة"
+            },
+            {
+              "name": "Jeddah",
+              "name_ar": "جدة"
+            },
+            {
+              "name": "Taif",
+              "name_ar": "الطائف"
+            },
+            {
+              "name": "Rabigh",
+              "name_ar": "رابغ"
+            },
+            {
+              "name": "Al Qunfudhah",
+              "name_ar": "القنفذة"
+            },
+            {
+              "name": "Al Lith",
+              "name_ar": "الليث"
+            },
+            {
+              "name": "Khulais",
+              "name_ar": "خليص"
+            }
+          ]
+        },
+        {
+          "code": "03",
+          "name": "Al Madinah",
+          "name_ar": "المدينة المنورة",
+          "cities": [
+            {
+              "name": "Medina",
+              "name_ar": "المدينة المنورة"
+            },
+            {
+              "name": "Yanbu",
+              "name_ar": "ينبع"
+            },
+            {
+              "name": "Al Ula",
+              "name_ar": "العلا"
+            },
+            {
+              "name": "Badr",
+              "name_ar": "بدر"
+            },
+            {
+              "name": "Khaybar",
+              "name_ar": "خيبر"
+            }
+          ]
+        },
+        {
+          "code": "04",
+          "name": "Eastern Province",
+          "name_ar": "المنطقة الشرقية",
+          "cities": [
+            {
+              "name": "Dammam",
+              "name_ar": "الدمام"
+            },
+            {
+              "name": "Al Khobar",
+              "name_ar": "الخبر"
+            },
+            {
+              "name": "Dhahran",
+              "name_ar": "الظهران"
+            },
+            {
+              "name": "Jubail",
+              "name_ar": "الجبيل"
+            },
+            {
+              "name": "Al Ahsa",
+              "name_ar": "الأحساء"
+            },
+            {
+              "name": "Hafar Al-Batin",
+              "name_ar": "حفر الباطن"
+            },
+            {
+              "name": "Qatif",
+              "name_ar": "القطيف"
+            },
+            {
+              "name": "Ras Tanura",
+              "name_ar": "رأس تنورة"
+            },
+            {
+              "name": "Khafji",
+              "name_ar": "الخفجي"
+            }
+          ]
+        },
+        {
+          "code": "05",
+          "name": "Asir",
+          "name_ar": "عسير",
+          "cities": [
+            {
+              "name": "Abha",
+              "name_ar": "أبها"
+            },
+            {
+              "name": "Khamis Mushait",
+              "name_ar": "خميس مشيط"
+            },
+            {
+              "name": "Bisha",
+              "name_ar": "بيشة"
+            },
+            {
+              "name": "Muhayil",
+              "name_ar": "محايل عسير"
+            },
+            {
+              "name": "Sarat Abidah",
+              "name_ar": "سراة عبيدة"
+            }
+          ]
+        },
+        {
+          "code": "06",
+          "name": "Tabuk",
+          "name_ar": "تبوك",
+          "cities": [
+            {
+              "name": "Tabuk",
+              "name_ar": "تبوك"
+            },
+            {
+              "name": "Duba",
+              "name_ar": "ضباء"
+            },
+            {
+              "name": "Haql",
+              "name_ar": "حقل"
+            },
+            {
+              "name": "Umluj",
+              "name_ar": "أملج"
+            },
+            {
+              "name": "NEOM",
+              "name_ar": "نيوم"
+            }
+          ]
+        },
+        {
+          "code": "07",
+          "name": "Hail",
+          "name_ar": "حائل",
+          "cities": [
+            {
+              "name": "Hail",
+              "name_ar": "حائل"
+            },
+            {
+              "name": "Baqaa",
+              "name_ar": "بقعاء"
+            },
+            {
+              "name": "Al Ghazalah",
+              "name_ar": "الغزالة"
+            }
+          ]
+        },
+        {
+          "code": "08",
+          "name": "Northern Borders",
+          "name_ar": "الحدود الشمالية",
+          "cities": [
+            {
+              "name": "Arar",
+              "name_ar": "عرعر"
+            },
+            {
+              "name": "Rafha",
+              "name_ar": "رفحاء"
+            },
+            {
+              "name": "Turaif",
+              "name_ar": "طريف"
+            }
+          ]
+        },
+        {
+          "code": "09",
+          "name": "Jazan",
+          "name_ar": "جازان",
+          "cities": [
+            {
+              "name": "Jazan",
+              "name_ar": "جازان"
+            },
+            {
+              "name": "Sabya",
+              "name_ar": "صبيا"
+            },
+            {
+              "name": "Abu Arish",
+              "name_ar": "أبو عريش"
+            },
+            {
+              "name": "Farasan",
+              "name_ar": "فرسان"
+            }
+          ]
+        },
+        {
+          "code": "10",
+          "name": "Najran",
+          "name_ar": "نجران",
+          "cities": [
+            {
+              "name": "Najran",
+              "name_ar": "نجران"
+            },
+            {
+              "name": "Sharurah",
+              "name_ar": "شرورة"
+            },
+            {
+              "name": "Habuna",
+              "name_ar": "حبونا"
+            }
+          ]
+        },
+        {
+          "code": "11",
+          "name": "Al Bahah",
+          "name_ar": "الباحة",
+          "cities": [
+            {
+              "name": "Al Bahah",
+              "name_ar": "الباحة"
+            },
+            {
+              "name": "Baljurashi",
+              "name_ar": "بلجرشي"
+            },
+            {
+              "name": "Al Mandaq",
+              "name_ar": "المندق"
+            }
+          ]
+        },
+        {
+          "code": "12",
+          "name": "Al Jawf",
+          "name_ar": "الجوف",
+          "cities": [
+            {
+              "name": "Sakaka",
+              "name_ar": "سكاكا"
+            },
+            {
+              "name": "Dumat Al-Jandal",
+              "name_ar": "دومة الجندل"
+            },
+            {
+              "name": "Qurayyat",
+              "name_ar": "القريات"
+            }
+          ]
+        },
+        {
+          "code": "13",
+          "name": "Qassim",
+          "name_ar": "القصيم",
+          "cities": [
+            {
+              "name": "Buraydah",
+              "name_ar": "بريدة"
+            },
+            {
+              "name": "Unaizah",
+              "name_ar": "عنيزة"
+            },
+            {
+              "name": "Ar Rass",
+              "name_ar": "الرس"
+            },
+            {
+              "name": "Al Mithnab",
+              "name_ar": "المذنب"
+            }
+          ]
+        }
+      ]
+    },
+    "AE": {
+      "name": "United Arab Emirates",
+      "name_ar": "الإمارات العربية المتحدة",
+      "states": [
+        {
+          "code": "AZ",
+          "name": "Abu Dhabi",
+          "name_ar": "أبوظبي",
+          "cities": [
+            {
+              "name": "Abu Dhabi",
+              "name_ar": "أبوظبي"
+            },
+            {
+              "name": "Al Ain",
+              "name_ar": "العين"
+            },
+            {
+              "name": "Madinat Zayed",
+              "name_ar": "مدينة زايد"
+            },
+            {
+              "name": "Ruwais",
+              "name_ar": "الرويس"
+            },
+            {
+              "name": "Liwa",
+              "name_ar": "ليوا"
+            },
+            {
+              "name": "Khalifa City",
+              "name_ar": "مدينة خليفة"
+            }
+          ]
+        },
+        {
+          "code": "DU",
+          "name": "Dubai",
+          "name_ar": "دبي",
+          "cities": [
+            {
+              "name": "Dubai",
+              "name_ar": "دبي"
+            },
+            {
+              "name": "Deira",
+              "name_ar": "ديرة"
+            },
+            {
+              "name": "Bur Dubai",
+              "name_ar": "بر دبي"
+            },
+            {
+              "name": "Jumeirah",
+              "name_ar": "جميرا"
+            },
+            {
+              "name": "Al Barsha",
+              "name_ar": "البرشاء"
+            },
+            {
+              "name": "Hatta",
+              "name_ar": "حتا"
+            },
+            {
+              "name": "Jebel Ali",
+              "name_ar": "جبل علي"
+            }
+          ]
+        },
+        {
+          "code": "SH",
+          "name": "Sharjah",
+          "name_ar": "الشارقة",
+          "cities": [
+            {
+              "name": "Sharjah",
+              "name_ar": "الشارقة"
+            },
+            {
+              "name": "Khor Fakkan",
+              "name_ar": "خورفكان"
+            },
+            {
+              "name": "Kalba",
+              "name_ar": "كلباء"
+            },
+            {
+              "name": "Dibba Al-Hisn",
+              "name_ar": "دبا الحصن"
+            },
+            {
+              "name": "Al Dhaid",
+              "name_ar": "الذيد"
+            }
+          ]
+        },
+        {
+          "code": "AJ",
+          "name": "Ajman",
+          "name_ar": "عجمان",
+          "cities": [
+            {
+              "name": "Ajman",
+              "name_ar": "عجمان"
+            },
+            {
+              "name": "Masfout",
+              "name_ar": "مصفوت"
+            },
+            {
+              "name": "Manama",
+              "name_ar": "المنامة"
+            }
+          ]
+        },
+        {
+          "code": "UQ",
+          "name": "Umm Al Quwain",
+          "name_ar": "أم القيوين",
+          "cities": [
+            {
+              "name": "Umm Al Quwain",
+              "name_ar": "أم القيوين"
+            },
+            {
+              "name": "Falaj Al Mualla",
+              "name_ar": "فلج المعلا"
+            }
+          ]
+        },
+        {
+          "code": "RK",
+          "name": "Ras Al Khaimah",
+          "name_ar": "رأس الخيمة",
+          "cities": [
+            {
+              "name": "Ras Al Khaimah",
+              "name_ar": "رأس الخيمة"
+            },
+            {
+              "name": "Al Rams",
+              "name_ar": "الرمس"
+            },
+            {
+              "name": "Al Jazirah Al Hamra",
+              "name_ar": "الجزيرة الحمراء"
+            }
+          ]
+        },
+        {
+          "code": "FU",
+          "name": "Fujairah",
+          "name_ar": "الفجيرة",
+          "cities": [
+            {
+              "name": "Fujairah",
+              "name_ar": "الفجيرة"
+            },
+            {
+              "name": "Dibba Al-Fujairah",
+              "name_ar": "دبا الفجيرة"
+            },
+            {
+              "name": "Masafi",
+              "name_ar": "مسافي"
+            }
+          ]
+        }
+      ]
+    },
+    "QA": {
+      "name": "Qatar",
+      "name_ar": "قطر",
+      "states": [
+        {
+          "code": "DA",
+          "name": "Ad Dawhah",
+          "name_ar": "الدوحة",
+          "cities": [
+            {
+              "name": "Doha",
+              "name_ar": "الدوحة"
+            },
+            {
+              "name": "West Bay",
+              "name_ar": "الخليج الغربي"
+            },
+            {
+              "name": "Al Sadd",
+              "name_ar": "السد"
+            },
+            {
+              "name": "Msheireb",
+              "name_ar": "مشيرب"
+            }
+          ]
+        },
+        {
+          "code": "RA",
+          "name": "Al Rayyan",
+          "name_ar": "الريان",
+          "cities": [
+            {
+              "name": "Al Rayyan",
+              "name_ar": "الريان"
+            },
+            {
+              "name": "Education City",
+              "name_ar": "المدينة التعليمية"
+            },
+            {
+              "name": "Al Gharrafa",
+              "name_ar": "الغرافة"
+            },
+            {
+              "name": "Muaither",
+              "name_ar": "معيذر"
+            }
+          ]
+        },
+        {
+          "code": "WA",
+          "name": "Al Wakrah",
+          "name_ar": "الوكرة",
+          "cities": [
+            {
+              "name": "Al Wakrah",
+              "name_ar": "الوكرة"
+            },
+            {
+              "name": "Al Wukair",
+              "name_ar": "الوكير"
+            },
+            {
+              "name": "Mesaieed",
+              "name_ar": "مسيعيد"
+            }
+          ]
+        },
+        {
+          "code": "KH",
+          "name": "Al Khor",
+          "name_ar": "الخور",
+          "cities": [
+            {
+              "name": "Al Khor",
+              "name_ar": "الخور"
+            },
+            {
+              "name": "Al Dhakhira",
+              "name_ar": "الذخيرة"
+            },
+            {
+              "name": "Ras Laffan",
+              "name_ar": "راس لفان"
+            }
+          ]
+        },
+        {
+          "code": "US",
+          "name": "Umm Salal",
+          "name_ar": "أم صلال",
+          "cities": [
+            {
+              "name": "Umm Salal Ali",
+              "name_ar": "أم صلال علي"
+            },
+            {
+              "name": "Umm Salal Mohammed",
+              "name_ar": "أم صلال محمد"
+            }
+          ]
+        },
+        {
+          "code": "DY",
+          "name": "Al Daayen",
+          "name_ar": "الظعاين",
+          "cities": [
+            {
+              "name": "Lusail",
+              "name_ar": "لوسيل"
+            },
+            {
+              "name": "Al Kheesa",
+              "name_ar": "الخيسة"
+            },
+            {
+              "name": "Umm Qarn",
+              "name_ar": "أم قرن"
+            }
+          ]
+        },
+        {
+          "code": "SN",
+          "name": "Al Shahaniya",
+          "name_ar": "الشحانية",
+          "cities": [
+            {
+              "name": "Al Shahaniya",
+              "name_ar": "الشحانية"
+            },
+            {
+              "name": "Dukhan",
+              "name_ar": "دخان"
+            }
+          ]
+        },
+        {
+          "code": "MS",
+          "name": "Al Shamal",
+          "name_ar": "الشمال",
+          "cities": [
+            {
+              "name": "Madinat ash Shamal",
+              "name_ar": "مدينة الشمال"
+            },
+            {
+              "name": "Al Ruwais",
+              "name_ar": "الرويس"
+            },
+            {
+              "name": "Abu Dhalouf",
+              "name_ar": "أبو ظلوف"
+            }
+          ]
+        }
+      ]
+    },
+    "BH": {
+      "name": "Bahrain",
+      "name_ar": "البحرين",
+      "states": [
+        {
+          "code": "13",
+          "name": "Capital",
+          "name_ar": "العاصمة",
+          "cities": [
+            {
+              "name": "Manama",
+              "name_ar": "المنامة"
+            },
+            {
+              "name": "Juffair",
+              "name_ar": "الجفير"
+            },
+            {
+              "name": "Adliya",
+              "name_ar": "العدلية"
+            },
+            {
+              "name": "Seef",
+              "name_ar": "السيف"
+            }
+          ]
+        },
+        {
+          "code": "15",
+          "name": "Muharraq",
+          "name_ar": "المحرق",
+          "cities": [
+            {
+              "name": "Muharraq",
+              "name_ar": "المحرق"
+            },
+            {
+              "name": "Hidd",
+              "name_ar": "الحد"
+            },
+            {
+              "name": "Arad",
+              "name_ar": "عراد"
+            },
+            {
+              "name": "Busaiteen",
+              "name_ar": "البسيتين"
+            }
+          ]
+        },
+        {
+          "code": "17",
+          "name": "Northern",
+          "name_ar": "الشمالية",
+          "cities": [
+            {
+              "name": "Hamad Town",
+              "name_ar": "مدينة حمد"
+            },
+            {
+              "name": "Budaiya",
+              "name_ar": "البديع"
+            },
+            {
+              "name": "Jidhafs",
+              "name_ar": "جدحفص"
+            },
+            {
+              "name": "Saar",
+              "name_ar": "سار"
+            },
+            {
+              "name": "Barbar",
+              "name_ar": "باربار"
+            }
+          ]
+        },
+        {
+          "code": "14",
+          "name": "Southern",
+          "name_ar": "الجنوبية",
+          "cities": [
+            {
+              "name": "Riffa",
+              "name_ar": "الرفاع"
+            },
+            {
+              "name": "Isa Town",
+              "name_ar": "مدينة عيسى"
+            },
+            {
+              "name": "Zallaq",
+              "name_ar": "الزلاق"
+            },
+            {
+              "name": "Awali",
+              "name_ar": "عوالي"
+            },
+            {
+              "name": "Askar",
+              "name_ar": "عسكر"
+            }
+          ]
+        }
+      ]
+    },
+    "OM": {
+      "name": "Oman",
+      "name_ar": "عُمان",
+      "states": [
+        {
+          "code": "MA",
+          "name": "Muscat",
+          "name_ar": "مسقط",
+          "cities": [
+            {
+              "name": "Muscat",
+              "name_ar": "مسقط"
+            },
+            {
+              "name": "Muttrah",
+              "name_ar": "مطرح"
+            },
+            {
+              "name": "Seeb",
+              "name_ar": "السيب"
+            },
+            {
+              "name": "Bawshar",
+              "name_ar": "بوشر"
+            },
+            {
+              "name": "Al Amerat",
+              "name_ar": "العامرات"
+            },
+            {
+              "name": "Qurayyat",
+              "name_ar": "قريات"
+            }
+          ]
+        },
+        {
+          "code": "ZU",
+          "name": "Dhofar",
+          "name_ar": "ظفار",
+          "cities": [
+            {
+              "name": "Salalah",
+              "name_ar": "صلالة"
+            },
+            {
+              "name": "Mirbat",
+              "name_ar": "مرباط"
+            },
+            {
+              "name": "Taqah",
+              "name_ar": "طاقة"
+            },
+            {
+              "name": "Thumrait",
+              "name_ar": "ثمريت"
+            }
+          ]
+        },
+        {
+          "code": "MU",
+          "name": "Musandam",
+          "name_ar": "مسندم",
+          "cities": [
+            {
+              "name": "Khasab",
+              "name_ar": "خصب"
+            },
+            {
+              "name": "Bukha",
+              "name_ar": "بخا"
+            },
+            {
+              "name": "Daba",
+              "name_ar": "دبا"
+            }
+          ]
+        },
+        {
+          "code": "BU",
+          "name": "Al Buraimi",
+          "name_ar": "البريمي",
+          "cities": [
+            {
+              "name": "Al Buraimi",
+              "name_ar": "البريمي"
+            },
+            {
+              "name": "Mahdah",
+              "name_ar": "محضة"
+            }
+          ]
+        },
+        {
+          "code": "DA",
+          "name": "Ad Dakhiliyah",
+          "name_ar": "الداخلية",
+          "cities": [
+            {
+              "name": "Nizwa",
+              "name_ar": "نزوى"
+            },
+            {
+              "name": "Bahla",
+              "name_ar": "بهلاء"
+            },
+            {
+              "name": "Samail",
+              "name_ar": "سمائل"
+            },
+            {
+              "name": "Izki",
+              "name_ar": "إزكي"
+            }
+          ]
+        },
+        {
+          "code": "BS",
+          "name": "Al Batinah North",
+          "name_ar": "شمال الباطنة",
+          "cities": [
+            {
+              "name": "Sohar",
+              "name_ar": "صحار"
+            },
+            {
+              "name": "Shinas",
+              "name_ar": "شناص"
+            },
+            {
+              "name": "Liwa",
+              "name_ar": "لوى"
+            },
+            {
+              "name": "Saham",
+              "name_ar": "صحم"
+            }
+          ]
+        },
+        {
+          "code": "BJ",
+          "name": "Al Batinah South",
+          "name_ar": "جنوب الباطنة",
+          "cities": [
+            {
+              "name": "Rustaq",
+              "name_ar": "الرستاق"
+            },
+            {
+              "name": "Barka",
+              "name_ar": "بركاء"
+            },
+            {
+              "name": "Al Musanaah",
+              "name_ar": "المصنعة"
+            }
+          ]
+        },
+        {
+          "code": "SS",
+          "name": "Ash Sharqiyah North",
+          "name_ar": "شمال الشرقية",
+          "cities": [
+            {
+              "name": "Ibra",
+              "name_ar": "إبراء"
+            },
+            {
+              "name": "Al Mudhaibi",
+              "name_ar": "المضيبي"
+            },
+            {
+              "name": "Bidiyah",
+              "name_ar": "بدية"
+            }
+          ]
+        },
+        {
+          "code": "SJ",
+          "name": "Ash Sharqiyah South",
+          "name_ar": "جنوب الشرقية",
+          "cities": [
+            {
+              "name": "Sur",
+              "name_ar": "صور"
+            },
+            {
+              "name": "Al Kamil Wal Wafi",
+              "name_ar": "الكامل والوافي"
+            },
+            {
+              "name": "Masirah",
+              "name_ar": "مصيرة"
+            }
+          ]
+        },
+        {
+          "code": "ZA",
+          "name": "Ad Dhahirah",
+          "name_ar": "الظاهرة",
+          "cities": [
+            {
+              "name": "Ibri",
+              "name_ar": "عبري"
+            },
+            {
+              "name": "Yanqul",
+              "name_ar": "ينقل"
+            },
+            {
+              "name": "Dhank",
+              "name_ar": "ضنك"
+            }
+          ]
+        },
+        {
+          "code": "WU",
+          "name": "Al Wusta",
+          "name_ar": "الوسطى",
+          "cities": [
+            {
+              "name": "Haima",
+              "name_ar": "هيماء"
+            },
+            {
+              "name": "Duqm",
+              "name_ar": "الدقم"
+            },
+            {
+              "name": "Mahout",
+              "name_ar": "محوت"
+            }
+          ]
+        }
+      ]
+    },
+    "EG": {
+      "name": "Egypt",
+      "name_ar": "مصر",
+      "states": [
+        {
+          "code": "C",
+          "name": "Cairo",
+          "name_ar": "القاهرة",
+          "cities": [
+            {
+              "name": "Cairo",
+              "name_ar": "القاهرة"
+            },
+            {
+              "name": "Nasr City",
+              "name_ar": "مدينة نصر"
+            },
+            {
+              "name": "Maadi",
+              "name_ar": "المعادي"
+            },
+            {
+              "name": "Heliopolis",
+              "name_ar": "مصر الجديدة"
+            },
+            {
+              "name": "New Cairo",
+              "name_ar": "القاهرة الجديدة"
+            },
+            {
+              "name": "Shubra",
+              "name_ar": "شبرا"
+            },
+            {
+              "name": "Helwan",
+              "name_ar": "حلوان"
+            }
+          ]
+        },
+        {
+          "code": "ALX",
+          "name": "Alexandria",
+          "name_ar": "الإسكندرية",
+          "cities": [
+            {
+              "name": "Alexandria",
+              "name_ar": "الإسكندرية"
+            },
+            {
+              "name": "Borg El Arab",
+              "name_ar": "برج العرب"
+            },
+            {
+              "name": "Agami",
+              "name_ar": "العجمي"
+            },
+            {
+              "name": "Montaza",
+              "name_ar": "المنتزه"
+            }
+          ]
+        },
+        {
+          "code": "GZ",
+          "name": "Giza",
+          "name_ar": "الجيزة",
+          "cities": [
+            {
+              "name": "Giza",
+              "name_ar": "الجيزة"
+            },
+            {
+              "name": "6th of October",
+              "name_ar": "السادس من أكتوبر"
+            },
+            {
+              "name": "Sheikh Zayed",
+              "name_ar": "الشيخ زايد"
+            },
+            {
+              "name": "Dokki",
+              "name_ar": "الدقي"
+            },
+            {
+              "name": "Haram",
+              "name_ar": "الهرم"
+            }
+          ]
+        },
+        {
+          "code": "DK",
+          "name": "Dakahlia",
+          "name_ar": "الدقهلية",
+          "cities": [
+            {
+              "name": "Mansoura",
+              "name_ar": "المنصورة"
+            },
+            {
+              "name": "Mit Ghamr",
+              "name_ar": "ميت غمر"
+            },
+            {
+              "name": "Talkha",
+              "name_ar": "طلخا"
+            }
+          ]
+        },
+        {
+          "code": "BH",
+          "name": "Beheira",
+          "name_ar": "البحيرة",
+          "cities": [
+            {
+              "name": "Damanhur",
+              "name_ar": "دمنهور"
+            },
+            {
+              "name": "Kafr El Dawwar",
+              "name_ar": "كفر الدوار"
+            },
+            {
+              "name": "Rashid",
+              "name_ar": "رشيد"
+            }
+          ]
+        },
+        {
+          "code": "FYM",
+          "name": "Faiyum",
+          "name_ar": "الفيوم",
+          "cities": [
+            {
+              "name": "Faiyum",
+              "name_ar": "الفيوم"
+            },
+            {
+              "name": "Sinnuris",
+              "name_ar": "سنورس"
+            },
+            {
+              "name": "Ibsheway",
+              "name_ar": "إبشواي"
+            }
+          ]
+        },
+        {
+          "code": "GH",
+          "name": "Gharbia",
+          "name_ar": "الغربية",
+          "cities": [
+            {
+              "name": "Tanta",
+              "name_ar": "طنطا"
+            },
+            {
+              "name": "El Mahalla El Kubra",
+              "name_ar": "المحلة الكبرى"
+            },
+            {
+              "name": "Zefta",
+              "name_ar": "زفتى"
+            }
+          ]
+        },
+        {
+          "code": "IS",
+          "name": "Ismailia",
+          "name_ar": "الإسماعيلية",
+          "cities": [
+            {
+              "name": "Ismailia",
+              "name_ar": "الإسماعيلية"
+            },
+            {
+              "name": "Fayed",
+              "name_ar": "فايد"
+            },
+            {
+              "name": "Qantara",
+              "name_ar": "القنطرة"
+            }
+          ]
+        },
+        {
+          "code": "MNF",
+          "name": "Monufia",
+          "name_ar": "المنوفية",
+          "cities": [
+            {
+              "name": "Shibin El Kom",
+              "name_ar": "شبين الكوم"
+            },
+            {
+              "name": "Menouf",
+              "name_ar": "منوف"
+            },
+            {
+              "name": "Sadat City",
+              "name_ar": "مدينة السادات"
+            }
+          ]
+        },
+        {
+          "code": "MN",
+          "name": "Minya",
+          "name_ar": "المنيا",
+          "cities": [
+            {
+              "name": "Minya",
+              "name_ar": "المنيا"
+            },
+            {
+              "name": "Mallawi",
+              "name_ar": "ملوي"
+            },
+            {
+              "name": "Beni Mazar",
+              "name_ar": "بني مزار"
+            }
+          ]
+        },
+        {
+          "code": "KB",
+          "name": "Qalyubia",
+          "name_ar": "القليوبية",
+          "cities": [
+            {
+              "name": "Banha",
+              "name_ar": "بنها"
+            },
+            {
+              "name": "Shubra El Kheima",
+              "name_ar": "شبرا الخيمة"
+            },
+            {
+              "name": "Qalyub",
+              "name_ar": "قليوب"
+            },
+            {
+              "name": "Obour",
+              "name_ar": "العبور"
+            }
+          ]
+        },
+        {
+          "code": "WAD",
+          "name": "New Valley",
+          "name_ar": "الوادي الجديد",
+          "cities": [
+            {
+              "name": "Kharga",
+              "name_ar": "الخارجة"
+            },
+            {
+              "name": "Dakhla",
+              "name_ar": "الداخلة"
+            },
+            {
+              "name": "Farafra",
+              "name_ar": "الفرافرة"
+            }
+          ]
+        },
+        {
+          "code": "SUZ",
+          "name": "Suez",
+          "name_ar": "السويس",
+          "cities": [
+            {
+              "name": "Suez",
+              "name_ar": "السويس"
+            },
+            {
+              "name": "Ain Sokhna",
+              "name_ar": "العين السخنة"
+            }
+          ]
+        },
+        {
+          "code": "ASN",
+          "name": "Aswan",
+          "name_ar": "أسوان",
+          "cities": [
+            {
+              "name": "Aswan",
+              "name_ar": "أسوان"
+            },
+            {
+              "name": "Kom Ombo",
+              "name_ar": "كوم أمبو"
+            },
+            {
+              "name": "Edfu",
+              "name_ar": "إدفو"
+            },
+            {
+              "name": "Abu Simbel",
+              "name_ar": "أبو سمبل"
+            }
+          ]
+        },
+        {
+          "code": "AST",
+          "name": "Asyut",
+          "name_ar": "أسيوط",
+          "cities": [
+            {
+              "name": "Asyut",
+              "name_ar": "أسيوط"
+            },
+            {
+              "name": "Dairut",
+              "name_ar": "ديروط"
+            },
+            {
+              "name": "Abnub",
+              "name_ar": "أبنوب"
+            }
+          ]
+        },
+        {
+          "code": "BNS",
+          "name": "Beni Suef",
+          "name_ar": "بني سويف",
+          "cities": [
+            {
+              "name": "Beni Suef",
+              "name_ar": "بني سويف"
+            },
+            {
+              "name": "El Wasta",
+              "name_ar": "الواسطى"
+            },
+            {
+              "name": "Nasser",
+              "name_ar": "ناصر"
+            }
+          ]
+        },
+        {
+          "code": "PTS",
+          "name": "Port Said",
+          "name_ar": "بورسعيد",
+          "cities": [
+            {
+              "name": "Port Said",
+              "name_ar": "بورسعيد"
+            },
+            {
+              "name": "Port Fouad",
+              "name_ar": "بورفؤاد"
+            }
+          ]
+        },
+        {
+          "code": "DT",
+          "name": "Damietta",
+          "name_ar": "دمياط",
+          "cities": [
+            {
+              "name": "Damietta",
+              "name_ar": "دمياط"
+            },
+            {
+              "name": "New Damietta",
+              "name_ar": "دمياط الجديدة"
+            },
+            {
+              "name": "Ras El Bar",
+              "name_ar": "رأس البر"
+            }
+          ]
+        },
+        {
+          "code": "SHR",
+          "name": "Sharqia",
+          "name_ar": "الشرقية",
+          "cities": [
+            {
+              "name": "Zagazig",
+              "name_ar": "الزقازيق"
+            },
+            {
+              "name": "10th of Ramadan",
+              "name_ar": "العاشر من رمضان"
+            },
+            {
+              "name": "Belbeis",
+              "name_ar": "بلبيس"
+            }
+          ]
+        },
+        {
+          "code": "SIN",
+          "name": "South Sinai",
+          "name_ar": "جنوب سيناء",
+          "cities": [
+            {
+              "name": "El Tor",
+              "name_ar": "الطور"
+            },
+            {
+              "name": "Sharm El Sheikh",
+              "name_ar": "شرم الشيخ"
+            },
+            {
+              "name": "Dahab",
+              "name_ar": "دهب"
+            },
+            {
+              "name": "Nuweiba",
+              "name_ar": "نويبع"
+            }
+          ]
+        },
+        {
+          "code": "KFS",
+          "name": "Kafr El Sheikh",
+          "name_ar": "كفر الشيخ",
+          "cities": [
+            {
+              "name": "Kafr El Sheikh",
+              "name_ar": "كفر الشيخ"
+            },
+            {
+              "name": "Desouk",
+              "name_ar": "دسوق"
+            },
+            {
+              "name": "Baltim",
+              "name_ar": "بلطيم"
+            }
+          ]
+        },
+        {
+          "code": "MT",
+          "name": "Matrouh",
+          "name_ar": "مطروح",
+          "cities": [
+            {
+              "name": "Mersa Matruh",
+              "name_ar": "مرسى مطروح"
+            },
+            {
+              "name": "El Alamein",
+              "name_ar": "العلمين"
+            },
+            {
+              "name": "Siwa",
+              "name_ar": "سيوة"
+            }
+          ]
+        },
+        {
+          "code": "LX",
+          "name": "Luxor",
+          "name_ar": "الأقصر",
+          "cities": [
+            {
+              "name": "Luxor",
+              "name_ar": "الأقصر"
+            },
+            {
+              "name": "Esna",
+              "name_ar": "إسنا"
+            },
+            {
+              "name": "Armant",
+              "name_ar": "أرمنت"
+            }
+          ]
+        },
+        {
+          "code": "QN",
+          "name": "Qena",
+          "name_ar": "قنا",
+          "cities": [
+            {
+              "name": "Qena",
+              "name_ar": "قنا"
+            },
+            {
+              "name": "Nag Hammadi",
+              "name_ar": "نجع حمادي"
+            },
+            {
+              "name": "Qus",
+              "name_ar": "قوص"
+            }
+          ]
+        },
+        {
+          "code": "NSN",
+          "name": "North Sinai",
+          "name_ar": "شمال سيناء",
+          "cities": [
+            {
+              "name": "Arish",
+              "name_ar": "العريش"
+            },
+            {
+              "name": "Bir al-Abd",
+              "name_ar": "بئر العبد"
+            },
+            {
+              "name": "Sheikh Zuweid",
+              "name_ar": "الشيخ زويد"
+            }
+          ]
+        },
+        {
+          "code": "SHG",
+          "name": "Sohag",
+          "name_ar": "سوهاج",
+          "cities": [
+            {
+              "name": "Sohag",
+              "name_ar": "سوهاج"
+            },
+            {
+              "name": "Akhmim",
+              "name_ar": "أخميم"
+            },
+            {
+              "name": "Girga",
+              "name_ar": "جرجا"
+            }
+          ]
+        },
+        {
+          "code": "BA",
+          "name": "Red Sea",
+          "name_ar": "البحر الأحمر",
+          "cities": [
+            {
+              "name": "Hurghada",
+              "name_ar": "الغردقة"
+            },
+            {
+              "name": "Safaga",
+              "name_ar": "سفاجا"
+            },
+            {
+              "name": "Marsa Alam",
+              "name_ar": "مرسى علم"
+            },
+            {
+              "name": "Quseer",
+              "name_ar": "القصير"
+            }
+          ]
+        }
+      ]
+    },
+    "JO": {
+      "name": "Jordan",
+      "name_ar": "الأردن",
+      "states": [
+        {
+          "code": "AM",
+          "name": "Amman",
+          "name_ar": "العاصمة عمان",
+          "cities": [
+            {
+              "name": "Amman",
+              "name_ar": "عمّان"
+            },
+            {
+              "name": "Wadi As-Seer",
+              "name_ar": "وادي السير"
+            },
+            {
+              "name": "Sahab",
+              "name_ar": "سحاب"
+            },
+            {
+              "name": "Al Jizah",
+              "name_ar": "الجيزة"
+            }
+          ]
+        },
+        {
+          "code": "IR",
+          "name": "Irbid",
+          "name_ar": "إربد",
+          "cities": [
+            {
+              "name": "Irbid",
+              "name_ar": "إربد"
+            },
+            {
+              "name": "Ramtha",
+              "name_ar": "الرمثا"
+            },
+            {
+              "name": "Al Mazar Al Shamali",
+              "name_ar": "المزار الشمالي"
+            }
+          ]
+        },
+        {
+          "code": "AZ",
+          "name": "Zarqa",
+          "name_ar": "الزرقاء",
+          "cities": [
+            {
+              "name": "Zarqa",
+              "name_ar": "الزرقاء"
+            },
+            {
+              "name": "Russeifa",
+              "name_ar": "الرصيفة"
+            },
+            {
+              "name": "Hashimiya",
+              "name_ar": "الهاشمية"
+            }
+          ]
+        },
+        {
+          "code": "BA",
+          "name": "Balqa",
+          "name_ar": "البلقاء",
+          "cities": [
+            {
+              "name": "As-Salt",
+              "name_ar": "السلط"
+            },
+            {
+              "name": "Deir Alla",
+              "name_ar": "دير علا"
+            },
+            {
+              "name": "Ain Al-Basha",
+              "name_ar": "عين الباشا"
+            }
+          ]
+        },
+        {
+          "code": "MA",
+          "name": "Mafraq",
+          "name_ar": "المفرق",
+          "cities": [
+            {
+              "name": "Mafraq",
+              "name_ar": "المفرق"
+            },
+            {
+              "name": "Ruwaished",
+              "name_ar": "الرويشد"
+            },
+            {
+              "name": "Balama",
+              "name_ar": "بلعما"
+            }
+          ]
+        },
+        {
+          "code": "JA",
+          "name": "Jerash",
+          "name_ar": "جرش",
+          "cities": [
+            {
+              "name": "Jerash",
+              "name_ar": "جرش"
+            },
+            {
+              "name": "Burma",
+              "name_ar": "برما"
+            }
+          ]
+        },
+        {
+          "code": "AJ",
+          "name": "Ajloun",
+          "name_ar": "عجلون",
+          "cities": [
+            {
+              "name": "Ajloun",
+              "name_ar": "عجلون"
+            },
+            {
+              "name": "Kufranjah",
+              "name_ar": "كفرنجة"
+            }
+          ]
+        },
+        {
+          "code": "MD",
+          "name": "Madaba",
+          "name_ar": "مادبا",
+          "cities": [
+            {
+              "name": "Madaba",
+              "name_ar": "مادبا"
+            },
+            {
+              "name": "Dhiban",
+              "name_ar": "ذيبان"
+            }
+          ]
+        },
+        {
+          "code": "KA",
+          "name": "Karak",
+          "name_ar": "الكرك",
+          "cities": [
+            {
+              "name": "Karak",
+              "name_ar": "الكرك"
+            },
+            {
+              "name": "Al-Qasr",
+              "name_ar": "القصر"
+            },
+            {
+              "name": "Mazar Al-Janubi",
+              "name_ar": "المزار الجنوبي"
+            }
+          ]
+        },
+        {
+          "code": "TA",
+          "name": "Tafilah",
+          "name_ar": "الطفيلة",
+          "cities": [
+            {
+              "name": "Tafilah",
+              "name_ar": "الطفيلة"
+            },
+            {
+              "name": "Busaira",
+              "name_ar": "بصيرا"
+            }
+          ]
+        },
+        {
+          "code": "MN",
+          "name": "Maan",
+          "name_ar": "معان",
+          "cities": [
+            {
+              "name": "Maan",
+              "name_ar": "معان"
+            },
+            {
+              "name": "Petra",
+              "name_ar": "البتراء"
+            },
+            {
+              "name": "Shobak",
+              "name_ar": "الشوبك"
+            }
+          ]
+        },
+        {
+          "code": "AQ",
+          "name": "Aqaba",
+          "name_ar": "العقبة",
+          "cities": [
+            {
+              "name": "Aqaba",
+              "name_ar": "العقبة"
+            },
+            {
+              "name": "Quwayrah",
+              "name_ar": "القويرة"
+            }
+          ]
+        }
+      ]
+    },
+    "LB": {
+      "name": "Lebanon",
+      "name_ar": "لبنان",
+      "states": [
+        {
+          "code": "BA",
+          "name": "Beirut",
+          "name_ar": "بيروت",
+          "cities": [
+            {
+              "name": "Beirut",
+              "name_ar": "بيروت"
+            },
+            {
+              "name": "Achrafieh",
+              "name_ar": "الأشرفية"
+            },
+            {
+              "name": "Hamra",
+              "name_ar": "الحمرا"
+            },
+            {
+              "name": "Verdun",
+              "name_ar": "فردان"
+            }
+          ]
+        },
+        {
+          "code": "JL",
+          "name": "Mount Lebanon",
+          "name_ar": "جبل لبنان",
+          "cities": [
+            {
+              "name": "Baabda",
+              "name_ar": "بعبدا"
+            },
+            {
+              "name": "Jounieh",
+              "name_ar": "جونية"
+            },
+            {
+              "name": "Aley",
+              "name_ar": "عاليه"
+            },
+            {
+              "name": "Byblos",
+              "name_ar": "جبيل"
+            },
+            {
+              "name": "Broummana",
+              "name_ar": "برمانا"
+            }
+          ]
+        },
+        {
+          "code": "AS",
+          "name": "North Lebanon",
+          "name_ar": "الشمال",
+          "cities": [
+            {
+              "name": "Tripoli",
+              "name_ar": "طرابلس"
+            },
+            {
+              "name": "Zgharta",
+              "name_ar": "زغرتا"
+            },
+            {
+              "name": "Batroun",
+              "name_ar": "البترون"
+            },
+            {
+              "name": "Koura",
+              "name_ar": "الكورة"
+            }
+          ]
+        },
+        {
+          "code": "AK",
+          "name": "Akkar",
+          "name_ar": "عكار",
+          "cities": [
+            {
+              "name": "Halba",
+              "name_ar": "حلبا"
+            },
+            {
+              "name": "Qoubaiyat",
+              "name_ar": "القبيات"
+            }
+          ]
+        },
+        {
+          "code": "BH",
+          "name": "Baalbek-Hermel",
+          "name_ar": "بعلبك الهرمل",
+          "cities": [
+            {
+              "name": "Baalbek",
+              "name_ar": "بعلبك"
+            },
+            {
+              "name": "Hermel",
+              "name_ar": "الهرمل"
+            }
+          ]
+        },
+        {
+          "code": "BI",
+          "name": "Beqaa",
+          "name_ar": "البقاع",
+          "cities": [
+            {
+              "name": "Zahle",
+              "name_ar": "زحلة"
+            },
+            {
+              "name": "Chtaura",
+              "name_ar": "شتورة"
+            },
+            {
+              "name": "Rachaya",
+              "name_ar": "راشيا"
+            }
+          ]
+        },
+        {
+          "code": "JA",
+          "name": "South Lebanon",
+          "name_ar": "الجنوب",
+          "cities": [
+            {
+              "name": "Sidon",
+              "name_ar": "صيدا"
+            },
+            {
+              "name": "Tyre",
+              "name_ar": "صور"
+            },
+            {
+              "name": "Jezzine",
+              "name_ar": "جزين"
+            }
+          ]
+        },
+        {
+          "code": "NA",
+          "name": "Nabatieh",
+          "name_ar": "النبطية",
+          "cities": [
+            {
+              "name": "Nabatieh",
+              "name_ar": "النبطية"
+            },
+            {
+              "name": "Bint Jbeil",
+              "name_ar": "بنت جبيل"
+            },
+            {
+              "name": "Marjeyoun",
+              "name_ar": "مرجعيون"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

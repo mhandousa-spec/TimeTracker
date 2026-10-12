@@ -1,0 +1,308 @@
+name: knowticed_plus
+description: "knowticed_plus application."
+publish_to: 'none'
+
+version: 1.0.16+16
+
+environment:
+  sdk: ">=3.5.4 <4.0.0"
+
+dependencies:
+  auto_size_text: ^3.0.0
+  cloud_firestore: ^6.10.0
+  csv: ^8.0.0
+  # Direct since 21/9/2026 (was transitive via `excel`, same version): the
+  # User Management importer rewrites absolute .rels targets before decoding.
+  archive: ^3.6.1
+  dotted_border: ^3.1.0
+  dropdown_button2: ^2.3.9 # v3 rewrites value handling; pure Dart, no native warnings
+  excel: ^4.0.6
+  file_picker: ^10.3.8
+  firebase_core: ^4.15.0
+  firebase_messaging: ^16.7.0
+  firebase_storage: ^13.6.0
+  flutter:
+    sdk: flutter
+  country_phone_validator: ^1.0.1
+  flutter_local_notifications: ^22.3.1
+  flutter_localizations:
+    sdk: flutter
+  google_maps_flutter: ^2.10.1
+  table_calendar: ^3.1.2
+  fl_chart: ^1.2.0
+  # REPLACED 23/9/2026: flutter_markdown is discontinued; same API.
+  flutter_markdown_plus: ^1.0.0
+  flutter_native_splash: ^2.4.4
+  flutter_advanced_switch: ^3.1.0
+  flutter_svg: ^2.0.10+1
+  flutter_switch: ^0.3.2
+  geolocator: ^14.0.2
+  get: ^4.7.2
+  get_storage: ^2.1.1
+  # Added 11/8/2026: the login flow persisted the user's plaintext password to
+  # GetStorage, which is an unencrypted JSON file on disk. Credentials now go
+  # to the Keychain / EncryptedSharedPreferences via this package.
+  flutter_secure_storage: ^10.0.0
+  image_picker: ^1.1.2
+  intl: ^0.20.2
+  # Added 12/8/2026: `firstWhereOrNull` used to come from package:get's
+  # Iterable extension. GetX is being removed, so the extension is taken
+  # from its real home instead of relying on a transitive dependency.
+  collection: ^1.19.0
+  local_auth: ^3.0.2
+  lottie: ^3.2.0
+  multi_dropdown: ^3.2.2
+  package_info_plus: ^9.0.1
+  page_transition: ^2.2.1
+  path_provider: ^2.1.5
+  permission_handler: ^13.0.2
+  provider: ^6.1.2
+  country_picker: ^2.0.27
+  flutter_colorpicker: ^1.1.0
+  syncfusion_flutter_charts: ^33.2.15
+  timeago: ^3.7.0
+  url_launcher: ^6.3.1
+  vibration: ^3.1.3
+  # UPGRADED 23/9/2026 from ^3.0.1: pulls connectivity_plus 7 (Swift Package
+  # Manager ready) instead of 5.x + network_info_plus 4.x. connectivityBuilder now
+  # receives List<ConnectivityResult>.
+  flutter_offline: ^6.0.0
+  cached_network_image: ^4.0.1
+  googleapis_auth: ^2.3.4
+  animated_toggle_switch: ^0.8.4
+  pdf: ^3.11.3
+  flutter_screenutil: ^5.9.3
+  flex_color_picker: ^4.0.0
+  audio_waveforms: ^2.0.2
+  # ADDED 2/9/2026. audio_waveforms above is Android/iOS ONLY, so voice
+  # notes could not record on the macOS/Windows desktop builds at all
+  # (MissingPluginException out of RecorderController.record).
+  # AudioRecordService uses this one on desktop and audio_waveforms on
+  # mobile, where it also drives the live waveform UI.
+  record: ^7.1.1
+  # ADDED 2/9/2026. The same gap, on the PLAYBACK side: PlayerController
+  # (audio_waveforms) threw MissingPluginException for preparePlayer /
+  # startPlayer / setRate on macOS, so a received voice note could not be
+  # played at all. audioplayers covers macOS, Windows, Linux AND mobile in one
+  # package. AudioMessageModel uses it on desktop and keeps audio_waveforms on
+  # mobile, where PlayerController also feeds AudioFileWaveforms.
+  # NOTE: a Linux build of audioplayers needs the gstreamer dev packages.
+  audioplayers: ^6.8.1
+  dartz: ^0.10.1
+  share_plus: ^12.0.2
+  google_fonts: ^8.2.1
+  avatar_stack: ^3.0.0
+  scrollable_positioned_list: ^0.3.8
+  card_swiper: ^3.0.1
+  pdfx: ^2.8.0
+  fluttertoast: ^10.0.0
+  video_player: ^2.9.3
+  flutter_contacts: ^2.3.1
+  flutter_map: ^8.1.0
+  geocoding: ^5.0.0
+  latlong2: ^0.10.1
+  flutter_staggered_grid_view: ^0.7.0
+  flutter_timer_countdown: ^1.0.7
+  printing: ^5.13.4
+  calendar_date_picker2: ^3.0.0
+  toastification: ^3.0.1
+  get_it: ^9.2.0
+  chewie: ^1.13.0
+  crypto: ^3.0.7
+  flutter_bloc: ^9.1.1
+  # added for features/messaging
+  mime: ^2.1.0
+  cloud_firestore_platform_interface: ^8.0.7
+  flutter_localization: ^0.4.1
+  shared_preferences: ^2.5.3
+  shimmer: ^4.0.0
+  desktop_drop: ^0.8.4
+  percentages_with_animation: ^1.1.2
+  animated_reorderable_list: ^1.3.0
+  # REPLACED 23/9/2026: device_preview 3 dropped the DeviceFrame widget the
+  # page builder preview uses; that widget lives in device_frame itself.
+  device_frame: ^1.4.0
+  graphic: ^2.6.0
+  flutter_file_dialog: ^3.0.2
+  open_filex: ^4.7.0
+  photo_view: ^0.15.0
+  syncfusion_flutter_pdfviewer: ^33.2.13
+  riff_switch: ^0.0.4
+  flutter_advanced_calendar: ^1.4.3
+  loader_overlay: ^5.0.0
+  marquee: ^2.3.0
+  http: ^1.6.0
+  encrypt: ^5.0.3
+  dio: ^5.9.2
+  syncfusion_flutter_datepicker: ^33.2.15
+  flutter_spinkit: ^5.2.2
+  cupertino_icons: ^1.0.8
+  excel2003: ^1.0.0
+
+dependency_overrides:
+  intl: ^0.20.2
+  # Local copy of flutter_native_splash 2.4.4 with the iOS folder from 2.4.5
+  # (fixes Swift Package Manager "include directory is invalid" error).
+  # Needed because `excel` pins archive 3.x, which blocks flutter_native_splash >=2.4.5.
+  # Remove once `excel` supports archive 4 and upgrade flutter_native_splash normally.
+  flutter_native_splash:
+    path: packages/flutter_native_splash
+
+dev_dependencies:
+  flutter_launcher_icons: ^0.14.3
+  flutter_localizations:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  flutter_test:
+    sdk: flutter
+  build_runner: ^2.4.15
+
+flutter:
+  uses-material-design: true
+  generate: true
+
+  assets:
+    # Country -> state/governorate -> city data for the location dropdowns
+    # (settings > edit personal data). Declared as a single file, not a folder,
+    # so nothing else in assets/data ships by accident.
+    - assets/data/location_data.json
+    # Icons categorized by module
+    - assets/icons_assets/calendar_assets/
+    - assets/icons_assets/form_builder_assets/
+    - assets/icons_assets/home_assets/
+    - assets/icons_assets/main_icons_assets/
+    - assets/icons_assets/messaging_assets/
+    - assets/icons_assets/notification_assets/
+    - assets/icons_assets/onboarding_assets/
+    - assets/icons_assets/organization_chart_assets/
+    - assets/icons_assets/roles_assets/
+    - assets/icons_assets/services_assets/
+    - assets/icons_assets/settings_assets/
+    - assets/icons_assets/data_grc_assets/
+    - assets/icons_assets/database_builder_assets/
+    - assets/icons_assets/knowledge_hub_assets/
+    - assets/icons_assets/qiyas_assets/
+    # ADDED 8/10/2026 — Time Tracker dashboard illustrations (exported from Figma).
+    - assets/icons_assets/time_tracker_assets/
+    # Watermark settings screen (Settings > Home Layout > Watermark).
+    - assets/icons_assets/watermark/
+    # Loose asset folders referenced directly by path from Dart.
+    # NOTE: assets/flags, assets/png_assets/flags, assets/vectors, assets/hrAsset
+    # and assets/knowldge_image_module are referenced in code but no source file
+    # for them exists in any project, so they are intentionally NOT declared —
+    # Flutter fails the build on an empty asset directory.
+    - assets/icons/
+    - assets/png_assets/
+    # Country flags as SVG (lipis/flag-icons, MIT) — see
+    # lib/core/custom/99-custom_country_flag.dart. Added 29/9/2026.
+    - assets/flags_svg/
+    - assets/icons_assets/crm_icons_assets/
+    - assets/icons_assets/hr_assets/
+    # Lottie categorized by module
+    - assets/icons_assets/form_builder_assets/
+    - assets/icons_assets/settings_assets/
+    - assets/lottie_assets/events_lottie_assets/
+    - assets/icons_assets/database_builder_assets/
+    - assets/icons_assets/services_assets/
+    - assets/lottie_assets/home_lottie_assets/
+    - assets/icons_assets/knowledge_hub_assets/
+    - assets/lottie_assets/inventory_lottie_assets/
+    - assets/lottie_assets/main_lottie_assets/
+    - assets/lottie_assets/messaging_lottie_assets/
+    - assets/lottie_assets/notification_lottie_assets/
+    - assets/lottie_assets/organization_chart_lottie_assets/
+    - assets/lottie_assets/roles_lottie_assets/
+    - assets/lottie_assets/todo_assets/
+    # Bundled Google Fonts (offline: GoogleFonts.config.allowRuntimeFetching = false)
+    # google_fonts matches these .ttf files by filename (e.g. Cairo-Medium.ttf),
+    # so the folders holding them must be declared as assets.
+    - assets/fonts/fonts_english/Cairo/
+    - assets/fonts/fonts_english/Montserrat/
+    # Remaining non-image assets (pdf / zip) kept in place
+    - assets/
+
+  # To add assets to your application, add an assets section, like this:
+  # assets:
+  #   - images/a_dot_burr.jpeg
+  #   - images/a_dot_ham.jpeg
+  # An image asset can refer to one or more resolution-specific "variants", see
+  # https://flutter.dev/assets-and-images/#resolution-aware
+  # For details regarding adding assets from package dependencies, see
+  # https://flutter.dev/assets-and-images/#from-packages
+  # To add custom fonts to your application, add a fonts section here,
+  # in this "flutter" section. Each entry in this list should have a
+  # "family" key with the font family name, and a "fonts" key with a
+  # list giving the asset and other descriptors for the font. For
+  # example:
+  fonts:
+    - family: Cairo
+      fonts:
+        - asset: assets/fonts/fonts_english/Cairo/Cairo-Regular.ttf
+    - family: Arial
+      fonts:
+        - asset: assets/fonts/fonts_english/arial-font/arial.ttf
+    - family: Calibri
+      fonts:
+        - asset: assets/fonts/fonts_english/calibri-font-sv/Calibri Regular.ttf
+    - family: Exo
+      fonts:
+        - asset: assets/fonts/fonts_english/Exo_2/Exo2-Regular.ttf
+    - family: Lato
+      fonts:
+        - asset: assets/fonts/fonts_english/Lato/Lato-Regular.ttf
+    - family: M Plus
+      fonts:
+        - asset: assets/fonts/fonts_english/M_PLUS_Rounded_1c/MPLUSRounded1c-Regular.ttf
+    - family: Montserrat
+      fonts:
+        - asset: assets/fonts/fonts_english/Montserrat/Montserrat-Regular.ttf
+    - family: Muli
+      fonts:
+        - asset: assets/fonts/fonts_english/muli/Muli.ttf
+    - family: Open Sans
+      fonts:
+        - asset: assets/fonts/fonts_english/Open_Sans/OpenSans-Regular.ttf
+    - family: Tajawal
+      fonts:
+        - asset: assets/fonts/fonts_english/Tajawal/Tajawal-Regular.ttf
+    - family: Alexandria
+      fonts:
+        - asset: assets/fonts/fonts_arabic/Alexandria/Alexandria-Regular.ttf
+    - family: Ibm Plex
+      fonts:
+        - asset: assets/fonts/fonts_arabic/IBM_Plex_Sans_Arabic/IBMPlexSansArabic-Regular.ttf
+    - family: Almarai
+      fonts:
+        - asset: assets/fonts/fonts_arabic/Almarai/Almarai-Regular.ttf
+    - family: Amiri
+      fonts:
+        - asset: assets/fonts/fonts_arabic/Amiri/Amiri-Regular.ttf
+    - family: Changa
+      fonts:
+        - asset: assets/fonts/fonts_arabic/Changa/Changa-Regular.ttf
+    - family: Harmattan
+      fonts:
+        - asset: assets/fonts/fonts_arabic/Harmattan/Harmattan-Regular.ttf
+    - family: Noto Sans
+      fonts:
+        - asset: assets/fonts/fonts_arabic/Noto_Sans_Arabic/NotoSansArabic-Regular.ttf
+    - family: Rubik
+      fonts:
+        - asset: assets/fonts/fonts_arabic/Rubik/Rubik-Regular.ttf
+    - family: Vazirmatn
+      fonts:
+        - asset: assets/fonts/fonts_arabic/Vazirmatn/Vazirmatn-Regular.ttf
+
+
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/logo.png"
+  remove_alpha_ios: true
+  windows:
+    generate: true
+    image_path: "assets/logo.png"
+
+flutter_intl:
+  enabled: true

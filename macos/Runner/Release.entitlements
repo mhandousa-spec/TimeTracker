@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>com.apple.security.app-sandbox</key>
+	<true/>
+	<key>com.apple.security.network.client</key>
+	<true/>
+	<!-- ADDED 19/8/2026. Mirrors DebugProfile.entitlements — the longer note
+	     lives there. A sandboxed app cannot open NSOpenPanel/NSSavePanel
+	     without it, so file_picker throws ENTITLEMENT_NOT_FOUND and every
+	     picker in the app (watermark, form cover, attachments) fails.
+	     read-write because the same entitlement also covers the save panel used
+	     by PDF conversion and CSV export. -->
+	<!-- ADDED 2/9/2026. Voice notes in the chat composer. Without this, a
+	     sandboxed app cannot open an input device at all: RecorderController
+	     .record() fails and the composer's mic button does nothing, with no
+	     system permission prompt shown (the sandbox denies before macOS ever
+	     asks). NSMicrophoneUsageDescription in Info.plist supplies the text of
+	     that prompt; both are required. -->
+	<key>com.apple.security.device.audio-input</key>
+	<true/>
+	<!-- ADDED 9/9/2026. Mirrors DebugProfile.entitlements — the longer note
+	     lives there. Without it a sandboxed app cannot reach Core Location, so
+	     every activity log entry is written with no coordinates at best and
+	     throws PermissionDefinitionsNotFoundException at worst. -->
+	<key>com.apple.security.personal-information.location</key>
+	<true/>
+	<key>com.apple.security.files.user-selected.read-write</key>
+	<true/>
+	<!-- ADDED 27/8/2026. Mirrors DebugProfile.entitlements — the longer note
+	     lives there. Grants the sandboxed app access to the real ~/Downloads and
+	     redirects getDownloadsDirectory() to it, so the "Download" action writes
+	     the file to the user's Downloads folder instead of dying with
+	     PathAccessException (Operation not permitted) inside the container. -->
+	<key>com.apple.security.files.downloads.read-write</key>
+	<true/>
+	<!-- Required by flutter_secure_storage on macOS. Without it the sandboxed
+	     app cannot reach the Keychain and every read/write fails with
+	     errSecMissingEntitlement (-34018). -->
+	<key>keychain-access-groups</key>
+	<array>
+		<string>$(AppIdentifierPrefix)com.knowticed.plus</string>
+	</array>
+	<!-- ADDED 23/9/2026. Push Notifications (firebase_messaging on macOS). -->
+	<key>com.apple.developer.aps-environment</key>
+	<string>development</string>
+</dict>
+</plist>

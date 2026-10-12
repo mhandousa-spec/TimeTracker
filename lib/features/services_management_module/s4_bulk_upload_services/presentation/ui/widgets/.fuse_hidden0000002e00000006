@@ -1,0 +1,116 @@
+// ******************* FILE INFO *******************
+// File Name: status_toggle_widget
+// Description: Status toggle widget.
+// Module: services_management_module / presentation/s4_bulk_upload_services/ui/widgets
+// *************************************************
+import 'package:get/get.dart';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:flutter_switch/flutter_switch.dart';
+import 'package:knowticed_plus/generated/l10n.dart';
+import 'package:knowticed_plus/core/custom/57-custom_dialog_manager.dart';
+import 'package:knowticed_plus/core/helper/role/services_module_access.dart';
+import 'package:knowticed_plus/core/theme/app_colors.dart';
+import 'package:knowticed_plus/core/theme/app_font_size.dart';
+
+import 'package:knowticed_plus/core/theme/app_theme.dart';
+
+import 'package:knowticed_plus/features/services_management_module/s4_bulk_upload_services/presentation/controller/create_service_cubit.dart';
+import 'package:knowticed_plus/features/services_management_module/s4_bulk_upload_services/presentation/controller/create_service_state.dart';
+
+
+class StatusToggleWidget extends StatelessWidget {
+  const StatusToggleWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // "Change Service Status" off → the row goes entirely. Leaving the switch
+    // visible-but-dead would read as a broken control rather than a denied one.
+    if (!ServicesModuleAccess.canChangeServiceStatus) {
+      return const SizedBox.shrink();
+    }
+
+    return BlocBuilder<CreateServiceCubit, CreateServiceState>(
+      buildWhen: (previous, current) =>
+      current is CreateServiceLoaded || current is CreateServiceStatusChanged,
+      builder: (context, state) {
+        if (state is! CreateServiceLoaded) return const SizedBox.shrink();
+
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            SvgPicture.asset(
+              'assets/icons_assets/main_icons_assets/status_pulse_line.svg',
+              width: 16.sp,
+              height: 16.sp,
+              fit: BoxFit.cover,
+              color: AppColors.text,
+            ),
+            SizedBox(width: 6.sp),
+            Text(
+              "${S.of(context).Status}: ",
+              style: StyleText.fontSize14Weight400,
+            ),
+            SizedBox(width: 8.sp),
+            FlutterSwitch(
+              height: 22.0.sp,
+              width: 38.0.sp,
+              toggleSize: 17.sp,
+              value: state.formData.isActive,
+              borderRadius: 20.0,
+              padding: 2.0,
+              activeColor: AppColors.secondaryPrimary,
+              onToggle: (val) => _confirmThenChangeStatus(context, val),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// ♻️ REFACTOR — the status switch confirmed and then said nothing.
+  ///
+  /// This used to be `_showConfirmDialog` plus a hand-rolled
+  /// `StatusChangeDialog` returning a bool: the user answered Yes, the dialog
+  /// closed, and the flow ended there. Every other state-changing action in
+  /// the app follows confirm → success, and this one stopped halfway, so
+  /// nothing told the user the change had taken.
+  ///
+  /// It now runs `CustomDialogManager.showDialogFlow`
+  /// (core/custom/57-custom_dialog_manager.dart) — the same flow Cancel
+  /// Request and Delete Image use. The confirm step keeps the copy and the
+  /// Edit Document lottie the old dialog had, and the manager renders the same
+  /// shape it was being hand-tuned towards (one card width and 135.sp buttons
+  /// on desktop, 115.sp on mobile, decided in one place for every dialog).
+  /// The success step is what is new.
+  ///
+  /// The cubit is resolved BEFORE the flow awaits: it pushes routes, and
+  /// reading an InheritedWidget off `context` afterwards is the classic
+  /// use-after-unmount.
+  Future<void> _confirmThenChangeStatus(BuildContext context, bool newValue) {
+    final cubit = context.read<CreateServiceCubit>();
+
+    return CustomDialogManager.showDialogFlow(
+      context: context,
+      confirmLottie:
+          'assets/lottie_assets/main_lottie_assets/lottie_Edit Document.json',
+      confirmTitle: S.of(context).changingStatus,
+      confirmSubtitle: S.of(context).areYouSureToDisableService,
+      confirmYesText: S.of(context).yes,
+      confirmNoText: S.of(context).no,
+      // `toggleStatus` writes to the form state and the shared pref; there is
+      // nothing here that can fail, so the success step always follows a Yes.
+      onConfirm: () async {
+        cubit.toggleStatus(newValue);
+        return true;
+      },
+      successLottie:
+          'assets/lottie_assets/main_lottie_assets/lottie_approved.json',
+      successTitle: S.of(context).changedStatus,
+      successSubtitle: S.of(context).statusUpdatedSuccessfully,
+    );
+  }
+}

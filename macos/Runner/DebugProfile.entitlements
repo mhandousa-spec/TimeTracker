@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>com.apple.security.app-sandbox</key>
+	<true/>
+	<key>com.apple.security.cs.allow-jit</key>
+	<true/>
+	<key>com.apple.security.network.server</key>
+	<true/>
+	<key>com.apple.security.network.client</key>
+	<true/>
+	<!-- ADDED 19/8/2026. Without this every file dialog on macOS dies with
+
+	         PlatformException(ENTITLEMENT_NOT_FOUND, Either the Read-Only or
+	         Read-Write entitlement is required for this action.)
+
+	     thrown from FilePickerMacOS.pickFiles. com.apple.security.app-sandbox
+	     is true above, and a sandboxed app may not open NSOpenPanel/NSSavePanel
+	     unless it declares that the user is allowed to hand it files. This is
+	     what broke "Upload Watermark" on macOS.
+
+	     read-write, not read-only: the same entitlement governs NSSavePanel,
+	     and the app also writes files the user chooses a location for — PDF
+	     conversion (f8_convert_pdf) and the CSV export in f6_result. read-only
+	     would fix picking and leave saving broken in the same way. -->
+	<!-- ADDED 2/9/2026. Voice notes in the chat composer. Without this, a
+	     sandboxed app cannot open an input device at all: RecorderController
+	     .record() fails and the composer's mic button does nothing, with no
+	     system permission prompt shown (the sandbox denies before macOS ever
+	     asks). NSMicrophoneUsageDescription in Info.plist supplies the text of
+	     that prompt; both are required. -->
+	<key>com.apple.security.device.audio-input</key>
+	<true/>
+	<!-- ADDED 9/9/2026. Activity logging records where an action happened.
+	     Because com.apple.security.app-sandbox is true above, a sandboxed app
+	     cannot reach Core Location at all without this — the sandbox denies
+	     before macOS ever shows a prompt, exactly as it did for the microphone.
+	     NSLocationUsageDescription / NSLocationWhenInUseUsageDescription in
+	     Info.plist supply the text of that prompt; both are required. -->
+	<key>com.apple.security.personal-information.location</key>
+	<true/>
+	<key>com.apple.security.files.user-selected.read-write</key>
+	<true/>
+	<!-- ADDED 27/8/2026. Without this the "Download" action on macOS dies with
+
+	         PathAccessException: Cannot create file, path =
+	         '.../Library/Containers/com.knowticed.plus/Data/Downloads/<file>'
+	         (OS Error: Operation not permitted, errno = 1)
+
+	     thrown from _downloadFileDesktop (knowledge_hub_file_operations.dart).
+	     Because com.apple.security.app-sandbox is true, path_provider's
+	     getDownloadsDirectory() is redirected into the app container's
+	     Data/Downloads, and the sandbox then denies the write. This entitlement
+	     grants the sandboxed app access to the user's real ~/Downloads AND makes
+	     macOS redirect getDownloadsDirectory() to it, so the file lands in the
+	     actual Downloads folder and the write succeeds. Unlike
+	     user-selected.read-write, it needs no save panel — the download stays
+	     silent, which is the intended UX. -->
+	<key>com.apple.security.files.downloads.read-write</key>
+	<true/>
+	<!-- REMOVED 13/8/2026: keychain-access-groups.
+
+	     It was added for flutter_secure_storage, but Xcode refuses to build a
+	     target carrying it unless that target signs with a real development
+	     certificate:
+
+	         error: "Runner" has entitlements that require signing with a
+	         development certificate. Enable development signing in the
+	         Signing & Capabilities editor.
+
+	     This project signs ad-hoc — CODE_SIGN_IDENTITY = "-", CODE_SIGN_STYLE =
+	     Manual, no DEVELOPMENT_TEAM — so the macOS debug build failed outright.
+
+	     Removing it costs nothing, because the entitlement never worked under
+	     ad-hoc signing in the first place: with no team, $(AppIdentifierPrefix)
+	     resolves to nothing and every Keychain call already failed with
+	     errSecMissingEntitlement (-34018). SecureCredentialStore documents this
+	     exact case and degrades to normal sign-in, so the only effect is that
+	     biometric / saved-password login does not persist in a macOS debug
+	     build. iOS, Android and Windows are unaffected, and
+	     Release.entitlements still declares the group for signed builds.
+
+	     If macOS is later signed with a real team, restore:
+
+	         <key>keychain-access-groups</key>
+	         <array>
+	           <string>$(AppIdentifierPrefix)com.knowticed.plus</string>
+	         </array>
+	-->
+</dict>
+</plist>

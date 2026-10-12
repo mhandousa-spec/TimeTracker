@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIconFile</key>
+	<string></string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(FLUTTER_BUILD_NAME)</string>
+	<key>CFBundleVersion</key>
+	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<!-- ADDED 23/9/2026. Mac App Store requirements. -->
+	<key>CFBundleDisplayName</key>
+	<string>Knowticed Plus</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.business</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>LSMinimumSystemVersion</key>
+	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
+	<key>NSHumanReadableCopyright</key>
+	<string>$(PRODUCT_COPYRIGHT)</string>
+	<key>NSMainNibFile</key>
+	<string>MainMenu</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+	<!-- ADDED 2/9/2026. Text of the macOS microphone prompt, shown the first
+	     time a voice note is recorded from the chat composer. Required
+	     alongside com.apple.security.device.audio-input in the entitlements —
+	     without this key the app is terminated when it touches the mic. -->
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Knowticed Plus needs the microphone so you can record voice messages in chat.</string>
+	<!-- ADDED 9/9/2026. Text of the macOS location prompt, shown the first
+	     time an activity log entry records where it happened.
+
+	     Required alongside com.apple.security.personal-information.location in
+	     both entitlements files — with neither, geolocator throws
+	     PermissionDefinitionsNotFoundException out of
+	     GeolocatorApple.requestPermission, which escaped as an uncaught async
+	     error because SystemLogsController.systemLogsAction is a fire-and-forget
+	     `void ... async`.
+
+	     Both keys: macOS reads NSLocationUsageDescription, and
+	     NSLocationWhenInUseUsageDescription is what geolocator_apple's own check
+	     looks for on newer macOS versions. Declaring one and not the other is
+	     what makes this fail on some machines and not others. -->
+	<!-- UPDATED 8/10/2026: wording names the Time Tracker check-in use. -->
+	<key>NSLocationUsageDescription</key>
+	<string>Knowticed Plus uses your location when you check in or out in Time Tracker, to confirm you are at your assigned work location, and to record where actions in the activity log were performed.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Knowticed Plus uses your location when you check in or out in Time Tracker, to confirm you are at your assigned work location, and to record where actions in the activity log were performed.</string>
+	<!-- ADDED 23/9/2026. Remaining prompt texts, for parity with iOS. -->
+	<key>NSCameraUsageDescription</key>
+	<string>Knowticed Plus uses the camera so you can take photos and attach them to messages, comments and forms.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Knowticed Plus needs access to your photos so you can attach images and videos to messages, comments and forms.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Knowticed Plus accesses your contacts so you can share a contact in chat.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Knowticed Plus uses Touch ID so you can sign in quickly and securely.</string>
+</dict>
+</plist>

@@ -1,0 +1,54 @@
+name: Windows Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    name: Build Windows Release
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Build Windows release
+        env:
+          # MSVC 14.51 (VS 18.6+) turns <experimental/coroutine> into a hard
+          # error. local_auth_windows / permission_handler_windows still
+          # include it, so suppress the static assertion for the whole tree.
+          CXXFLAGS: /D_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS
+          # The Firebase C++ SDK is downloaded at build time and its
+          # CMakeLists.txt still declares cmake_minimum_required(VERSION 3.1).
+          # CMake 4.x removed that compatibility, so raise the policy floor.
+          CMAKE_POLICY_VERSION_MINIMUM: "3.5"
+        run: flutter build windows --release
+
+      - name: Create release archive
+        shell: pwsh
+        run: |
+          $source = "build/windows/x64/runner/Release"
+          $archive = "windows-release.zip"
+          if (Test-Path $archive) {
+            Remove-Item $archive
+          }
+          Compress-Archive -Path "$source\*" -DestinationPath $archive
+
+      - name: Upload release asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: windows-release.zip

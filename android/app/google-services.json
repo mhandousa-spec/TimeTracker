@@ -1,0 +1,143 @@
+{
+  "project_info": {
+    "project_number": "662885989585",
+    "project_id": "knowticed-v2-scheme",
+    "storage_bucket": "knowticed-v2-scheme.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:662885989585:android:8646ef3f8fcc64eb6fd9f0",
+        "android_client_info": {
+          "package_name": "com.example.inventory_management"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATnLBmpY-W8tAauU8x-pQGI49azLxYF5k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:662885989585:android:d03601be31ea14c96fd9f0",
+        "android_client_info": {
+          "package_name": "com.example.knowticed_admin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATnLBmpY-W8tAauU8x-pQGI49azLxYF5k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:662885989585:android:04be2a7afbb47feb6fd9f0",
+        "android_client_info": {
+          "package_name": "com.knowticed.plus"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATnLBmpY-W8tAauU8x-pQGI49azLxYF5k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:662885989585:android:a9265357dff2c3286fd9f0",
+        "android_client_info": {
+          "package_name": "com.example.messaging_module"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATnLBmpY-W8tAauU8x-pQGI49azLxYF5k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:662885989585:android:885a2c29ee9b41a36fd9f0",
+        "android_client_info": {
+          "package_name": "com.example.two_firebas"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATnLBmpY-W8tAauU8x-pQGI49azLxYF5k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:662885989585:android:823bcd505779e7326fd9f0",
+        "android_client_info": {
+          "package_name": "com.knowticed.admin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATnLBmpY-W8tAauU8x-pQGI49azLxYF5k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:662885989585:android:648cd4f2216fb7c56fd9f0",
+        "android_client_info": {
+          "package_name": "com.knowticed.plus"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATnLBmpY-W8tAauU8x-pQGI49azLxYF5k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

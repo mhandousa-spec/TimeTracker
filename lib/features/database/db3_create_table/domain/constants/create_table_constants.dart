@@ -1,0 +1,679 @@
+/// Module: database / db3_create_table / domain / constants
+///
+///*************************** FILE INFO ****************************///
+/// File Name: create_table_constants.dart
+/// Purpose: Declares `CreateTableCollections`, `CreateTableLimits`,
+///          `CreateTableAssets` and `CreateTableStrings`.
+/// Author: Knowticed Plus team
+/// Created at: 16/8/2026
+///
+/// The copy, the limits and the icons for the Figma section
+/// "INSIDE DATABASE PAGE: Creating Table + Viewable Fields" (banner 7398:6131
+/// iPad H / 7398:6133 iPad V) — the Creating Table half of it.
+///
+/// Same arrangement as db1's `create_database_constants.dart` and db2's
+/// `database_details_constants.dart`, and for the same reason: these keys are
+/// not in `lib/l10n/intl_*.arb` yet and adding them means a codegen run on a
+/// machine with the Flutter SDK. The module ships its own en/ar table resolved
+/// through `context.isArabic` — the signal the rest of the app already uses for
+/// RTL — and the migration is a key-for-key move into the .arb pair plus
+/// swapping `CreateTableStrings.of` for `S.of`. Nothing outside this file
+/// changes.
+///
+/// WHAT IS DELIBERATELY NOT HERE
+/// -----------------------------
+///   * The databases collection path — `CreateDatabaseCollections.databases`.
+///   * The title/description limits — `CreateDatabaseLimits`. A table name and
+///     a database title are the same kind of value and must not end up with
+///     two different ceilings.
+///   * The date format — `DatabaseDateFormat`. Three screens disagreeing about
+///     whether the month is a number is exactly what that class exists to stop.
+
+import 'package:flutter/widgets.dart';
+
+import 'package:knowticed_plus/core/extensions/context_extensions.dart';
+import 'package:knowticed_plus/features/database/db1_create_database/domain/constants/create_database_constants.dart';
+
+/// Where a table document lives.
+///
+/// The parent path is db1's; this module only names the subcollection under it:
+///
+///     Demo/{companyId}/Modules/Database/Databases/{databaseId}/Tables/{tableId}
+///
+/// Nested under a document, so — like `CreateDatabaseCollections.accessGrants` —
+/// this one is NOT tenant-prefixed. The tenant is already resolved by the
+/// parent's path.
+abstract final class CreateTableCollections {
+  static const String tables = 'Tables';
+
+  /// One table's comment thread (Figma 7398:8232):
+  ///
+  ///     …/Databases/{databaseId}/Tables/{tableId}/Comments/{commentId}
+  ///
+  /// Nested one level further than [tables] and, for the same reason, not
+  /// tenant-prefixed.
+  static const String comments = 'Comments';
+
+  /// One table's own data (Figma 7398:3042 / 15076):
+  ///
+  ///     …/Databases/{databaseId}/Tables/{tableId}/Rows/{rowId}
+  ///
+  /// A subcollection and not an array on the table document — see
+  /// `TableDataRowModel` for why the columns went the other way.
+  static const String rows = 'Rows';
+}
+
+/// Hard limits enforced by both the cubit and the fields.
+abstract final class CreateTableLimits {
+  /// A table has to have at least one column to be a table.
+  static const int minColumns = 1;
+
+  /// Ceiling on "Enter Column Number".
+  ///
+  /// Not a Firestore limit — it is a rendering one. Each column draws an 84pt
+  /// block with two live fields in it, so a mistyped `500` would build a
+  /// thousand controllers and a 42 000pt scroll view before anyone could
+  /// correct the typo. 50 is far past any table the Figma shows (4) and still
+  /// bounded.
+  static const int maxColumns = 50;
+
+  static const int minRows = 0;
+
+  /// Ceiling on "Enter Row Number". The rows are not rendered by this screen —
+  /// they belong to the Form Builder — so this only has to stop a number that
+  /// could not be a real table.
+  static const int maxRows = 5000;
+
+  /// Character ceiling on one column heading.
+  static const int columnNameMaxLength = 60;
+
+  /// Character ceiling on one CELL of table data (Figma 7398:3042).
+  ///
+  /// Larger than [columnNameMaxLength] because a heading names a thing and a
+  /// cell holds one — a Point of contact cell in the Preview (7398:15210)
+  /// carries a full name, and the box it is typed into is 250 wide, not 60
+  /// characters wide. Still bounded: a cell is one value, and a paragraph in
+  /// one means the column is the wrong shape.
+  static const int cellMaxLength = 200;
+}
+
+/// Icons the Creating Table card uses, all already in the app's asset bundle.
+///
+/// Named constants rather than inline strings because a renamed asset should
+/// break the build in one place, not go missing from a button at runtime.
+abstract final class CreateTableAssets {
+  /// The duplicate glyph on each column block (Figma `solar:copy-linear`,
+  /// 7398:6608). Already in the bundle as the form builder's copy icon.
+  static const String duplicateColumn =
+      'assets/icons_assets/form_builder_assets/copy_duplicate.svg';
+
+  /// The red remove glyph on each column block (Figma `zondicons:minus-solid`,
+  /// 7398:6613).
+  static const String removeColumn =
+      'assets/icons_assets/main_icons_assets/minus_circle_red.svg';
+
+  /// The speech bubble on the "Comments" button of the Table Name Details card
+  /// (Figma 7398:4102, `Frame 1597883021`).
+  static const String comments =
+      'assets/icons_assets/main_icons_assets/chat_bubble_dots.svg';
+
+  /// The paper plane in the composer's send button (Figma 7398:8232).
+  static const String send =
+      'assets/icons_assets/main_icons_assets/send_paper_plane_white.svg';
+
+  /// The thumb under a bubble.
+  ///
+  /// ONE asset for BOTH reactions. The bundle ships a thumbs-UP and no
+  /// thumbs-down, and the Figma's two glyphs are the same shape mirrored — so
+  /// `TableCommentBubble` flips this one on the X axis for dislike rather than
+  /// this file naming an asset that is not there. A real thumbs-down svg can
+  /// replace the flip later without touching anything else.
+  static const String thumb = 'assets/icons_assets/messaging_assets/like.svg';
+
+  /// The cloud on the Import Table dialog (Figma 7398:4041).
+  static const String cloudUpload =
+      'assets/icons_assets/main_icons_assets/cloud_upload.svg';
+
+  /// The arrow on that dialog's "Upload File" button.
+  static const String uploadArrow =
+      'assets/icons_assets/form_builder_assets/upload_arrow.svg';
+
+  /// The sheet-with-an-arrow beside the dialog's title, and on the Import
+  /// button that opens it from Table Name Details (7398:3042).
+  static const String importTable =
+      'assets/icons_assets/form_builder_assets/upload_arrow_rounded.svg';
+}
+
+/// The screen's copy, in the two locales the app ships.
+class CreateTableStrings {
+  const CreateTableStrings._(this._isArabic);
+
+  final bool _isArabic;
+
+  /// Resolves the table for the current directionality.
+  factory CreateTableStrings.of(BuildContext context) =>
+      CreateTableStrings._(context.isArabic);
+
+  String _pick(String en, String ar) => _isArabic ? ar : en;
+
+  // ── Breadcrumbs (Figma 7398:6535) ────────────────────────────────────────
+  String get database => _pick('Database', 'قاعدة البيانات');
+
+  /// The middle crumb is the database's own name, so it is passed in.
+  String get creatingTable => _pick('Creating Table', 'إنشاء جدول');
+  String get editingTableName =>
+      _pick('Editing Table Name', 'تعديل اسم الجدول');
+
+  // ── Field labels ─────────────────────────────────────────────────────────
+  /// Bilingual by nature: the card captures BOTH languages at once, so these
+  /// two are not translations of each other and neither is `_pick`ed. Same
+  /// rule as `CreateDatabaseStrings.databaseTitleEn`.
+  ///
+  /// The landscape frame labels this "Table Name" and the portrait frame
+  /// "Enter Table Name" (7398:6574 vs 7398:6773). One label, not two: an
+  /// instruction that changes when the iPad is rotated reads as a bug.
+  String get tableNameEn => 'Table Name';
+  String get tableNameAr => 'اسم الجدول';
+
+  String get descriptionEn => 'Description';
+  String get descriptionAr => 'الوصف';
+
+  String get commentsAccess => _pick('Comments Access', 'الوصول للتعليقات');
+  String get selectCommentsAccess =>
+      _pick('Select Comments Access', 'اختر الوصول للتعليقات');
+
+  String get enterRowNumber => _pick('Enter Row Number', 'أدخل عدد الصفوف');
+  String get enterColumnNumber =>
+      _pick('Enter Column Number', 'أدخل عدد الأعمدة');
+
+  // ── Hints ────────────────────────────────────────────────────────────────
+  String get hintEn => 'Text here';
+  String get hintAr => 'اكتب هنا';
+
+  // ── Column blocks (Figma 7398:6667 and siblings) ─────────────────────────
+  String get dataType => _pick('Data Type', 'نوع البيانات');
+  String get selectDataType => _pick('Select Data Type', 'اختر نوع البيانات');
+  String get columnName => _pick('Column Name', 'اسم العمود');
+  String get columnNameHint => _pick('Employee Name', 'اسم الموظف');
+
+  /// "1st Column" / "2nd Column" — [index] is ZERO-BASED, the ordinal is not.
+  ///
+  /// English ordinals are irregular for 1–3 and for anything ending in 11–13,
+  /// so the suffix is computed rather than picked from a four-entry table that
+  /// would render "21th Column". Arabic uses "العمود ١" past the first three
+  /// because the ordinal forms stop being common well before column ten.
+  String nthColumn(int index) {
+    final int n = index + 1;
+    if (_isArabic) {
+      switch (n) {
+        case 1:
+          return 'العمود الأول';
+        case 2:
+          return 'العمود الثاني';
+        case 3:
+          return 'العمود الثالث';
+        default:
+          return 'العمود $n';
+      }
+    }
+
+    final bool teen = n % 100 >= 11 && n % 100 <= 13;
+    final String suffix = teen
+        ? 'th'
+        : switch (n % 10) {
+            1 => 'st',
+            2 => 'nd',
+            3 => 'rd',
+            _ => 'th',
+          };
+    return '$n$suffix Column';
+  }
+
+  String get duplicateColumn => _pick('Duplicate column', 'تكرار العمود');
+  String get removeColumn => _pick('Remove column', 'حذف العمود');
+
+  // ── Actions ──────────────────────────────────────────────────────────────
+  String get discard => _pick('Discard', 'تجاهل');
+  String get create => _pick('Create', 'إنشاء');
+  String get save => _pick('Save', 'حفظ');
+
+  // ── Form Builder: filling a table in (Figma 7398:3042 / 15076 / 15210) ────
+
+  /// Third crumb on the editing screen (7398:15076). "Editing Table Name" in
+  /// the Figma is the TEMPLATE — the real crumb carries the table's own name,
+  /// the same way `tableDetailsCrumb` does.
+  String editingTableDataCrumb(String name) =>
+      _pick('Editing $name', 'تعديل $name');
+
+  /// Third crumb on the preview screen (7398:15210).
+  String get previewCrumb => _pick('Preview', 'معاينة');
+
+  String get preview => _pick('Preview', 'معاينة');
+  String get undo => _pick('Undo', 'تراجع');
+  String get redo => _pick('Redo', 'إعادة');
+  String get removeSelection => _pick('Remove Selection', 'حذف المحدد');
+  String get addRow => _pick('Row', 'صف');
+  String get addColumn => _pick('Column', 'عمود');
+
+  /// The Import Table dialog (7398:4041).
+  String get importTable => _pick('Import Table', 'استيراد جدول');
+  String get import => _pick('Import', 'استيراد');
+  String get typeOfImport => _pick('Type Of Import', 'نوع الاستيراد');
+  String get uploadFile => _pick('Upload File', 'رفع ملف');
+
+  /// The file was read but nothing in it belonged to this table.
+  String get importMatchedNothing => _pick(
+        'None of the headings in that file match this table\'s columns.',
+        'لا يوجد أي عنوان في هذا الملف يطابق أعمدة هذا الجدول.',
+      );
+
+  /// Headings the file had that this table has no column for.
+  String importUnmatchedHeadings(String headings) => _pick(
+        'These headings were skipped because this table has no column for '
+            'them: $headings',
+        'تم تجاهل هذه العناوين لعدم وجود أعمدة لها في الجدول: $headings',
+      );
+
+  /// Asked before the red circle on a heading takes the column away.
+  ///
+  /// It names the VALUES and not just the column: removing a heading on the
+  /// create card costs nothing because there is no data yet, and removing one
+  /// here empties a cell in every row.
+  String removeColumnSubtitle(String name) => _pick(
+        'Remove "$name" and everything filled into it?',
+        'هل تريد حذف "$name" وكل ما تم إدخاله فيه؟',
+      );
+
+  /// Said when Save is pressed over a cell that does not fit its column's type.
+  ///
+  /// It names the COUNT rather than the cells: the wrong cells are already
+  /// outlined in red where they are, and a dialog listing "row 4, Date" for
+  /// eleven of them is a dialog nobody reads.
+  String invalidCellsSubtitle(int count) => _pick(
+        count == 1
+            ? 'One cell does not match its column type. It is outlined in red.'
+            : '$count cells do not match their column type. They are outlined '
+                'in red.',
+        count == 1
+            ? 'خلية واحدة لا تطابق نوع عمودها، وهي محددة باللون الأحمر.'
+            : 'يوجد $count خلايا لا تطابق نوع أعمدتها، وهي محددة باللون الأحمر.',
+      );
+
+  String get rowsSavedSubtitle => _pick(
+        'The table data has been saved.',
+        'تم حفظ بيانات الجدول.',
+      );
+
+  String get discardRowsSubtitle => _pick(
+        'Your changes to this table data will be lost.',
+        'سيتم فقدان تغييراتك على بيانات هذا الجدول.',
+      );
+
+  /// Shown when Preview is pressed on a table that has nothing in it yet.
+  String get nothingToPreview => _pick(
+        'Fill in at least one cell before previewing the table.',
+        'املأ خلية واحدة على الأقل قبل معاينة الجدول.',
+      );
+
+  // ── Table list on the details page ───────────────────────────────────────
+  //
+  // REMOVED 17/8/2026: the nine column headings this section used to hold
+  // (`colNo`, `colTableName`, `colColumns`, `colRows`, `colComments`,
+  // `colMembers`, `colCreated`, `colLastEdit`, `colAccess`), plus `noTablesYet`
+  // and `noTablesMatch`. The list is the Figma's CARD GRID now — see
+  // `TableListSection` for why — so there are no columns to head, and both
+  // empty states have been the shared animation since 16/8/2026. What the
+  // cards do say is under "Table cards" below.
+
+  String get tablesLoadFailed => _pick(
+        'The tables could not be loaded.',
+        'تعذر تحميل الجداول.',
+      );
+  String get retry => _pick('Retry', 'إعادة المحاولة');
+
+  // ── Editing Table Access (7398:13651 / 14122 / 14553) ────────────────────
+  //
+  // Several of these repeat keys db1 already has (search, department, Select
+  // All …). That is the same duplication db2 carries, and it is deliberate:
+  // each module ships ONE table so a screen never has to reach across features
+  // for a word, and the migration into `intl_*.arb` is a per-module move rather
+  // than an untangling.
+  String get editingTableAccess =>
+      _pick('Editing Table Access', 'تعديل الوصول للجدول');
+  String get accessCrumb => _pick('Access', 'الوصول');
+
+  String get employeeInformation =>
+      _pick('Employee  Information', 'بيانات الموظف');
+  String get search => _pick('Search', 'بحث');
+  String get department => _pick('Department', 'القسم');
+  String get allDepartments => _pick('All Departments', 'كل الأقسام');
+  String get selectAll => _pick('Select All', 'تحديد الكل');
+  String get deselectAll => _pick('Deselect All', 'إلغاء تحديد الكل');
+  String get review => _pick('Review', 'مراجعة');
+  String get discardChanges => _pick('Discard Changes', 'تجاهل التغييرات');
+
+  String get noEmployeesFound => _pick('No employees found', 'لا يوجد موظفون');
+  String get noMembersSelected =>
+      _pick('No members selected yet', 'لم يتم اختيار أعضاء بعد');
+  String get pickSomeoneFirst => _pick(
+        'Select at least one person before continuing.',
+        'اختر شخصًا واحدًا على الأقل قبل المتابعة.',
+      );
+
+  // ── Summary tiles (7398:14697-14708) ─────────────────────────────────────
+  String get summary => _pick('Summary', 'الملخص');
+  String get totalEmployees => _pick('Total Employees', 'إجمالي الموظفين');
+  String get totalDepartments => _pick('Total Departments', 'إجمالي الأقسام');
+  String get permissions => _pick('Permissions', 'الصلاحيات');
+
+  // ── Viewable Fields ──────────────────────────────────────────────────────
+  String get viewableFields => _pick('Viewable Fields', 'الحقول المرئية');
+
+  // ── Column headings on the review screen's table view (Figma 7398:14296) ──
+
+  String get colPicture => _pick('Employee Picture', 'صورة الموظف');
+  String get colName => _pick('Employee Name', 'اسم الموظف');
+  String get colJobTitle => _pick('Job Title', 'المسمى الوظيفي');
+
+  /// The multi-select's empty trigger. Moved here from db1 on 16/8/2026 with
+  /// `ViewableFieldsField` itself — the create wizard has no tables, so it had
+  /// no columns to offer and the control went with them.
+  String get selectViewableFields =>
+      _pick('Select Viewable Fields', 'اختر الحقول المرئية');
+
+  /// The tile's value when nothing is restricted. "All fields", not "None":
+  /// an unrestricted grant sees the whole table. See
+  /// `DatabaseAccessGrant.viewableFields`.
+  String get allFields => _pick('All fields', 'كل الحقول');
+
+  String fieldsSelected(int count) => _pick(
+        count == 1 ? '1 field' : '$count fields',
+        count == 1 ? 'حقل واحد' : '$count حقول',
+      );
+
+  /// Shown under the control when the table has columns but none of them has a
+  /// name yet — a table saved through an older build, or one whose headings
+  /// were cleared. Different sentence from db1's "no tables yet", because the
+  /// fix is different.
+  String get tableHasNoNamedColumns => _pick(
+        'This table has no named columns yet, so there are no fields to limit.',
+        'لا توجد أعمدة مسماة في هذا الجدول بعد، لذا لا توجد حقول لتقييدها.',
+      );
+
+  // ── Access actions ───────────────────────────────────────────────────────
+  String get removeAllAccess => _pick('Remove All Access', 'إزالة كل الوصول');
+
+  String removeAllAccessSubtitle(int count) => _pick(
+        count == 1
+            ? 'Remove access for 1 person? They keep a Removed row on the '
+                'access table.'
+            : 'Remove access for all $count people? They keep a Removed row on '
+                'the access table.',
+        count == 1
+            ? 'هل تريد إزالة وصول شخص واحد؟ سيظل مسجلاً كـ"محذوف" في جدول '
+                'الوصول.'
+            : 'هل تريد إزالة وصول الأشخاص الـ$count جميعاً؟ سيظلون مسجلين '
+                'كـ"محذوفين" في جدول الوصول.',
+      );
+
+  String get confirmAccessTitle => _pick('Table Access', 'الوصول للجدول');
+  String get confirmAccessSubtitle => _pick(
+        'Save these access rules for this table?',
+        'هل تريد حفظ قواعد الوصول هذه للجدول؟',
+      );
+  String get accessSavedSubtitle => _pick(
+        'Table access has been updated.',
+        'تم تحديث الوصول للجدول.',
+      );
+
+  String get discardAccessSubtitle => _pick(
+        'Discard the changes you made to this table\'s access?',
+        'هل تريد تجاهل التغييرات التي أجريتها على الوصول لهذا الجدول؟',
+      );
+
+  /// The "you cannot save yet" guard. Names all three requirements, because the
+  /// user cannot tell from the screen which one the button is objecting to.
+  String get incompleteGrant => _pick(
+        'Choose a permission level and both dates before saving.',
+        'اختر مستوى الصلاحية وكلا التاريخين قبل الحفظ.',
+      );
+
+  String get endBeforeStart => _pick(
+        'End date must be after the start date',
+        'يجب أن يكون تاريخ النهاية بعد تاريخ البداية',
+      );
+
+  // ── Dialogs ──────────────────────────────────────────────────────────────
+  String get confirmCreateTitle => _pick('New Table', 'جدول جديد');
+  String get confirmCreateSubtitle => _pick(
+        'Are You Sure You Want To Create This Table?',
+        'هل أنت متأكد من إنشاء هذا الجدول؟',
+      );
+
+  String get successTitle => _pick('Success', 'تم بنجاح');
+  String get createdSubtitle => _pick(
+        'You Successfully Created A New Table',
+        'تم إنشاء الجدول بنجاح',
+      );
+  String get savedSubtitle => _pick(
+        'Your changes have been saved.',
+        'تم حفظ التغييرات.',
+      );
+
+  String get errorTitle => _pick('Something Went Wrong', 'حدث خطأ ما');
+
+  /// Heading on the "you cannot continue yet" guards. Not an error — the form
+  /// is merely incomplete — so it is worded as a prompt rather than a failure.
+  String get incompleteTitle => _pick('Missing Information', 'معلومات ناقصة');
+
+  /// What a greyed-out Save says when it is tapped. ADDED 17/8/2026 with the
+  /// rule that Save stays disabled until something is actually edited.
+  ///
+  /// Same wording as db2's `nothingChangedTitle` / `nothingChanged`, and
+  /// deliberately duplicated rather than imported: each module ships ONE string
+  /// table so a screen never reaches across features for a sentence — the same
+  /// duplication this file's "Editing Table Access" block already carries.
+  String get nothingChangedTitle => _pick('Nothing Changed', 'لا توجد تغييرات');
+  String get nothingChanged => _pick(
+        'Nothing on this screen has been changed yet.',
+        'لم يتم تغيير أي شيء في هذه الشاشة بعد.',
+      );
+
+  String get close => _pick('Close', 'إغلاق');
+  String get yes => _pick('Yes', 'نعم');
+  String get no => _pick('No', 'لا');
+
+  String get discardConfirmTitle => _pick('Discard Changes', 'تجاهل التغييرات');
+  String get discardConfirmSubtitle => _pick(
+        'Are you sure you want to discard this table?',
+        'هل أنت متأكد من تجاهل هذا الجدول؟',
+      );
+
+  /// Lowering "Enter Column Number" throws away the blocks at the end. Naming
+  /// the count matters: the blocks being dropped are below the fold on a
+  /// portrait iPad, so the user cannot see what they are about to lose.
+  String get removeColumnsTitle => _pick('Remove Columns', 'حذف أعمدة');
+  String removeColumnsSubtitle(int count) => _pick(
+        count == 1
+            ? 'Lowering the column number removes 1 column you have already '
+                'named. Continue?'
+            : 'Lowering the column number removes $count columns you have '
+                'already named. Continue?',
+        count == 1
+            ? 'تقليل عدد الأعمدة سيحذف عمودًا واحدًا قمت بتسميته بالفعل. هل تريد '
+                'المتابعة؟'
+            : 'تقليل عدد الأعمدة سيحذف $count أعمدة قمت بتسميتها بالفعل. هل '
+                'تريد المتابعة؟',
+      );
+
+  // ── Validation ───────────────────────────────────────────────────────────
+  String get nameEnRequired =>
+      _pick('English table name is required', 'اسم الجدول بالإنجليزية مطلوب');
+  String get nameArRequired =>
+      _pick('Arabic table name is required', 'اسم الجدول بالعربية مطلوب');
+
+  String get nameTooShort => _pick(
+        'Table name must be at least ${CreateDatabaseLimits.titleMinLength} '
+            'characters',
+        'يجب ألا يقل اسم الجدول عن ${CreateDatabaseLimits.titleMinLength} حرفين',
+      );
+
+  /// Shown when `tableNameExists` rejects the write. Names the rule that was
+  /// broken AND what to do about it: the form the user is looking at is
+  /// complete and nothing on screen hints that the name is the problem.
+  String get duplicateName => _pick(
+        'A table with this name already exists in this database. Change the '
+            'name and try again.',
+        'يوجد جدول بهذا الاسم في قاعدة البيانات بالفعل. غيّر الاسم وحاول مرة '
+            'أخرى.',
+      );
+
+  String get columnCountRange => _pick(
+        'Enter a column number between ${CreateTableLimits.minColumns} and '
+            '${CreateTableLimits.maxColumns}',
+        'أدخل عدد أعمدة بين ${CreateTableLimits.minColumns} و '
+            '${CreateTableLimits.maxColumns}',
+      );
+
+  String get rowCountRange => _pick(
+        'Enter a row number between ${CreateTableLimits.minRows} and '
+            '${CreateTableLimits.maxRows}',
+        'أدخل عدد صفوف بين ${CreateTableLimits.minRows} و '
+            '${CreateTableLimits.maxRows}',
+      );
+
+  // COLUMN-NAME MESSAGES REMOVED 17/8/2026, with the rules that raised them:
+  // `columnNameRequired`, `duplicateColumnName`, `columnTypeMismatch` and
+  // `columnTypeMismatchAt`. The Column Name box takes any text now — see
+  // `TableColumnBlock._nameField` for why the Data Type was the wrong thing to
+  // hold a heading to.
+
+  String get couldNotSave => _pick(
+        'The table could not be saved. Check your connection and try again.',
+        'تعذر حفظ الجدول. تحقق من الاتصال وحاول مرة أخرى.',
+      );
+
+  // ── Table cards on the details page (Figma 7398:2183 / 1270) ─────────────
+
+  /// "No. of Rows: 100" and "No. of Columns: 10" — the two counts on a card.
+  /// The colon is part of the label, as it is on db1's database card.
+  ///
+  /// The card's two DATE lines are not here: they are [creationDateLabel] and
+  /// [lastEditLabel], shared with the info card one screen down, because the
+  /// same date under two spellings is exactly what one string table is for.
+  String get cardRows => _pick('No. of Rows:', 'عدد الصفوف:');
+  String get cardColumns => _pick('No. of Columns:', 'عدد الأعمدة:');
+
+  // ── Table Name Details (Figma 7398:4102 open / 7398:4690 collapsed) ──────
+
+  /// Third crumb. The Figma writes the table's name followed by the word
+  /// "Details"; the name is substituted by the caller, the same shape db2's
+  /// `detailsCrumb` uses one level up.
+  String tableDetailsCrumb(String name) =>
+      _pick('$name Details', 'تفاصيل $name');
+
+  /// The label on the COLLAPSED card (7398:4690), where the card's own name is
+  /// hidden and something still has to say what "Expand" brings back.
+  String get tableDetails => _pick('Table Details', 'تفاصيل الجدول');
+
+  String get hide => _pick('Hide', 'إخفاء');
+  String get expand => _pick('Expand', 'عرض');
+
+  String get access => _pick('Access', 'الوصول');
+  String get edit => _pick('Edit', 'تعديل');
+  String get delete => _pick('Delete', 'حذف');
+  String get export => _pick('Export', 'تصدير');
+  String get filter => _pick('Filter', 'تصفية');
+
+  String get descriptionLabel => _pick('Description:', 'الوصف:');
+  String get creationDateLabel => _pick('Creation Date:', 'تاريخ الإنشاء:');
+  String get lastEditLabel => _pick('Last Edit:', 'آخر تعديل:');
+
+  String get noDescription => _pick('No description', 'لا يوجد وصف');
+
+  // ── The four tiles (Figma 7398:4102, `Frame 1597883023`-`1597883026`) ────
+  String get noOfColumns => _pick('No. Of Columns', 'عدد الأعمدة');
+  String get noOfRows => _pick('No. Of Rows', 'عدد الصفوف');
+  String get accesses => _pick('Accesses', 'الوصول');
+
+  // ── The rows grid ────────────────────────────────────────────────────────
+
+  /// Heading over the row-number column of the data grid — the Figma's "NO"
+  /// (7398:4138). Same word as [colNo], reused rather than a second key.
+  String get rowNumber => _pick('NO', 'م');
+
+  /// Shown in place of the grid on a table whose columns were all left unnamed.
+  /// Different sentence from [tableHasNoNamedColumns], which explains the same
+  /// fact to someone choosing viewable FIELDS — here the fix is to edit the
+  /// table, so the sentence says so.
+  String get noNamedColumns => _pick(
+        'This table has no named columns yet. Use Edit to give them headings.',
+        'لا توجد أعمدة مسماة في هذا الجدول بعد. استخدم "تعديل" لإضافة عناوينها.',
+      );
+
+  String get deleteTableTitle => _pick('Delete Table', 'حذف الجدول');
+  String deleteTableSubtitle(String name) => _pick(
+        'Are you sure you want to delete "$name"? This cannot be undone.',
+        'هل أنت متأكد من حذف "$name"؟ لا يمكن التراجع عن هذا.',
+      );
+  String get deletedTitle => _pick('Deleted', 'تم الحذف');
+  String deletedSubtitle(String name) => _pick(
+        '"$name" has been deleted.',
+        'تم حذف "$name".',
+      );
+  String get deleteFailedTitle => _pick('Delete Failed', 'فشل الحذف');
+  String get couldNotDelete => _pick(
+        'The table could not be deleted. Check your connection and try again.',
+        'تعذر حذف الجدول. تحقق من الاتصال وحاول مرة أخرى.',
+      );
+
+  // ── Comments (Figma 7398:8232 / 8311 / 8587) ─────────────────────────────
+
+  /// Fourth crumb, and the label on the button that opens the screen.
+  String get comments => _pick('Comments', 'التعليقات');
+
+  String get writeAComment => _pick('Write a Comment', 'اكتب تعليقًا');
+  String get send => _pick('Send', 'إرسال');
+
+  String get like => _pick('Like', 'إعجاب');
+  String get dislike => _pick('Dislike', 'عدم إعجاب');
+
+  /// "Date: 28 Nov 2024 At 8:23" — the Figma's timestamp line, word for word
+  /// (7398:8232). The date itself comes from `DatabaseDateFormat.short`, so a
+  /// comment and the card above it cannot disagree about how a month is
+  /// written; only the "At" and the clock are added here.
+  String commentDate(String date, String time) =>
+      _pick('Date: $date At $time', 'التاريخ: $date في $time');
+
+  String get commentsLoadFailed => _pick(
+        'The comments could not be loaded.',
+        'تعذر تحميل التعليقات.',
+      );
+
+  String get commentFailed => _pick(
+        'Your comment could not be posted. Check your connection and try again.',
+        'تعذر نشر تعليقك. تحقق من الاتصال وحاول مرة أخرى.',
+      );
+
+  /// Why the composer is missing. Shown, rather than the box simply being
+  /// absent, because a Comments screen with no way to comment reads as broken —
+  /// and the reason is a setting somebody can change on the Editing Table Name
+  /// card, so naming it is actionable.
+  String get commentsPrivate => _pick(
+        'Comments on this table are Private, so only admins can post.',
+        'التعليقات على هذا الجدول خاصة، لذا يمكن للمسؤولين فقط النشر.',
+      );
+
+  /// Shown when nobody is signed in, which is the other reason the composer can
+  /// be missing — and a completely different fix from [commentsPrivate].
+  String get signInToComment => _pick(
+        'Sign in to leave a comment.',
+        'سجّل الدخول لترك تعليق.',
+      );
+
+  String get deleteCommentTitle => _pick('Delete Comment', 'حذف التعليق');
+  String get deleteCommentSubtitle => _pick(
+        'Delete this comment? It cannot be brought back.',
+        'هل تريد حذف هذا التعليق؟ لا يمكن استرجاعه.',
+      );
+}
