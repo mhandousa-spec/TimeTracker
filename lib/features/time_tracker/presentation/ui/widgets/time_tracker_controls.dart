@@ -82,6 +82,10 @@ abstract class TtAssets {
   static const String description = '$_form/description_text_lines.svg';
   static const String attachment = '$_form/attachment_paperclip.svg';
   static const String send = '$_main/send_paper_plane_white.svg';
+
+  /// ADDED 12/10/2026 (owner I5): the house comment-send icon (Knowledge Hub
+  /// comments) for the square Send of "Inquiries And Comments".
+  static const String commentSend = 'assets/icons_assets/knowledge_hub_assets/svg_send_icon.svg';
   static const String camera = 'assets/icons_assets/messaging_assets/camera.svg';
   static const String image = '$_form/image_add.svg';
   static const String location = '$_form/location_pin.svg';

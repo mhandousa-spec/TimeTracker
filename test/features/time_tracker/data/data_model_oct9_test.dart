@@ -560,7 +560,7 @@ void main() {
       await h.pump(tester, const RequestDetailsPage(requestId: 'p1'));
       // The legacy comment is there (the section opens on its own).
       expect(find.text('Old embedded comment'), findsOneWidget);
-      expect(find.byKey(const ValueKey<String>('requestCommentEdit_1696000000000000_0')), findsNothing);
+      expect(find.byKey(const ValueKey<String>('requestCommentMenu_1696000000000000_0')), findsNothing);
       await tester.enterText(find.byKey(const ValueKey<String>('requestCommentInput')).first, 'Fresh comment');
       await tester.tap(find.byKey(const ValueKey<String>('requestCommentSend')));
       await h.settle(tester);
@@ -569,7 +569,15 @@ void main() {
           h.remote.store[TimeTrackerFirestorePaths.requestComments('p1')]!;
       expect(docs, hasLength(1));
       final String id = docs.keys.single;
+      // 12/10/2026 (owner Q4): Edit / Delete by long-press on one's own comment.
+      expect(find.byKey(ValueKey<String>('requestCommentEdit_$id')), findsNothing);
+      await tester.longPress(find.byKey(ValueKey<String>('requestCommentMenu_$id')));
+      await h.settle(tester);
       expect(find.byKey(ValueKey<String>('requestCommentEdit_$id')), findsOneWidget);
+      expect(find.byKey(ValueKey<String>('requestCommentDelete_$id')), findsOneWidget);
+      await tester.tap(find.byKey(ValueKey<String>('requestCommentEdit_$id')));
+      await h.settle(tester);
+      expect(find.byKey(ValueKey<String>('requestCommentEditInput_$id')), findsOneWidget);
       await h.dispose(tester);
     });
   });

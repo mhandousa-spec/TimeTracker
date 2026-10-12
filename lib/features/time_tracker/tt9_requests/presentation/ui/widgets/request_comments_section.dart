@@ -4,7 +4,7 @@
 /// File Name: request_comments_section.dart
 /// Purpose: Declares `RequestCommentsSection` — "Inquiries And Comments"
 ///          with Expand / Hide: the thread, Edit / Delete on one's own
-///          comments, and "Write a Comment".
+///          comments (long-press), and "Write A Comment".
 /// Author: Knowticed Plus team
 /// Created at: 9/10/2026
 ///
@@ -36,6 +36,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:knowticed_plus/core/custom/16-custom_card_styles.dart';
 import 'package:knowticed_plus/core/custom/2-custom_textfield.dart';
+import 'package:knowticed_plus/core/custom/41-custom_button_sizing.dart';
+import 'package:knowticed_plus/core/custom/51-custom_pop_up.dart';
 import 'package:knowticed_plus/core/custom/66-circle_progress.dart';
 import 'package:knowticed_plus/core/theme/app_animations.dart';
 import 'package:knowticed_plus/core/theme/app_colors.dart';
@@ -173,33 +175,87 @@ class _RequestCommentsSectionState extends State<RequestCommentsSection> {
     );
   }
 
-  Widget _composer(S s) => Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Expanded(
-            child: CustomTextField(
-              key: const ValueKey<String>('requestCommentInput'),
-              controller: _new,
-              hint: s.timeTrackerWriteComment,
-              height: 36,
-              maxLength: RequestCommentRules.maxLength,
-              valueStyle: StyleText.fontSize12Weight400.copyWith(color: AppColors.text),
-              onSubmitted: (_) => _send(),
+  /// Updated: 12/10/2026 - owner I5 / Q3: no "0 / 500" counter (the 500
+  /// limit stays); Send = a SQUARE exactly as tall as the field (house
+  /// comment send icon, as on the Knowledge Hub comments), shrinks on tap.
+  Widget _composer(S s) => IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Expanded(
+              child: CustomTextField(
+                key: const ValueKey<String>('requestCommentInput'),
+                controller: _new,
+                hint: s.timeTrackerWriteComment,
+                height: 36,
+                maxLength: RequestCommentRules.maxLength,
+                hideCounter: true,
+                valueStyle: StyleText.fontSize12Weight400.copyWith(color: AppColors.text),
+                onSubmitted: (_) => _send(),
+              ),
             ),
-          ),
-          SizedBox(width: 10.w),
-          GestureDetector(
-            key: const ValueKey<String>('requestCommentSend'),
-            onTap: _send,
-            child: Container(
-              width: 36.r,
-              height: 36.r,
-              decoration: BoxDecoration(color: AppColors.primary, shape: BoxShape.circle),
-              child: TtIcon(const TtGlyph.svg(TtAssets.send), size: 18.r, color: AppColors.textButton),
+            SizedBox(width: 10.w),
+            AspectRatio(
+              aspectRatio: 1,
+              child: Semantics(
+                button: true,
+                label: s.send,
+                child: ShrinkOnTap(
+                  child: GestureDetector(
+                    key: const ValueKey<String>('requestCommentSend'),
+                    behavior: HitTestBehavior.opaque,
+                    onTap: _send,
+                    child: Container(
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: AppColors.primary,
+                        borderRadius: BorderRadius.circular(ButtonSizing.radius),
+                      ),
+                      child: TtIcon(const TtGlyph.svg(TtAssets.commentSend), size: 20.r, color: AppColors.textButton),
+                    ),
+                  ),
+                ),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       );
+
+  /// ADDED 12/10/2026 (owner Q4): Edit / Delete of one's own comment come
+  /// from a LONG-PRESS on the message (no links in the card). The core
+  /// popup rows (`HoverablePopupMenuItem`, Delete red), shown at the finger.
+  Future<void> _commentMenu(BuildContext context, RequestComment c, Offset at) async {
+    HapticController.medium();
+    final S s = S.of(context);
+    final RenderBox overlay = Overlay.of(context).context.findRenderObject()! as RenderBox;
+    final String? picked = await showMenu<String>(
+      context: context,
+      position: RelativeRect.fromRect(at & const Size(1, 1), Offset.zero & overlay.size),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
+      color: AppColors.card,
+      items: <PopupMenuEntry<String>>[
+        HoverablePopupMenuItem(
+          key: ValueKey<String>('requestCommentEdit_${c.id}'),
+          value: 'edit',
+          label: s.edit,
+        ),
+        HoverablePopupMenuItem(
+          key: ValueKey<String>('requestCommentDelete_${c.id}'),
+          value: 'delete',
+          label: s.delete,
+          labelColor: AppColors.red,
+        ),
+      ],
+    );
+    if (!mounted || !context.mounted) return;
+    if (picked == 'edit') {
+      _edit.text = c.text;
+      setState(() => _editingId = c.id);
+    } else if (picked == 'delete') {
+      HapticController.high();
+      RequestFlows.deleteComment(context, widget.request, c.id, asApprover: widget.asApprover);
+    }
+  }
 
   Widget _bubble(BuildContext context, RequestComment c) {
     final S s = S.of(context);
@@ -236,10 +292,15 @@ class _RequestCommentsSectionState extends State<RequestCommentsSection> {
           if (_editingId == c.id)
             _editor(c, s)
           else
-            Container(
-              padding: EdgeInsetsDirectional.symmetric(horizontal: 12.w, vertical: 10.h),
-              decoration: BoxDecoration(color: AppColors.background, borderRadius: CardStyles.radius()),
-              child: Text(c.text, style: StyleText.fontSize12Weight400.copyWith(color: AppColors.text)),
+            GestureDetector(
+              key: mine ? ValueKey<String>('requestCommentMenu_${c.id}') : null,
+              behavior: HitTestBehavior.opaque,
+              onLongPressStart: mine ? (LongPressStartDetails d) => _commentMenu(context, c, d.globalPosition) : null,
+              child: Container(
+                padding: EdgeInsetsDirectional.symmetric(horizontal: 12.w, vertical: 10.h),
+                decoration: BoxDecoration(color: AppColors.background, borderRadius: CardStyles.radius()),
+                child: Text(c.text, style: StyleText.fontSize12Weight400.copyWith(color: AppColors.text)),
+              ),
             ),
           // 9/10/2026 (data model): the comment's optional files.
           for (final RequestAttachment a in c.attachments)
@@ -252,25 +313,7 @@ class _RequestCommentsSectionState extends State<RequestCommentsSection> {
               }),
             ),
           SizedBox(height: 4.h),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text(c.editedAt != null ? '$when · ${s.timeTrackerEdited}' : when, style: small),
-              if (mine && _editingId != c.id) ...<Widget>[
-                SizedBox(width: 12.w),
-                _link(s.edit, ValueKey<String>('requestCommentEdit_${c.id}'), () {
-                  HapticController.medium();
-                  _edit.text = c.text;
-                  setState(() => _editingId = c.id);
-                }),
-                SizedBox(width: 10.w),
-                _link(s.delete, ValueKey<String>('requestCommentDelete_${c.id}'), () {
-                  HapticController.high();
-                  RequestFlows.deleteComment(context, widget.request, c.id, asApprover: widget.asApprover);
-                }, color: AppColors.red),
-              ],
-            ],
-          ),
+          Text(c.editedAt != null ? '$when · ${s.timeTrackerEdited}' : when, style: small),
         ],
       ),
     );
@@ -284,6 +327,7 @@ class _RequestCommentsSectionState extends State<RequestCommentsSection> {
             controller: _edit,
             height: 36,
             maxLength: RequestCommentRules.maxLength,
+            hideCounter: true,
             valueStyle: StyleText.fontSize12Weight400.copyWith(color: AppColors.text),
           ),
           SizedBox(height: 6.h),
