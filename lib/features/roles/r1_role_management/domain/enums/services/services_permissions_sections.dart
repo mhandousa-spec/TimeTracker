@@ -12,7 +12,7 @@ import 'package:knowticed_plus/features/roles/r1_role_management/domain/enums/se
 
 import 'package:knowticed_plus/features/roles/r1_role_management/domain/entities/module_permissions_sections.dart';
 import 'package:knowticed_plus/features/roles/r1_role_management/domain/entities/module_permissions_sections_permissions.dart';
-import './Employee_services.dart';
+import './employee_services.dart';
 import './approval_permission_work.dart';
 import './dashboard_permissions.dart';
 enum ServicePermissionsSections implements ModulePermissionsSections, ModulePermissionsSectionsPermission {

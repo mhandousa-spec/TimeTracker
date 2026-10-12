@@ -31,7 +31,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:knowticed_plus/core/custom/1-custom_dropdown.dart';
-import 'package:knowticed_plus/core/custom/41-custom_button_sizing.dart';
 import 'package:knowticed_plus/core/custom/57-custom_dialog_manager.dart';
 import 'package:knowticed_plus/core/extensions/context_extensions.dart';
 import 'package:knowticed_plus/core/theme/app_colors.dart';
@@ -79,7 +78,7 @@ class HrDashboardFilterBar extends StatelessWidget {
     final bool ar = Localizations.localeOf(context).languageCode == 'ar';
     final Widget? employee = state.canFilterByEmployee
         ? _EmployeeButton(
-            active: state.filters.employeeEmails.isNotEmpty,
+            selectedCount: state.filters.employeeEmails.length,
             onTap: () => _pickEmployees(context),
           )
         : null;
@@ -141,15 +140,23 @@ class HrDashboardFilterBar extends StatelessWidget {
   }
 }
 
-/// "Employee" — white, yellow once employees are picked (Figma `661:43225`).
+/// "Employee" — opens the employee picker.
+///
+/// Updated: 12/10/2026 - owner review N1 / R6: it IS the core dropdown
+/// trigger (same fill, height, radius, text and chevron as Department /
+/// Location / Time) instead of a yellow-when-active box; a selection shows
+/// as "Employee (3)". The dropdown itself never opens — the tap goes to the
+/// picker.
 class _EmployeeButton extends StatelessWidget {
-  const _EmployeeButton({required this.active, required this.onTap});
+  const _EmployeeButton({required this.selectedCount, required this.onTap});
 
-  final bool active;
+  final int selectedCount;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
+    final String title = S.of(context).employee;
+    final String text = selectedCount == 0 ? title : '$title ($selectedCount)';
     return GestureDetector(
       key: const ValueKey<String>('hrEmployeeButton'),
       behavior: HitTestBehavior.opaque,
@@ -157,17 +164,18 @@ class _EmployeeButton extends StatelessWidget {
         HapticController.low();
         onTap();
       },
-      // 9/10/2026 (UI pass): the toolbar's one height + radius (was 36 raw).
-      child: Container(
-        height: ButtonSizing.height,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: active ? AppColors.primary : AppColors.card,
+      child: IgnorePointer(
+        child: CustomDropdown<String>(
+          hint: text,
+          height: TtToolbar.height,
           borderRadius: TtToolbar.radius,
-        ),
-        child: Text(
-          S.of(context).employee,
-          style: StyleText.fontSize12Weight400.copyWith(color: active ? AppColors.textButton : AppColors.text),
+          fillColor: AppColors.card,
+          itemStyle: StyleText.fontSize12Weight400,
+          value: selectedCount == 0 ? null : text,
+          items: <DropdownItem<String>>[
+            if (selectedCount > 0) DropdownItem<String>(value: text, label: text),
+          ],
+          onChanged: (_) {},
         ),
       ),
     );
