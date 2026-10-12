@@ -138,20 +138,11 @@ class _RequestCommentsSectionState extends State<RequestCommentsSection> {
               child: Text(s.timeTrackerInquiriesAndComments,
                   style: StyleText.fontSize18Weight500.copyWith(color: AppColors.text)),
             ),
-            GestureDetector(
+            TtLink(
               key: const ValueKey<String>('requestCommentsToggle'),
-              onTap: () {
-                HapticController.low();
-                setState(() => _expanded = !expanded);
-              },
-              child: Text(
-                expanded ? s.hide : s.expand,
-                style: StyleText.fontSize14Weight500.copyWith(
-                  color: AppColors.blue,
-                  decoration: TextDecoration.underline,
-                  decorationColor: AppColors.blue,
-                ),
-              ),
+              label: expanded ? s.hide : s.expand,
+              padding: EdgeInsets.zero,
+              onTap: () => setState(() => _expanded = !expanded),
             ),
           ],
         ),
@@ -313,14 +304,12 @@ class _RequestCommentsSectionState extends State<RequestCommentsSection> {
         ],
       );
 
-  Widget _link(String label, Key key, VoidCallback onTap, {Color? color}) => GestureDetector(
+  Widget _link(String label, Key key, VoidCallback onTap, {Color? color}) => TtLink(
         key: key,
+        label: label,
+        color: color,
+        style: StyleText.fontSize12Weight500,
+        padding: EdgeInsets.zero,
         onTap: onTap,
-        child: Text(label,
-            style: StyleText.fontSize12Weight500.copyWith(
-              color: color ?? AppColors.blue,
-              decoration: TextDecoration.underline,
-              decorationColor: color ?? AppColors.blue,
-            )),
       );
 }

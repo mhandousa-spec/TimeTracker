@@ -72,11 +72,11 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m22(field, error) =>
       "The specified ${field} ${error}! Please verify the entry";
 
-  static String m23(count) => "${count} absences";
+  static String m23(count) => "${count} Absences";
 
-  static String m24(count) => "${count} absences";
+  static String m24(count) => "${count} Absences";
 
-  static String m25(count) => "${count} absences";
+  static String m25(count) => "${count} Absences";
 
   static String m26(count) => "Assign (${count})";
 
@@ -7466,7 +7466,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "All Employees",
     ),
     "timeTrackerAllowBreaks": MessageLookupByLibrary.simpleMessage(
-      "Allow Breaks in Attendance",
+      "Allow Breaks In Attendance",
     ),
     "timeTrackerAllowDifferentLocation": MessageLookupByLibrary.simpleMessage(
       "Allow Different Work Location",
@@ -7493,7 +7493,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Approvals — All Departments",
     ),
     "timeTrackerApproveAndReject": MessageLookupByLibrary.simpleMessage(
-      "Approve and Reject",
+      "Approve And Reject",
     ),
     "timeTrackerApproveCancellation": MessageLookupByLibrary.simpleMessage(
       "Approve Cancellation",
@@ -7601,7 +7601,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "timeTrackerCheckIn": MessageLookupByLibrary.simpleMessage("Check In"),
     "timeTrackerCheckInAndOut": MessageLookupByLibrary.simpleMessage(
-      "Check In and Out",
+      "Check In And Out",
     ),
     "timeTrackerCheckInAvailable": MessageLookupByLibrary.simpleMessage(
       "You can check in and out.",
@@ -7693,10 +7693,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Comment Deleted",
     ),
     "timeTrackerCommentOnApprovals": MessageLookupByLibrary.simpleMessage(
-      "Comment on Approvals",
+      "Comment On Approvals",
     ),
     "timeTrackerCommentOnRequests": MessageLookupByLibrary.simpleMessage(
-      "Comment on Requests",
+      "Comment On Requests",
     ),
     "timeTrackerConfirmedTitle": MessageLookupByLibrary.simpleMessage(
       "Confirmed",
@@ -7760,13 +7760,13 @@ class MessageLookup extends MessageLookupByLibrary {
       "Custom Date Selector",
     ),
     "timeTrackerCustomOverridesLocation": MessageLookupByLibrary.simpleMessage(
-      "Custom — overrides the location",
+      "Custom — Overrides The Location",
     ),
     "timeTrackerCustomRulesEmployee": MessageLookupByLibrary.simpleMessage(
-      "Custom rules for this employee",
+      "Custom Rules For This Employee",
     ),
     "timeTrackerCustomRulesGroup": MessageLookupByLibrary.simpleMessage(
-      "Custom rules for this group",
+      "Custom Rules For This Group",
     ),
     "timeTrackerDashboardPermissions": MessageLookupByLibrary.simpleMessage(
       "Dashboard",
@@ -7826,14 +7826,14 @@ class MessageLookup extends MessageLookupByLibrary {
       "The demo data is already loaded.",
     ),
     "timeTrackerDemoLoad": MessageLookupByLibrary.simpleMessage(
-      "Load demo data",
+      "Load Demo Data",
     ),
     "timeTrackerDemoLoadDone": m35,
     "timeTrackerDemoRemove": MessageLookupByLibrary.simpleMessage(
-      "Remove demo data",
+      "Remove Demo Data",
     ),
     "timeTrackerDemoRemoveDone": m36,
-    "timeTrackerDemoTools": MessageLookupByLibrary.simpleMessage("Demo tools"),
+    "timeTrackerDemoTools": MessageLookupByLibrary.simpleMessage("Demo Tools"),
     "timeTrackerDemoToolsHint": MessageLookupByLibrary.simpleMessage(
       "Available in debug builds only. Adds realistic sample records to every Time Tracker tab. Existing records are never changed.",
     ),
@@ -7960,10 +7960,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerFilterType": MessageLookupByLibrary.simpleMessage("Type"),
     "timeTrackerFiltersTitle": MessageLookupByLibrary.simpleMessage("Filters"),
     "timeTrackerFrequentAbsences": MessageLookupByLibrary.simpleMessage(
-      "3 or More Absences This Month",
+      "3 Or More Absences This Month",
     ),
     "timeTrackerGeofenceRadius": MessageLookupByLibrary.simpleMessage(
-      "Geofencing Radius (meters)",
+      "Geofencing Radius (Meters)",
     ),
     "timeTrackerGeofenceRadiusColumn": MessageLookupByLibrary.simpleMessage(
       "Geofencing Radius",
@@ -8016,7 +8016,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "timeTrackerHrDashboardFilterByEmployee":
         MessageLookupByLibrary.simpleMessage(
-          "HR Dashboard — Filter by Employee",
+          "HR Dashboard — Filter By Employee",
         ),
     "timeTrackerHrOwnsSetup": MessageLookupByLibrary.simpleMessage(
       "Locations, shifts and employee assignments are managed in the HR module.",
@@ -8090,7 +8090,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerLastUpdateValue": m44,
     "timeTrackerLate": MessageLookupByLibrary.simpleMessage("Late"),
     "timeTrackerLateAfter": MessageLookupByLibrary.simpleMessage(
-      "Late After (minutes)",
+      "Late After (Minutes)",
     ),
     "timeTrackerLateAfterHint": MessageLookupByLibrary.simpleMessage("0"),
     "timeTrackerLateAfterMinutes": m45,
@@ -8114,7 +8114,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "timeTrackerLocation": MessageLookupByLibrary.simpleMessage("Location"),
     "timeTrackerLocationAtGoogleMaps": MessageLookupByLibrary.simpleMessage(
-      "Location at Google Maps",
+      "Location At Google Maps",
     ),
     "timeTrackerLocationAvailability": MessageLookupByLibrary.simpleMessage(
       "Location Availability",
@@ -8151,7 +8151,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Location In Use",
     ),
     "timeTrackerLocationMatches": MessageLookupByLibrary.simpleMessage(
-      "Your Location Matches the Company’s Location",
+      "Your Location Matches The Company’s Location",
     ),
     "timeTrackerLocationName": MessageLookupByLibrary.simpleMessage(
       "Location Name",
@@ -8196,7 +8196,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "timeTrackerManagerStep": MessageLookupByLibrary.simpleMessage("Manager"),
     "timeTrackerMaxPauseMinutes": MessageLookupByLibrary.simpleMessage(
-      "Maximum pause (minutes)",
+      "Maximum Pause (Minutes)",
     ),
     "timeTrackerMembers": MessageLookupByLibrary.simpleMessage("Members"),
     "timeTrackerMembersRequired": MessageLookupByLibrary.simpleMessage(
@@ -8205,7 +8205,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerMembersSelected": m48,
     "timeTrackerMetersValue": m49,
     "timeTrackerMinTotalHoursHint": MessageLookupByLibrary.simpleMessage(
-      "At least (hours)",
+      "At Least (Hours)",
     ),
     "timeTrackerMinsValue": m50,
     "timeTrackerMinutes": MessageLookupByLibrary.simpleMessage("Minutes"),
@@ -8236,15 +8236,15 @@ class MessageLookup extends MessageLookupByLibrary {
       "No vacation balance has been set for you yet. Please contact HR.",
     ),
     "timeTrackerNoBreak": MessageLookupByLibrary.simpleMessage("No Break"),
-    "timeTrackerNoBreaks": MessageLookupByLibrary.simpleMessage("No breaks"),
+    "timeTrackerNoBreaks": MessageLookupByLibrary.simpleMessage("No Breaks"),
     "timeTrackerNoComments": MessageLookupByLibrary.simpleMessage(
       "No comments yet.",
     ),
     "timeTrackerNoDataYet": MessageLookupByLibrary.simpleMessage(
       "No data for this period yet.",
     ),
-    "timeTrackerNoLimit": MessageLookupByLibrary.simpleMessage("No limit"),
-    "timeTrackerNoPause": MessageLookupByLibrary.simpleMessage("No pause"),
+    "timeTrackerNoLimit": MessageLookupByLibrary.simpleMessage("No Limit"),
+    "timeTrackerNoPause": MessageLookupByLibrary.simpleMessage("No Pause"),
     "timeTrackerNoPendingApprovals": MessageLookupByLibrary.simpleMessage(
       "No Pending Approvals",
     ),
@@ -8267,7 +8267,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerOncomingTime": MessageLookupByLibrary.simpleMessage(
       "Oncoming Time",
     ),
-    "timeTrackerOneAbsence": MessageLookupByLibrary.simpleMessage("1 absence"),
+    "timeTrackerOneAbsence": MessageLookupByLibrary.simpleMessage("1 Absence"),
     "timeTrackerOneDay": MessageLookupByLibrary.simpleMessage("1 Day"),
     "timeTrackerOptional": MessageLookupByLibrary.simpleMessage("Optional"),
     "timeTrackerOthers": MessageLookupByLibrary.simpleMessage("Others"),
@@ -8277,7 +8277,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "timeTrackerPause": MessageLookupByLibrary.simpleMessage("Pause"),
     "timeTrackerPauseAllowed": MessageLookupByLibrary.simpleMessage(
-      "Pause allowed",
+      "Pause Allowed",
     ),
     "timeTrackerPauseUpToMinutes": m53,
     "timeTrackerPending": MessageLookupByLibrary.simpleMessage("Pending"),
@@ -8311,10 +8311,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Reason Of Rejection",
     ),
     "timeTrackerReasonsOfCancellation": MessageLookupByLibrary.simpleMessage(
-      "Reasons of Cancellation",
+      "Reasons Of Cancellation",
     ),
     "timeTrackerReasonsOfRejection": MessageLookupByLibrary.simpleMessage(
-      "Reasons of Rejection",
+      "Reasons Of Rejection",
     ),
     "timeTrackerReassign": MessageLookupByLibrary.simpleMessage("Reassign"),
     "timeTrackerReassignEmployeeLocation": MessageLookupByLibrary.simpleMessage(
@@ -8452,7 +8452,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "timeTrackerRequestWord": MessageLookupByLibrary.simpleMessage("Request"),
     "timeTrackerRequestedBy": MessageLookupByLibrary.simpleMessage(
-      "Requested by",
+      "Requested By",
     ),
     "timeTrackerRequestedTimeframe": MessageLookupByLibrary.simpleMessage(
       "Requested Timeframe",
@@ -8474,7 +8474,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerRetry": MessageLookupByLibrary.simpleMessage("Try Again"),
     "timeTrackerRulesFromLocation": m55,
     "timeTrackerRulesFromLocationTag": MessageLookupByLibrary.simpleMessage(
-      "From location",
+      "From Location",
     ),
     "timeTrackerScreensComingSoon": MessageLookupByLibrary.simpleMessage(
       "The Time Tracker screens are being built and will appear here soon.",
@@ -8486,17 +8486,17 @@ class MessageLookup extends MessageLookupByLibrary {
       "Select Location",
     ),
     "timeTrackerSelectState": MessageLookupByLibrary.simpleMessage(
-      "Select State or Province",
+      "Select State Or Province",
     ),
     "timeTrackerSendRequestReminder": MessageLookupByLibrary.simpleMessage(
       "Send Reminder",
     ),
     "timeTrackerSickLeave": MessageLookupByLibrary.simpleMessage("Sick Leave"),
     "timeTrackerSortNameAsc": MessageLookupByLibrary.simpleMessage(
-      "Name (A to Z)",
+      "Name (A To Z)",
     ),
     "timeTrackerSortNameDesc": MessageLookupByLibrary.simpleMessage(
-      "Name (Z to A)",
+      "Name (Z To A)",
     ),
     "timeTrackerSortNewest": MessageLookupByLibrary.simpleMessage(
       "Newest First",
@@ -8513,7 +8513,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Choose the start time.",
     ),
     "timeTrackerStateOrProvince": MessageLookupByLibrary.simpleMessage(
-      "State or Province",
+      "State Or Province",
     ),
     "timeTrackerStateOrProvinceAr": MessageLookupByLibrary.simpleMessage(
       "ولاية او محافظة",
@@ -8588,7 +8588,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Transactions Waiting",
     ),
     "timeTrackerTwoAbsences": MessageLookupByLibrary.simpleMessage(
-      "2 absences",
+      "2 Absences",
     ),
     "timeTrackerTwoDays": MessageLookupByLibrary.simpleMessage("2 Days"),
     "timeTrackerUnassigned": MessageLookupByLibrary.simpleMessage("Unassigned"),
@@ -8605,7 +8605,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "timeTrackerUploadedOn": m58,
     "timeTrackerUseLocationRules": MessageLookupByLibrary.simpleMessage(
-      "Use the location\'s rules",
+      "Use The Location\'s Rules",
     ),
     "timeTrackerUseMyLocation": MessageLookupByLibrary.simpleMessage(
       "Use My Current Location",
@@ -8671,7 +8671,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Work End Time",
     ),
     "timeTrackerWorkFromDifferentLocation":
-        MessageLookupByLibrary.simpleMessage("Work From a Different Location"),
+        MessageLookupByLibrary.simpleMessage("Work From A Different Location"),
     "timeTrackerWorkLocation": MessageLookupByLibrary.simpleMessage(
       "Work Location",
     ),
@@ -8697,7 +8697,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Choose at least one working day.",
     ),
     "timeTrackerWriteComment": MessageLookupByLibrary.simpleMessage(
-      "Write a Comment",
+      "Write A Comment",
     ),
     "timeTrackerWrongLocationBody": MessageLookupByLibrary.simpleMessage(
       "Your check-in location does not match the company\'s designated location. Please check in from the correct location.",

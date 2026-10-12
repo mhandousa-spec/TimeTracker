@@ -348,7 +348,7 @@ void main() {
           : <int, String>{0: '٠ يوم', 1: 'يوم واحد', 2: 'يومان', 4: '٤ أيام', 15: '١٥ يوما', 100: '١٠٠ يوم', 103: '١٠٣ أيام'};
       expected.forEach((int n, String text) => expect(TimeTrackerFormat.days(ctx, n), text, reason: '$n'));
       final Map<int, String> absences = l == 'en'
-          ? <int, String>{1: '1 absence', 3: '3 absences', 12: '12 absences'}
+          ? <int, String>{1: '1 Absence', 3: '3 Absences', 12: '12 Absences'}
           : <int, String>{1: 'غياب واحد', 2: 'غيابان', 3: '٣ غيابات', 12: '١٢ غيابا'};
       absences.forEach((int n, String text) => expect(TimeTrackerFormat.absences(ctx, n), text, reason: 'absences $n'));
     });

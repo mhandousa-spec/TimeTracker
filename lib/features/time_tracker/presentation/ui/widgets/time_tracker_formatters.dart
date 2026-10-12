@@ -68,7 +68,7 @@ class TimeTrackerFormat {
   /// Function Name: [days] / [absences]
   ///
   /// Purpose: ADDED 9/10/2026 (UI pass) — a count with its noun: "1 Day" /
-  /// "3 Days", "1 absence" / "4 absences"; Arabic by the CLDR rule (last two
+  /// "3 Days", "1 Absence" / "4 Absences"; Arabic by the CLDR rule (last two
   /// digits) — 1 "يوم واحد", 2 "يومان", 3–10 "٤ أيام", 11–99 "١٥ يوما", else
   /// "١٠٠ يوم" (was "1 Days" / "٤ يوم" / "٣ غياب"). Same rule as
   /// `TimeTrackerCountWording`; no tanween (house rule). The words come from

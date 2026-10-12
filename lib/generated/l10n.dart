@@ -34971,20 +34971,20 @@ class S {
     );
   }
 
-  /// `Check In and Out`
+  /// `Check In And Out`
   String get timeTrackerCheckInAndOut {
     return Intl.message(
-      'Check In and Out',
+      'Check In And Out',
       name: 'timeTrackerCheckInAndOut',
       desc: '',
       args: [],
     );
   }
 
-  /// `Work From a Different Location`
+  /// `Work From A Different Location`
   String get timeTrackerWorkFromDifferentLocation {
     return Intl.message(
-      'Work From a Different Location',
+      'Work From A Different Location',
       name: 'timeTrackerWorkFromDifferentLocation',
       desc: '',
       args: [],
@@ -35021,10 +35021,10 @@ class S {
     );
   }
 
-  /// `HR Dashboard — Filter by Employee`
+  /// `HR Dashboard — Filter By Employee`
   String get timeTrackerHrDashboardFilterByEmployee {
     return Intl.message(
-      'HR Dashboard — Filter by Employee',
+      'HR Dashboard — Filter By Employee',
       name: 'timeTrackerHrDashboardFilterByEmployee',
       desc: '',
       args: [],
@@ -35111,10 +35111,10 @@ class S {
     );
   }
 
-  /// `Comment on Requests`
+  /// `Comment On Requests`
   String get timeTrackerCommentOnRequests {
     return Intl.message(
-      'Comment on Requests',
+      'Comment On Requests',
       name: 'timeTrackerCommentOnRequests',
       desc: '',
       args: [],
@@ -35141,10 +35141,10 @@ class S {
     );
   }
 
-  /// `Approve and Reject`
+  /// `Approve And Reject`
   String get timeTrackerApproveAndReject {
     return Intl.message(
-      'Approve and Reject',
+      'Approve And Reject',
       name: 'timeTrackerApproveAndReject',
       desc: '',
       args: [],
@@ -35171,10 +35171,10 @@ class S {
     );
   }
 
-  /// `Comment on Approvals`
+  /// `Comment On Approvals`
   String get timeTrackerCommentOnApprovals {
     return Intl.message(
-      'Comment on Approvals',
+      'Comment On Approvals',
       name: 'timeTrackerCommentOnApprovals',
       desc: '',
       args: [],
@@ -35756,10 +35756,10 @@ class S {
     );
   }
 
-  /// `Your Location Matches the Company’s Location`
+  /// `Your Location Matches The Company’s Location`
   String get timeTrackerLocationMatches {
     return Intl.message(
-      'Your Location Matches the Company’s Location',
+      'Your Location Matches The Company’s Location',
       name: 'timeTrackerLocationMatches',
       desc: '',
       args: [],
@@ -36361,10 +36361,10 @@ class S {
     return Intl.message('All', name: 'timeTrackerAll', desc: '', args: []);
   }
 
-  /// `At least (hours)`
+  /// `At Least (Hours)`
   String get timeTrackerMinTotalHoursHint {
     return Intl.message(
-      'At least (hours)',
+      'At Least (Hours)',
       name: 'timeTrackerMinTotalHoursHint',
       desc: '',
       args: [],
@@ -36581,10 +36581,10 @@ class S {
     );
   }
 
-  /// `Location at Google Maps`
+  /// `Location At Google Maps`
   String get timeTrackerLocationAtGoogleMaps {
     return Intl.message(
-      'Location at Google Maps',
+      'Location At Google Maps',
       name: 'timeTrackerLocationAtGoogleMaps',
       desc: '',
       args: [],
@@ -36661,10 +36661,10 @@ class S {
     );
   }
 
-  /// `Geofencing Radius (meters)`
+  /// `Geofencing Radius (Meters)`
   String get timeTrackerGeofenceRadius {
     return Intl.message(
-      'Geofencing Radius (meters)',
+      'Geofencing Radius (Meters)',
       name: 'timeTrackerGeofenceRadius',
       desc: '',
       args: [],
@@ -36721,10 +36721,10 @@ class S {
     );
   }
 
-  /// `State or Province`
+  /// `State Or Province`
   String get timeTrackerStateOrProvince {
     return Intl.message(
-      'State or Province',
+      'State Or Province',
       name: 'timeTrackerStateOrProvince',
       desc: '',
       args: [],
@@ -36831,10 +36831,10 @@ class S {
     );
   }
 
-  /// `Late After (minutes)`
+  /// `Late After (Minutes)`
   String get timeTrackerLateAfter {
     return Intl.message(
-      'Late After (minutes)',
+      'Late After (Minutes)',
       name: 'timeTrackerLateAfter',
       desc: '',
       args: [],
@@ -36851,10 +36851,10 @@ class S {
     );
   }
 
-  /// `Allow Breaks in Attendance`
+  /// `Allow Breaks In Attendance`
   String get timeTrackerAllowBreaks {
     return Intl.message(
-      'Allow Breaks in Attendance',
+      'Allow Breaks In Attendance',
       name: 'timeTrackerAllowBreaks',
       desc: '',
       args: [],
@@ -37701,20 +37701,20 @@ class S {
     );
   }
 
-  /// `Name (A to Z)`
+  /// `Name (A To Z)`
   String get timeTrackerSortNameAsc {
     return Intl.message(
-      'Name (A to Z)',
+      'Name (A To Z)',
       name: 'timeTrackerSortNameAsc',
       desc: '',
       args: [],
     );
   }
 
-  /// `Name (Z to A)`
+  /// `Name (Z To A)`
   String get timeTrackerSortNameDesc {
     return Intl.message(
-      'Name (Z to A)',
+      'Name (Z To A)',
       name: 'timeTrackerSortNameDesc',
       desc: '',
       args: [],
@@ -38471,10 +38471,10 @@ class S {
     );
   }
 
-  /// `Requested by`
+  /// `Requested By`
   String get timeTrackerRequestedBy {
     return Intl.message(
-      'Requested by',
+      'Requested By',
       name: 'timeTrackerRequestedBy',
       desc: '',
       args: [],
@@ -38501,20 +38501,20 @@ class S {
     );
   }
 
-  /// `Reasons of Rejection`
+  /// `Reasons Of Rejection`
   String get timeTrackerReasonsOfRejection {
     return Intl.message(
-      'Reasons of Rejection',
+      'Reasons Of Rejection',
       name: 'timeTrackerReasonsOfRejection',
       desc: '',
       args: [],
     );
   }
 
-  /// `Reasons of Cancellation`
+  /// `Reasons Of Cancellation`
   String get timeTrackerReasonsOfCancellation {
     return Intl.message(
-      'Reasons of Cancellation',
+      'Reasons Of Cancellation',
       name: 'timeTrackerReasonsOfCancellation',
       desc: '',
       args: [],
@@ -38556,10 +38556,10 @@ class S {
     );
   }
 
-  /// `Write a Comment`
+  /// `Write A Comment`
   String get timeTrackerWriteComment {
     return Intl.message(
-      'Write a Comment',
+      'Write A Comment',
       name: 'timeTrackerWriteComment',
       desc: '',
       args: [],
@@ -39046,10 +39046,10 @@ class S {
     );
   }
 
-  /// `Select State or Province`
+  /// `Select State Or Province`
   String get timeTrackerSelectState {
     return Intl.message(
-      'Select State or Province',
+      'Select State Or Province',
       name: 'timeTrackerSelectState',
       desc: '',
       args: [],
@@ -39206,10 +39206,10 @@ class S {
     );
   }
 
-  /// `3 or More Absences This Month`
+  /// `3 Or More Absences This Month`
   String get timeTrackerFrequentAbsences {
     return Intl.message(
-      '3 or More Absences This Month',
+      '3 Or More Absences This Month',
       name: 'timeTrackerFrequentAbsences',
       desc: '',
       args: [],
@@ -39246,10 +39246,10 @@ class S {
     );
   }
 
-  /// `{count} absences`
+  /// `{count} Absences`
   String timeTrackerAbsencesCount(Object count) {
     return Intl.message(
-      '$count absences',
+      '$count Absences',
       name: 'timeTrackerAbsencesCount',
       desc: '',
       args: [count],
@@ -39826,50 +39826,50 @@ class S {
     );
   }
 
-  /// `Use the location's rules`
+  /// `Use The Location's Rules`
   String get timeTrackerUseLocationRules {
     return Intl.message(
-      'Use the location\'s rules',
+      'Use The Location\'s Rules',
       name: 'timeTrackerUseLocationRules',
       desc: '',
       args: [],
     );
   }
 
-  /// `Custom rules for this group`
+  /// `Custom Rules For This Group`
   String get timeTrackerCustomRulesGroup {
     return Intl.message(
-      'Custom rules for this group',
+      'Custom Rules For This Group',
       name: 'timeTrackerCustomRulesGroup',
       desc: '',
       args: [],
     );
   }
 
-  /// `Custom rules for this employee`
+  /// `Custom Rules For This Employee`
   String get timeTrackerCustomRulesEmployee {
     return Intl.message(
-      'Custom rules for this employee',
+      'Custom Rules For This Employee',
       name: 'timeTrackerCustomRulesEmployee',
       desc: '',
       args: [],
     );
   }
 
-  /// `Custom — overrides the location`
+  /// `Custom — Overrides The Location`
   String get timeTrackerCustomOverridesLocation {
     return Intl.message(
-      'Custom — overrides the location',
+      'Custom — Overrides The Location',
       name: 'timeTrackerCustomOverridesLocation',
       desc: '',
       args: [],
     );
   }
 
-  /// `From location`
+  /// `From Location`
   String get timeTrackerRulesFromLocationTag {
     return Intl.message(
-      'From location',
+      'From Location',
       name: 'timeTrackerRulesFromLocationTag',
       desc: '',
       args: [],
@@ -39896,30 +39896,30 @@ class S {
     );
   }
 
-  /// `No breaks`
+  /// `No Breaks`
   String get timeTrackerNoBreaks {
     return Intl.message(
-      'No breaks',
+      'No Breaks',
       name: 'timeTrackerNoBreaks',
       desc: '',
       args: [],
     );
   }
 
-  /// `Pause allowed`
+  /// `Pause Allowed`
   String get timeTrackerPauseAllowed {
     return Intl.message(
-      'Pause allowed',
+      'Pause Allowed',
       name: 'timeTrackerPauseAllowed',
       desc: '',
       args: [],
     );
   }
 
-  /// `No pause`
+  /// `No Pause`
   String get timeTrackerNoPause {
     return Intl.message(
-      'No pause',
+      'No Pause',
       name: 'timeTrackerNoPause',
       desc: '',
       args: [],
@@ -39936,20 +39936,20 @@ class S {
     );
   }
 
-  /// `Maximum pause (minutes)`
+  /// `Maximum Pause (Minutes)`
   String get timeTrackerMaxPauseMinutes {
     return Intl.message(
-      'Maximum pause (minutes)',
+      'Maximum Pause (Minutes)',
       name: 'timeTrackerMaxPauseMinutes',
       desc: '',
       args: [],
     );
   }
 
-  /// `No limit`
+  /// `No Limit`
   String get timeTrackerNoLimit {
     return Intl.message(
-      'No limit',
+      'No Limit',
       name: 'timeTrackerNoLimit',
       desc: '',
       args: [],
@@ -39966,10 +39966,10 @@ class S {
     );
   }
 
-  /// `Demo tools`
+  /// `Demo Tools`
   String get timeTrackerDemoTools {
     return Intl.message(
-      'Demo tools',
+      'Demo Tools',
       name: 'timeTrackerDemoTools',
       desc: '',
       args: [],
@@ -39986,10 +39986,10 @@ class S {
     );
   }
 
-  /// `Load demo data`
+  /// `Load Demo Data`
   String get timeTrackerDemoLoad {
     return Intl.message(
-      'Load demo data',
+      'Load Demo Data',
       name: 'timeTrackerDemoLoad',
       desc: '',
       args: [],
@@ -40016,10 +40016,10 @@ class S {
     );
   }
 
-  /// `Remove demo data`
+  /// `Remove Demo Data`
   String get timeTrackerDemoRemove {
     return Intl.message(
-      'Remove demo data',
+      'Remove Demo Data',
       name: 'timeTrackerDemoRemove',
       desc: '',
       args: [],
@@ -40381,40 +40381,40 @@ class S {
     );
   }
 
-  /// `1 absence`
+  /// `1 Absence`
   String get timeTrackerOneAbsence {
     return Intl.message(
-      '1 absence',
+      '1 Absence',
       name: 'timeTrackerOneAbsence',
       desc: '',
       args: [],
     );
   }
 
-  /// `2 absences`
+  /// `2 Absences`
   String get timeTrackerTwoAbsences {
     return Intl.message(
-      '2 absences',
+      '2 Absences',
       name: 'timeTrackerTwoAbsences',
       desc: '',
       args: [],
     );
   }
 
-  /// `{count} absences`
+  /// `{count} Absences`
   String timeTrackerAbsencesFew(Object count) {
     return Intl.message(
-      '$count absences',
+      '$count Absences',
       name: 'timeTrackerAbsencesFew',
       desc: '',
       args: [count],
     );
   }
 
-  /// `{count} absences`
+  /// `{count} Absences`
   String timeTrackerAbsencesMany(Object count) {
     return Intl.message(
-      '$count absences',
+      '$count Absences',
       name: 'timeTrackerAbsencesMany',
       desc: '',
       args: [count],

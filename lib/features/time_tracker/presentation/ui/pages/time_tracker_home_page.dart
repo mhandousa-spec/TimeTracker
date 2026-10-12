@@ -47,6 +47,7 @@ import 'package:knowticed_plus/core/theme/app_animations.dart';
 import 'package:knowticed_plus/core/theme/app_colors.dart';
 import 'package:knowticed_plus/core/theme/app_theme.dart';
 import 'package:knowticed_plus/core/theme/haptic_controller.dart';
+import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_controls.dart';
 import 'package:knowticed_plus/features/time_tracker/data/services/time_tracker_access.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/enums/time_tracker_tab.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/controller/time_tracker_home_cubit.dart';
@@ -162,23 +163,12 @@ class _TitleRow extends StatelessWidget {
           ],
           Align(
             alignment: AlignmentDirectional.centerEnd,
-            child: GestureDetector(
+            // 12/10/2026 (owner R9): `TtLink` — the underline clears the text.
+            child: TtLink(
               key: const ValueKey<String>('timeTrackerHideExpand'),
-              onTap: () {
-                HapticController.low();
-                context.read<TimeTrackerHomeCubit>().toggleHeader();
-              },
-              child: Padding(
-                padding: EdgeInsetsDirectional.only(top: 6.h, bottom: 4.h),
-                child: Text(
-                  collapsed ? s.expand : s.hide,
-                  style: StyleText.fontSize14Weight500.copyWith(
-                    color: AppColors.blue,
-                    decoration: TextDecoration.underline,
-                    decorationColor: AppColors.blue,
-                  ),
-                ),
-              ),
+              label: collapsed ? s.expand : s.hide,
+              padding: EdgeInsetsDirectional.only(top: 6.h, bottom: 4.h),
+              onTap: () => context.read<TimeTrackerHomeCubit>().toggleHeader(),
             ),
           ),
         ],

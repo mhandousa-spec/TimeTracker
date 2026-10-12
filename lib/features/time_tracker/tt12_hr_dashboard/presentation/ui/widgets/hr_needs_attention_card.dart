@@ -27,6 +27,7 @@ import 'package:knowticed_plus/core/custom/16-custom_card_styles.dart';
 import 'package:knowticed_plus/core/custom/24-custom_chart_card.dart';
 import 'package:knowticed_plus/core/theme/app_colors.dart';
 import 'package:knowticed_plus/core/theme/app_theme.dart';
+import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_controls.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/entities/attendance_day.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/entities/time_tracker_employee.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/entities/time_tracker_request.dart';
@@ -200,22 +201,20 @@ class _Group extends StatelessWidget {
                   ],
                 ),
               ),
-              if (viewAll != null)
-                GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: viewAll,
-                  child: Text(s.viewAll,
-                      style: StyleText.fontSize12Weight500.copyWith(
-                        color: AppColors.blue,
-                        decoration: TextDecoration.underline,
-                        decorationColor: AppColors.blue,
-                      )),
-                ),
+              // 12/10/2026 (owner N2 / R9): a clear gap between the count
+              // badge and "View All"; `TtLink` keeps the underline off the text.
+              if (viewAll != null) ...<Widget>[
+                SizedBox(width: 12.w),
+                TtLink(label: s.viewAll, style: StyleText.fontSize12Weight500, padding: EdgeInsets.zero, onTap: viewAll),
+              ],
             ],
           ),
           SizedBox(height: 6.h),
           for (final Widget r in rows) Padding(padding: EdgeInsetsDirectional.only(bottom: 6.h), child: r),
-          if (more > 0)
+          // 12/10/2026 (owner B3): no loose "+2 more" line when "View All"
+          // (which opens the full list) is there — the badge already says
+          // how many there are.
+          if (more > 0 && viewAll == null)
             GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: viewAll,

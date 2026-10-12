@@ -196,6 +196,60 @@ class TtIconEditButton extends StatelessWidget {
   }
 }
 
+/// ADDED 12/10/2026 (owner rule R9): the module's one text link ("Expand",
+/// "Hide", "View All", comment "Edit" / "Delete"). The underline is a 1 px
+/// line drawn [gap] BELOW the text box instead of `TextDecoration.underline`
+/// (which sits on the baseline and touches the Cairo descenders). Tap area
+/// padded so the link is easy to hit. LOW haptic.
+class TtLink extends StatelessWidget {
+  const TtLink({
+    super.key,
+    required this.label,
+    required this.onTap,
+    this.style,
+    this.color,
+    this.padding,
+  });
+
+  final String label;
+  final VoidCallback onTap;
+
+  /// Size / weight (colour comes from [color]); default 14 Medium.
+  final TextStyle? style;
+
+  /// Text + underline colour; default `AppColors.blue`.
+  final Color? color;
+
+  /// Tap padding around the link; default 4 vertical.
+  final EdgeInsetsGeometry? padding;
+
+  @override
+  Widget build(BuildContext context) {
+    final Color c = color ?? AppColors.blue;
+    return Semantics(
+      link: true,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          HapticController.low();
+          onTap();
+        },
+        child: Padding(
+          padding: padding ?? EdgeInsets.symmetric(vertical: 4.h),
+          child: Container(
+            padding: EdgeInsets.only(bottom: 2.h),
+            decoration: BoxDecoration(border: Border(bottom: BorderSide(color: c))),
+            child: Text(
+              label,
+              style: (style ?? StyleText.fontSize14Weight500).copyWith(color: c, height: 1.2),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 /// ADDED 9/10/2026 (owner review): ONE height and corner radius for every
 /// toolbar control — Search (`AppSearchTextField` 38 / 8), the Department /
 /// filter dropdowns, Export and Import (core `ButtonSizing` 38 / 8).
