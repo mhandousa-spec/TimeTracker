@@ -8356,7 +8356,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerNotRequired": MessageLookupByLibrary.simpleMessage(
       "Not Required",
     ),
+    "timeTrackerOff": MessageLookupByLibrary.simpleMessage("Off"),
     "timeTrackerOffice": MessageLookupByLibrary.simpleMessage("Office"),
+    "timeTrackerOn": MessageLookupByLibrary.simpleMessage("On"),
     "timeTrackerOnLeaveToday": MessageLookupByLibrary.simpleMessage(
       "On Leave Today",
     ),
@@ -8365,6 +8367,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "timeTrackerOneAbsence": MessageLookupByLibrary.simpleMessage("1 Absence"),
     "timeTrackerOneDay": MessageLookupByLibrary.simpleMessage("1 Day"),
+    "timeTrackerOpenInGoogleMaps": MessageLookupByLibrary.simpleMessage(
+      "Open In Google Maps",
+    ),
     "timeTrackerOptional": MessageLookupByLibrary.simpleMessage("Optional"),
     "timeTrackerOthers": MessageLookupByLibrary.simpleMessage("Others"),
     "timeTrackerOverall": MessageLookupByLibrary.simpleMessage("Overall"),
@@ -8607,6 +8612,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Search An Address Or Place",
     ),
     "timeTrackerSearching": MessageLookupByLibrary.simpleMessage("Searching…"),
+    "timeTrackerSectionAddress": MessageLookupByLibrary.simpleMessage(
+      "Address",
+    ),
+    "timeTrackerSectionAttendanceRules": MessageLookupByLibrary.simpleMessage(
+      "Attendance Rules",
+    ),
     "timeTrackerSectionAvailability": MessageLookupByLibrary.simpleMessage(
       "Availability",
     ),
@@ -8615,6 +8626,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "timeTrackerSectionHistory": MessageLookupByLibrary.simpleMessage(
       "History",
+    ),
+    "timeTrackerSectionMap": MessageLookupByLibrary.simpleMessage(
+      "Location On Map",
     ),
     "timeTrackerSectionRequirements": MessageLookupByLibrary.simpleMessage(
       "Request Requirements",

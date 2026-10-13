@@ -4817,5 +4817,11 @@
   "timeTrackerPickTypeFirst": "اختر نوع الطلب أولاً — وسيعرض النموذج ما يحتاجه فقط.",
   "timeTrackerApprovedByColumn": "تمت الموافقة بواسطة",
   "timeTrackerRemindAgainIn": "يمكنك التذكير مرة أخرى بعد {time}",
-  "timeTrackerHoursMinutesShort": "{h} س {m} د"
+  "timeTrackerHoursMinutesShort": "{h} س {m} د",
+  "timeTrackerOn": "مفعّل",
+  "timeTrackerOff": "معطّل",
+  "timeTrackerSectionAddress": "العنوان",
+  "timeTrackerSectionMap": "الموقع على الخريطة",
+  "timeTrackerOpenInGoogleMaps": "فتح في خرائط جوجل",
+  "timeTrackerSectionAttendanceRules": "قواعد الحضور"
 }

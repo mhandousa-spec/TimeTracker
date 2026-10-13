@@ -379,6 +379,8 @@ void main() {
           await c.shot('52_location_details');
           await c.scroll();
           await c.shot('52_location_details_s1');
+          await c.scroll();
+          await c.shot('52_location_details_s2');
           await c.top();
           await c.tap('locationDeleteButton');
           await c.shot('53_location_delete_blocked');

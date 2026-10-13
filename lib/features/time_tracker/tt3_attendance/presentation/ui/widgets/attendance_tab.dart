@@ -142,8 +142,9 @@ class _AttendanceTabState extends State<AttendanceTab> {
   ) {
     final S s = S.of(context);
     final TimeTrackerAccess access = _access;
-    return Row(
-      children: <Widget>[
+    // 13/10/2026 (Figma phone): "+ Transaction" full width under the row.
+    return TtToolbarWithPrimary(
+      tools: <Widget>[
         TtSearchField(
           controller: _search,
           onChanged: context.read<AttendanceCubit>().searchChanged,
@@ -161,17 +162,17 @@ class _AttendanceTabState extends State<AttendanceTab> {
             onTap: () => _export(rows),
           ),
         ],
-        if (access.canRequestTransaction) ...<Widget>[
-          SizedBox(width: 15.w),
-          // 12/10/2026 (owner R7 / O2): the shared toolbar button.
-          TtToolbarButton(
-            key: const ValueKey<String>('attendanceTransactionButton'),
-            title: s.timeTrackerTransactionButton,
-            icon: TtAssets.add,
-            onTap: _openTransaction,
-          ),
-        ],
       ],
+      // 12/10/2026 (owner R7 / O2): the shared toolbar button.
+      primary: access.canRequestTransaction
+          ? TtToolbarButton(
+              key: const ValueKey<String>('attendanceTransactionButton'),
+              title: s.timeTrackerTransactionButton,
+              icon: TtAssets.add,
+              wide: context.isPhone,
+              onTap: _openTransaction,
+            )
+          : null,
     );
   }
 

@@ -40965,6 +40965,56 @@ class S {
       args: [h, m],
     );
   }
+
+  /// `On`
+  String get timeTrackerOn {
+    return Intl.message('On', name: 'timeTrackerOn', desc: '', args: []);
+  }
+
+  /// `Off`
+  String get timeTrackerOff {
+    return Intl.message('Off', name: 'timeTrackerOff', desc: '', args: []);
+  }
+
+  /// `Address`
+  String get timeTrackerSectionAddress {
+    return Intl.message(
+      'Address',
+      name: 'timeTrackerSectionAddress',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Location On Map`
+  String get timeTrackerSectionMap {
+    return Intl.message(
+      'Location On Map',
+      name: 'timeTrackerSectionMap',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Open In Google Maps`
+  String get timeTrackerOpenInGoogleMaps {
+    return Intl.message(
+      'Open In Google Maps',
+      name: 'timeTrackerOpenInGoogleMaps',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Attendance Rules`
+  String get timeTrackerSectionAttendanceRules {
+    return Intl.message(
+      'Attendance Rules',
+      name: 'timeTrackerSectionAttendanceRules',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

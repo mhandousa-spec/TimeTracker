@@ -52,7 +52,9 @@ class LocationText {
   static String country(BuildContext context, WorkLocation l) => _labelOf(
         context,
         LocationDataService.instance.countries(context),
-        (LocationOption o) => o.code.toUpperCase() == l.country.trim().toUpperCase(),
+        // 13/10/2026: imported / demo rows may hold the English NAME
+        // ("Egypt") instead of the ISO code — show it in Arabic too.
+        (LocationOption o) => o.code.toUpperCase() == l.country.trim().toUpperCase() || o.matches(l.country),
         l.country,
       );
 

@@ -41,6 +41,7 @@ import 'package:knowticed_plus/core/theme/haptic_controller.dart';
 import 'package:knowticed_plus/features/time_tracker/data/services/time_tracker_access.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/entities/work_location.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_controls.dart';
+import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_formatters.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_csv_export.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_setup_widgets.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_table.dart';
@@ -126,8 +127,10 @@ class _LocationsTabState extends State<LocationsTab> {
   Widget _toolbar(BuildContext context, LocationsState state, List<WorkLocation> rows) {
     final S s = S.of(context);
     final bool hasHr = state.companyHasHr;
-    return Row(
-      children: <Widget>[
+    // 13/10/2026 (owner S1, Figma): Search · Filter · Export · Import in one
+    // row; "+ Location" full width under it on a phone.
+    return TtToolbarWithPrimary(
+      tools: <Widget>[
         TtSearchField(
           controller: _search,
           onChanged: context.read<LocationsCubit>().searchChanged,
@@ -154,16 +157,16 @@ class _LocationsTabState extends State<LocationsTab> {
             onTap: () => showLocationImportDialog(context),
           ),
         ],
-        if (_access.canCreateLocation(companyHasHr: hasHr)) ...<Widget>[
-          SizedBox(width: 15.w),
-          TtToolbarButton(
-            key: const ValueKey<String>('locationsAddButton'),
-            title: s.timeTrackerLocation,
-            icon: TtAssets.add,
-            onTap: () => _open(const LocationFormPage()),
-          ),
-        ],
       ],
+      primary: _access.canCreateLocation(companyHasHr: hasHr)
+          ? TtToolbarButton(
+              key: const ValueKey<String>('locationsAddButton'),
+              title: s.timeTrackerLocation,
+              icon: TtAssets.add,
+              wide: context.isPhone,
+              onTap: () => _open(const LocationFormPage()),
+            )
+          : null,
     );
   }
 
@@ -195,41 +198,101 @@ class _LocationsTabState extends State<LocationsTab> {
   }
 
   Widget _cards(BuildContext context, List<WorkLocation> rows, ValueChanged<WorkLocation> open) {
-    final S s = S.of(context);
     return AnimatedSizeWrap(
       child: Column(
         children: <Widget>[
           for (final WorkLocation l in rows)
-            GestureDetector(
-              key: ValueKey<String>('locationRow_${l.id}'),
-              onTap: () {
-                HapticController.low();
-                open(l);
-              },
-              child: Container(
-                margin: EdgeInsetsDirectional.only(bottom: 10.h),
-                padding: EdgeInsetsDirectional.all(12.r),
-                decoration: BoxDecoration(color: AppColors.card, borderRadius: CardStyles.radius()),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    Row(children: <Widget>[
-                      Expanded(
-                        child: Text(LocationText.name(context, l),
-                            style: StyleText.fontSize14Weight500.copyWith(color: AppColors.text)),
-                      ),
-                      LocationStatusText(status: l.status),
-                    ]),
-                    SizedBox(height: 6.h),
-                    Text(LocationText.hours(context, l),
-                        style: StyleText.fontSize12Weight400.copyWith(color: AppColors.secondaryText)),
-                    Text('${s.timeTrackerGeofencing}: ${LocationText.yesNo(context, l.isGeofenceEnabled)}',
-                        style: StyleText.fontSize12Weight400.copyWith(color: AppColors.secondaryText)),
-                  ],
-                ),
-              ),
+            Padding(
+              padding: EdgeInsetsDirectional.only(bottom: 10.h),
+              child: LocationCard(location: l, onTap: () => open(l)),
             ),
         ],
+      ),
+    );
+  }
+}
+
+/// 13/10/2026 (owner S2, Figma `661:117634`): the phone location card —
+/// Last Update on top, the building icon box + name, then Geofencing,
+/// Country, City, Allow Breaks, Allow Pause with their Figma icons, and
+/// Created Date at the end of the last line.
+class LocationCard extends StatelessWidget {
+  const LocationCard({super.key, required this.location, required this.onTap});
+
+  final WorkLocation location;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final S s = S.of(context);
+    final WorkLocation l = location;
+    final TextStyle label = StyleText.fontSize12Weight400.copyWith(color: AppColors.secondaryText);
+    final TextStyle value = StyleText.fontSize12Weight500.copyWith(color: AppColors.text);
+    String onOff(bool v) => v ? s.timeTrackerOn : s.timeTrackerOff;
+    Widget line(String icon, String l, Widget v) => Padding(
+          padding: EdgeInsetsDirectional.only(top: 6.h),
+          child: Row(
+            children: <Widget>[
+              TtIcon(TtGlyph.svg(icon), size: 14.r, color: AppColors.secondaryText),
+              SizedBox(width: 6.w),
+              Flexible(child: Text('$l: ', maxLines: 1, overflow: TextOverflow.ellipsis, style: label)),
+              Flexible(child: v),
+            ],
+          ),
+        );
+    Text text(String v) => Text(v, maxLines: 1, overflow: TextOverflow.ellipsis, style: value);
+    final TextStyle small = StyleText.fontSize10Weight400.copyWith(color: AppColors.secondaryText);
+    return GestureDetector(
+      key: ValueKey<String>('locationRow_${l.id}'),
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        HapticController.low();
+        onTap();
+      },
+      child: Container(
+        padding: EdgeInsetsDirectional.all(10.r),
+        decoration: BoxDecoration(color: AppColors.card, borderRadius: CardStyles.radius()),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: Text(s.timeTrackerLastUpdateValue(TimeTrackerFormat.date(context, l.audit.updatedAt)), style: small),
+            ),
+            SizedBox(height: 2.h),
+            Row(
+              children: <Widget>[
+                Container(
+                  width: 36.r,
+                  height: 36.r,
+                  padding: EdgeInsetsDirectional.all(7.r),
+                  decoration: BoxDecoration(
+                    color: AppColors.background,
+                    borderRadius: BorderRadiusDirectional.circular(8.r),
+                  ),
+                  child: TtIcon(const TtGlyph.svg(TtAssets.locBuilding), size: 22.r, color: AppColors.text),
+                ),
+                SizedBox(width: 8.w),
+                Expanded(
+                  child: Text(LocationText.name(context, l),
+                      maxLines: 2, overflow: TextOverflow.ellipsis, style: StyleText.fontSize14Weight500.copyWith(color: AppColors.text)),
+                ),
+              ],
+            ),
+            line(TtAssets.locGeofence, s.timeTrackerGeofencing, text(onOff(l.isGeofenceEnabled))),
+            line(TtAssets.locCountry, s.timeTrackerCountry, text(LocationText.country(context, l))),
+            line(TtAssets.locCity, s.timeTrackerCity, text(LocationText.city(context, l))),
+            line(TtAssets.dayBreak, s.timeTrackerAllowBreaks, text(onOff(l.isBreakAllowed))),
+            // Figma: Created Date shares the last line (no Status line).
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: <Widget>[
+                Expanded(child: line(TtAssets.locPause, s.timeTrackerAllowPause, text(onOff(l.isPauseAllowed)))),
+                Text(s.timeTrackerCreatedDateValue(TimeTrackerFormat.date(context, l.audit.createdAt)), style: small),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

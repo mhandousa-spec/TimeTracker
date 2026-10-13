@@ -8051,7 +8051,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "لم يُعيَّن في موقع بعد.",
     ),
     "timeTrackerNotRequired": MessageLookupByLibrary.simpleMessage("غير مطلوب"),
+    "timeTrackerOff": MessageLookupByLibrary.simpleMessage("معطّل"),
     "timeTrackerOffice": MessageLookupByLibrary.simpleMessage("المكتب"),
+    "timeTrackerOn": MessageLookupByLibrary.simpleMessage("مفعّل"),
     "timeTrackerOnLeaveToday": MessageLookupByLibrary.simpleMessage(
       "في إجازة اليوم",
     ),
@@ -8060,6 +8062,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "timeTrackerOneAbsence": MessageLookupByLibrary.simpleMessage("غياب واحد"),
     "timeTrackerOneDay": MessageLookupByLibrary.simpleMessage("يوم واحد"),
+    "timeTrackerOpenInGoogleMaps": MessageLookupByLibrary.simpleMessage(
+      "فتح في خرائط جوجل",
+    ),
     "timeTrackerOptional": MessageLookupByLibrary.simpleMessage("اختياري"),
     "timeTrackerOthers": MessageLookupByLibrary.simpleMessage("أخرى"),
     "timeTrackerOverall": MessageLookupByLibrary.simpleMessage("الإجمالي"),
@@ -8294,6 +8299,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "ابحث عن عنوان أو مكان",
     ),
     "timeTrackerSearching": MessageLookupByLibrary.simpleMessage("جارٍ البحث…"),
+    "timeTrackerSectionAddress": MessageLookupByLibrary.simpleMessage(
+      "العنوان",
+    ),
+    "timeTrackerSectionAttendanceRules": MessageLookupByLibrary.simpleMessage(
+      "قواعد الحضور",
+    ),
     "timeTrackerSectionAvailability": MessageLookupByLibrary.simpleMessage(
       "الإتاحة",
     ),
@@ -8301,6 +8312,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "هذا القسم قادم قريبا.",
     ),
     "timeTrackerSectionHistory": MessageLookupByLibrary.simpleMessage("السجل"),
+    "timeTrackerSectionMap": MessageLookupByLibrary.simpleMessage(
+      "الموقع على الخريطة",
+    ),
     "timeTrackerSectionRequirements": MessageLookupByLibrary.simpleMessage(
       "متطلبات الطلب",
     ),

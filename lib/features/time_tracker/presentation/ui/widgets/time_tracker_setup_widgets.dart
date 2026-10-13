@@ -360,27 +360,70 @@ class TtRemovableChip extends StatelessWidget {
 
 /// Yellow toolbar button with an icon (icon-only on phone).
 class TtToolbarButton extends StatelessWidget {
-  const TtToolbarButton({super.key, required this.title, required this.icon, required this.onTap, this.iconSize});
+  const TtToolbarButton({
+    super.key,
+    required this.title,
+    required this.icon,
+    required this.onTap,
+    this.iconSize,
+    this.wide = false,
+  });
 
   final String title;
   final String icon;
   final VoidCallback onTap;
   final double? iconSize;
 
+  /// 13/10/2026 (owner S1, Figma phone toolbar): the full-width labelled
+  /// "+ Location" / "+ Transaction" button under the toolbar row.
+  final bool wide;
+
   @override
   Widget build(BuildContext context) {
-    return ShrinkOnTap(
-      child: customButtonWithSvg(
-        title: context.isPhone ? '' : title,
-        function: onTap,
-        color: AppColors.primary,
-        colorBorder: AppColors.transparent,
-        image: icon,
-        widthImage: iconSize ?? TtToolbar.iconSize,
-        heightImage: iconSize ?? TtToolbar.iconSize,
-        svgColor: AppColors.textButton,
-        textStyle: StyleText.fontSize16Weight500.copyWith(color: AppColors.textButton),
-      ),
+    Widget button(double? width) => ShrinkOnTap(
+          child: customButtonWithSvg(
+            title: context.isPhone && !wide ? '' : title,
+            function: onTap,
+            color: AppColors.primary,
+            colorBorder: AppColors.transparent,
+            image: icon,
+            widthImage: iconSize ?? TtToolbar.iconSize,
+            heightImage: iconSize ?? TtToolbar.iconSize,
+            svgColor: AppColors.textButton,
+            fixedWidth: width,
+            fixedHeight: wide ? TtToolbar.height : null,
+            textStyle: StyleText.fontSize16Weight500.copyWith(color: AppColors.textButton),
+          ),
+        );
+    if (!wide) return button(null);
+    return LayoutBuilder(builder: (BuildContext context, BoxConstraints box) => button(box.maxWidth));
+  }
+}
+
+/// ADDED 13/10/2026 (owner S1, Figma phone toolbars): [tools] (search,
+/// filter, export, …) in one row; the [primary] add-button joins the row on
+/// a tablet and gets its own full-width row under it on a phone.
+class TtToolbarWithPrimary extends StatelessWidget {
+  const TtToolbarWithPrimary({super.key, required this.tools, this.primary});
+
+  final List<Widget> tools;
+
+  /// A [TtToolbarButton] built with `wide: context.isPhone`.
+  final Widget? primary;
+
+  @override
+  Widget build(BuildContext context) {
+    final Widget? main = primary;
+    if (!context.isPhone || main == null) {
+      return Row(children: <Widget>[...tools, if (main != null) ...<Widget>[SizedBox(width: 15.w), main]]);
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Row(children: tools),
+        SizedBox(height: 10.h),
+        main,
+      ],
     );
   }
 }
@@ -605,4 +648,128 @@ Future<bool> Function() refreshingCheckIn(
     if (ok) checkIn?.init();
     return ok;
   };
+}
+
+/// ADDED 13/10/2026 (owner S4 / R12): a titled details section — a yellow
+/// circle icon + title, then [rows] (same look as the Request Type details).
+class TtDetailSection extends StatelessWidget {
+  const TtDetailSection({super.key, required this.title, required this.icon, required this.rows, this.trailing});
+
+  final String title;
+  final String icon;
+  final List<Widget> rows;
+  final Widget? trailing;
+
+  @override
+  Widget build(BuildContext context) {
+    return TtFormCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Container(
+                width: 28.r,
+                height: 28.r,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(color: AppColors.primary, shape: BoxShape.circle),
+                child: TtIcon(TtGlyph.svg(icon), size: 15.r, color: AppColors.textButton),
+              ),
+              SizedBox(width: 8.w),
+              Expanded(child: Text(title, style: StyleText.fontSize16Weight500.copyWith(color: AppColors.text))),
+              if (trailing != null) trailing!,
+            ],
+          ),
+          for (final Widget r in rows) ...<Widget>[SizedBox(height: 10.h), r],
+        ],
+      ),
+    );
+  }
+}
+
+/// icon · label over the value (the value wraps).
+class TtDetailInfo extends StatelessWidget {
+  const TtDetailInfo({super.key, required this.icon, required this.label, required this.value});
+
+  final String icon;
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Padding(
+          padding: EdgeInsetsDirectional.only(top: 2.h),
+          child: TtIcon(TtGlyph.svg(icon), size: 16.r, color: AppColors.secondaryText),
+        ),
+        SizedBox(width: 8.w),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(label, style: StyleText.fontSize12Weight400.copyWith(color: AppColors.secondaryText)),
+              SizedBox(height: 2.h),
+              Text(value, style: StyleText.fontSize14Weight500.copyWith(color: AppColors.text)),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// icon · label ........ a small value chip, blue when [on].
+class TtDetailRule extends StatelessWidget {
+  const TtDetailRule({super.key, required this.icon, required this.label, required this.value, required this.on});
+
+  final String icon;
+  final String label;
+  final String value;
+  final bool on;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: <Widget>[
+        TtIcon(TtGlyph.svg(icon), size: 16.r, color: AppColors.secondaryText),
+        SizedBox(width: 8.w),
+        Expanded(child: Text(label, style: StyleText.fontSize14Weight400.copyWith(color: AppColors.text))),
+        Container(
+          padding: EdgeInsetsDirectional.symmetric(horizontal: 8.w, vertical: 3.h),
+          decoration: BoxDecoration(
+            color: on ? AppColors.blue.withValues(alpha: 0.12) : AppColors.background,
+            borderRadius: BorderRadius.circular(6.r),
+          ),
+          child: Text(value,
+              style: StyleText.fontSize12Weight500.copyWith(color: on ? AppColors.blue : AppColors.secondaryText)),
+        ),
+      ],
+    );
+  }
+}
+
+/// A status as a coloured chip: tinted container, dot, label.
+class TtStatusChip extends StatelessWidget {
+  const TtStatusChip({super.key, required this.label, required this.color});
+
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsetsDirectional.symmetric(horizontal: 14.w, vertical: 7.h),
+      decoration: BoxDecoration(color: color.withValues(alpha: 0.14), borderRadius: BorderRadius.circular(20.r)),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Container(width: 9.r, height: 9.r, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+          SizedBox(width: 8.w),
+          Text(label, style: StyleText.fontSize16Weight500.copyWith(color: color)),
+        ],
+      ),
+    );
+  }
 }

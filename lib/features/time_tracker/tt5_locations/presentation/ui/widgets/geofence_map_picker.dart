@@ -59,7 +59,27 @@ class GeofenceMapPicker extends StatefulWidget {
     required this.onPoint,
     required this.onLocate,
     this.onRadius,
-  });
+  }) : readOnly = false;
+
+  /// 13/10/2026 (owner S4): the Location details' map — the pin and the
+  /// geofence circle with the Satellite / Map switch only (no search, no
+  /// "use my location", taps do nothing).
+  const GeofenceMapPicker.preview({
+    super.key,
+    required this.latitude,
+    required this.longitude,
+    required this.radiusMeters,
+    required this.showCircle,
+  })  : locating = false,
+        onPoint = _noPoint,
+        onLocate = _noLocate,
+        onRadius = null,
+        readOnly = true;
+
+  static void _noPoint(LatLng _) {}
+  static void _noLocate() {}
+
+  final bool readOnly;
 
   final double? latitude;
   final double? longitude;
@@ -205,6 +225,7 @@ class _GeofenceMapPickerState extends State<GeofenceMapPicker> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
+        if (!widget.readOnly) ...<Widget>[
         Text(s.timeTrackerGeofencePreview, style: StyleText.fontSize14Weight500.copyWith(color: AppColors.text)),
         SizedBox(height: 8.h),
         Row(
@@ -260,6 +281,7 @@ class _GeofenceMapPickerState extends State<GeofenceMapPicker> {
               style: StyleText.fontSize12Weight400.copyWith(color: AppColors.red)),
         ],
         SizedBox(height: 10.h),
+        ],
         Align(
           alignment: AlignmentDirectional.centerStart,
           child: TtSegmentedToggle(
@@ -283,14 +305,20 @@ class _GeofenceMapPickerState extends State<GeofenceMapPicker> {
                 initialCenter: p ?? _fallbackCenter,
                 initialZoom: p == null ? 11 : 17,
                 backgroundColor: AppColors.background,
+                // Preview: zoom only — a drag scrolls the page, not the map.
+                interactionOptions: widget.readOnly
+                    ? const InteractionOptions(flags: InteractiveFlag.pinchZoom | InteractiveFlag.doubleTapZoom)
+                    : const InteractionOptions(),
                 onMapReady: () {
                   _ready = true;
                   _frame();
                 },
-                onTap: (TapPosition _, LatLng point) {
-                  HapticController.low();
-                  widget.onPoint(point);
-                },
+                onTap: widget.readOnly
+                    ? null
+                    : (TapPosition _, LatLng point) {
+                        HapticController.low();
+                        widget.onPoint(point);
+                      },
               ),
               children: <Widget>[
                 ..._tileLayers(),
@@ -323,8 +351,10 @@ class _GeofenceMapPickerState extends State<GeofenceMapPicker> {
             ),
           ),
         ),
-        SizedBox(height: 6.h),
-        Text(s.timeTrackerTapMapHint, style: StyleText.fontSize10Weight400.copyWith(color: AppColors.secondaryText)),
+        if (!widget.readOnly) ...<Widget>[
+          SizedBox(height: 6.h),
+          Text(s.timeTrackerTapMapHint, style: StyleText.fontSize10Weight400.copyWith(color: AppColors.secondaryText)),
+        ],
         if (widget.showCircle && widget.onRadius != null) ...<Widget>[
           SizedBox(height: 10.h),
           Align(

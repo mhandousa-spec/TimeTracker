@@ -130,6 +130,13 @@ abstract class TtAssets {
   static const String rtAttachments = '$_dir/tt_rt_attachments.svg';
   static const String rtStatus = '$_dir/tt_rt_status.svg';
 
+  /// 13/10/2026 (owner S2): the Location card icons (Figma `661:117634`).
+  static const String locBuilding = '$_dir/tt_loc_building.svg';
+  static const String locGeofence = '$_dir/tt_loc_geofence.svg';
+  static const String locCountry = '$_dir/tt_loc_country.svg';
+  static const String locCity = '$_dir/tt_loc_city.svg';
+  static const String locPause = '$_dir/tt_loc_pause.svg';
+
   /// Red filled circle with a white minus (drawn in its own colours).
   static const String minusCircle = '$_main/minus_circle_red.svg';
 
