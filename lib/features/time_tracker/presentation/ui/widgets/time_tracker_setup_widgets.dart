@@ -454,6 +454,25 @@ class TtArabicField extends StatelessWidget {
   Widget build(BuildContext context) => Directionality(textDirection: TextDirection.rtl, child: child);
 }
 
+/// ADDED 13/10/2026 (owner): an English field + its Arabic twin. ENGLISH
+/// always on the LEFT, ARABIC always on the RIGHT — in an Arabic UI the
+/// Arabic one therefore comes FIRST (and first on a phone, where they
+/// stack). Each lays out in its own direction (label + counter), so the
+/// English label is English and the Arabic label is Arabic in both UIs.
+class TtBilingualPair extends StatelessWidget {
+  const TtBilingualPair({super.key, required this.english, required this.arabic});
+
+  final Widget english;
+  final Widget arabic;
+
+  @override
+  Widget build(BuildContext context) {
+    final Widget en = Directionality(textDirection: TextDirection.ltr, child: english);
+    final Widget ar = TtArabicField(child: arabic);
+    return Directionality.of(context) == TextDirection.rtl ? TtPair(start: ar, end: en) : TtPair(start: en, end: ar);
+  }
+}
+
 /// Grey Discard (start) · yellow primary (end, grey until [canSubmit]).
 class TimeTrackerFormActions extends StatelessWidget {
   const TimeTrackerFormActions({

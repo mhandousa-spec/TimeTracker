@@ -39296,6 +39296,71 @@ class S {
     );
   }
 
+  /// `Map`
+  String get timeTrackerMapView {
+    return Intl.message('Map', name: 'timeTrackerMapView', desc: '', args: []);
+  }
+
+  /// `Satellite`
+  String get timeTrackerSatelliteView {
+    return Intl.message(
+      'Satellite',
+      name: 'timeTrackerSatelliteView',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Location Name`
+  String get timeTrackerEnLocationName {
+    return Intl.message(
+      'Location Name',
+      name: 'timeTrackerEnLocationName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Group Name`
+  String get timeTrackerEnGroupName {
+    return Intl.message(
+      'Group Name',
+      name: 'timeTrackerEnGroupName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Request Name`
+  String get timeTrackerEnRequestName {
+    return Intl.message(
+      'Request Name',
+      name: 'timeTrackerEnRequestName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Description`
+  String get timeTrackerEnDescription {
+    return Intl.message(
+      'Description',
+      name: 'timeTrackerEnDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Text here`
+  String get timeTrackerTextHereEn {
+    return Intl.message(
+      'Text here',
+      name: 'timeTrackerTextHereEn',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Request Requirements`
   String get timeTrackerSectionRequirements {
     return Intl.message(

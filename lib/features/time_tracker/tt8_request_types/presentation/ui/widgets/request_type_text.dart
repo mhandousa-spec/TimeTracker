@@ -194,7 +194,8 @@ class RequestTypeStatusChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final Color c = RequestTypeStatusText.colorOf(status);
     return Container(
-      padding: EdgeInsetsDirectional.symmetric(horizontal: 10.w, vertical: 4.h),
+      // 13/10/2026 (owner): a little bigger.
+      padding: EdgeInsetsDirectional.symmetric(horizontal: 14.w, vertical: 7.h),
       decoration: BoxDecoration(
         color: c.withValues(alpha: 0.14),
         borderRadius: BorderRadius.circular(20.r),
@@ -202,9 +203,9 @@ class RequestTypeStatusChip extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Container(width: 6.r, height: 6.r, decoration: BoxDecoration(color: c, shape: BoxShape.circle)),
-          SizedBox(width: 6.w),
-          Text(RequestTypeText.status(context, status), style: StyleText.fontSize12Weight500.copyWith(color: c)),
+          Container(width: 9.r, height: 9.r, decoration: BoxDecoration(color: c, shape: BoxShape.circle)),
+          SizedBox(width: 8.w),
+          Text(RequestTypeText.status(context, status), style: StyleText.fontSize16Weight500.copyWith(color: c)),
         ],
       ),
     );

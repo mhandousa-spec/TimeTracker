@@ -333,19 +333,21 @@ class _GroupFormViewState extends State<_GroupFormView> {
         _picture(state),
         SizedBox(height: 15.h),
         // Decision 32 (9/10/2026): name + description in EN and AR.
-        TtPair(
-          start: CustomTextField(
+        // 13/10/2026 (owner): English left, Arabic right (Arabic first in
+        // an Arabic UI); each label in its own language.
+        TtBilingualPair(
+          english: CustomTextField(
             key: const ValueKey<String>('groupNameField'),
             controller: _name,
-            label: s.timeTrackerGroupName,
+            label: s.timeTrackerEnGroupName,
             labelStyle: _label,
-            hint: s.textHere,
+            hint: s.timeTrackerTextHereEn,
             height: 36,
             errorText: state.shows(GroupFormError.nameRequired) ? s.timeTrackerNameRequired : null,
             valueStyle: StyleText.fontSize12Weight400.copyWith(color: AppColors.text),
             onChanged: (String v) => _cubit.update(_draft.copyWith(name: v)),
           ),
-          end: TtArabicField(
+          arabic: TtArabicField(
             child: CustomTextField(
               key: const ValueKey<String>('groupNameArField'),
               controller: _nameAr,
@@ -361,13 +363,15 @@ class _GroupFormViewState extends State<_GroupFormView> {
           ),
         ),
         SizedBox(height: 15.h),
-        TtPair(
-          start: CustomTextField(
+        // 13/10/2026 (owner): English left, Arabic right (Arabic first in
+        // an Arabic UI); each label in its own language.
+        TtBilingualPair(
+          english: CustomTextField(
             key: const ValueKey<String>('groupDescriptionField'),
             controller: _description,
-            label: s.timeTrackerDescription,
+            label: s.timeTrackerEnDescription,
             labelStyle: _label,
-            hint: s.textHere,
+            hint: s.timeTrackerTextHereEn,
             height: 72,
             maxLines: 3,
             minLines: 3,
@@ -376,7 +380,7 @@ class _GroupFormViewState extends State<_GroupFormView> {
             valueStyle: StyleText.fontSize12Weight400.copyWith(color: AppColors.text),
             onChanged: (String v) => _cubit.update(_draft.copyWith(description: v)),
           ),
-          end: TtArabicField(
+          arabic: TtArabicField(
             child: CustomTextField(
               key: const ValueKey<String>('groupDescriptionArField'),
               controller: _descriptionAr,

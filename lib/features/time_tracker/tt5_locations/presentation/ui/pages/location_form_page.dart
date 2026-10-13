@@ -449,11 +449,13 @@ class _LocationFormViewState extends State<_LocationFormView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        TtPair(
-          start: _text('nameEn', label: s.timeTrackerLocationName,
+        // 13/10/2026 (owner): English left, Arabic right (Arabic first in
+        // an Arabic UI); each label in its own language.
+        TtBilingualPair(
+          english: _text('nameEn', label: s.timeTrackerEnLocationName, hint: s.timeTrackerTextHereEn,
               error: state.shows(LocationFormError.nameEnRequired) ? s.timeTrackerNameRequired : null,
               onChanged: (String v) => _cubit.update(_draft.copyWith(nameEn: v))),
-          end: _text('nameAr', label: s.timeTrackerLocationNameAr, arabic: true,
+          arabic: _text('nameAr', label: s.timeTrackerLocationNameAr, arabic: true,
               error: state.shows(LocationFormError.nameArRequired) ? s.timeTrackerArabicNameRequired : null,
               onChanged: (String v) => _cubit.update(_draft.copyWith(nameAr: v))),
         ),

@@ -195,7 +195,7 @@ class _RequestTypeFormViewState extends State<_RequestTypeFormView> {
       key: key,
       controller: c,
       label: label,
-      hint: arabic ? s.timeTrackerTextHereAr : s.textHere,
+      hint: arabic ? s.timeTrackerTextHereAr : s.timeTrackerTextHereEn,
       height: multiline ? 72 : 36,
       maxLines: multiline ? 3 : 1,
       minLines: multiline ? 3 : 1,
@@ -215,22 +215,25 @@ class _RequestTypeFormViewState extends State<_RequestTypeFormView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        TtPair(
-          start: _text(_nameEn, s.timeTrackerRequestName, arabic: false,
+        // 13/10/2026 (owner): English left, Arabic right (Arabic first in
+        // an Arabic UI); each label in its own language.
+        TtBilingualPair(
+          english: _text(_nameEn, s.timeTrackerEnRequestName, arabic: false,
               key: const ValueKey<String>('requestTypeNameEn'),
               error: state.shows(RequestTypeFormError.nameEnRequired) ? s.timeTrackerNameRequired : null,
               onChanged: (String v) => _cubit.update(_draft.copyWith(nameEn: v))),
-          end: _text(_nameAr, s.timeTrackerRequestNameAr, arabic: true,
+          arabic: _text(_nameAr, s.timeTrackerRequestNameAr, arabic: true,
               key: const ValueKey<String>('requestTypeNameAr'),
               error: state.shows(RequestTypeFormError.nameArRequired) ? s.timeTrackerArabicNameRequired : null,
               onChanged: (String v) => _cubit.update(_draft.copyWith(nameAr: v))),
         ),
         SizedBox(height: 15.h),
-        _text(_descEn, s.timeTrackerDescription, arabic: false, multiline: true,
-            onChanged: (String v) => _cubit.update(_draft.copyWith(descriptionEn: v))),
-        SizedBox(height: 15.h),
-        _text(_descAr, s.timeTrackerDescriptionAr, arabic: true, multiline: true,
-            onChanged: (String v) => _cubit.update(_draft.copyWith(descriptionAr: v))),
+        TtBilingualPair(
+          english: _text(_descEn, s.timeTrackerEnDescription, arabic: false, multiline: true,
+              onChanged: (String v) => _cubit.update(_draft.copyWith(descriptionEn: v))),
+          arabic: _text(_descAr, s.timeTrackerDescriptionAr, arabic: true, multiline: true,
+              onChanged: (String v) => _cubit.update(_draft.copyWith(descriptionAr: v))),
+        ),
         SizedBox(height: 15.h),
         TtPair(
           start: TtSwitchRow(label: s.timeTrackerHrApproval, value: d.isHrApprovalRequired,

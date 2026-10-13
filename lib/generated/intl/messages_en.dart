@@ -7939,6 +7939,18 @@ class MessageLookup extends MessageLookupByLibrary {
       "Employees Included",
     ),
     "timeTrackerEmployeesSelected": m37,
+    "timeTrackerEnDescription": MessageLookupByLibrary.simpleMessage(
+      "Description",
+    ),
+    "timeTrackerEnGroupName": MessageLookupByLibrary.simpleMessage(
+      "Group Name",
+    ),
+    "timeTrackerEnLocationName": MessageLookupByLibrary.simpleMessage(
+      "Location Name",
+    ),
+    "timeTrackerEnRequestName": MessageLookupByLibrary.simpleMessage(
+      "Request Name",
+    ),
     "timeTrackerEndAfterStart": MessageLookupByLibrary.simpleMessage(
       "The end must be after the start.",
     ),
@@ -8225,6 +8237,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Manager Approval",
     ),
     "timeTrackerManagerStep": MessageLookupByLibrary.simpleMessage("Manager"),
+    "timeTrackerMapView": MessageLookupByLibrary.simpleMessage("Map"),
     "timeTrackerMaxPauseMinutes": MessageLookupByLibrary.simpleMessage(
       "Maximum Pause (Minutes)",
     ),
@@ -8527,6 +8540,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerRulesFromLocationTag": MessageLookupByLibrary.simpleMessage(
       "From Location",
     ),
+    "timeTrackerSatelliteView": MessageLookupByLibrary.simpleMessage(
+      "Satellite",
+    ),
     "timeTrackerScreensComingSoon": MessageLookupByLibrary.simpleMessage(
       "The Time Tracker screens are being built and will appear here soon.",
     ),
@@ -8618,6 +8634,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Tap the map to place the pin. The yellow circle is the check-in area.",
     ),
     "timeTrackerTextHereAr": MessageLookupByLibrary.simpleMessage("اكتب هنا"),
+    "timeTrackerTextHereEn": MessageLookupByLibrary.simpleMessage("Text here"),
     "timeTrackerTimeframeValue": m57,
     "timeTrackerTitle": MessageLookupByLibrary.simpleMessage("Tracking Time"),
     "timeTrackerTitleLabel": MessageLookupByLibrary.simpleMessage("Title"),

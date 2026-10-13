@@ -3,19 +3,26 @@
 ///*************************** FILE INFO ****************************///
 /// File Name: geofence_map_picker.dart
 /// Purpose: Declares `GeofenceMapPicker` — the location form's "Location On
-///          Map": a short address search with the "use my location" icon
-///          next to it, and a live map preview — the pin, and the geofence
-///          circle drawn at the typed radius (it redraws as the number
-///          changes). Tap the map to move the pin.
+///          Map": an address search with the "use my location" button next
+///          to it, a Map / Satellite switch, and a live map preview — the
+///          pin, and the geofence circle drawn at the typed radius (it
+///          redraws as the number changes). Tap the map to move the pin.
 /// Author: Knowticed Plus team
 /// Created at: 12/10/2026 (owner review L1 / S5)
 ///
-/// The map is the app's existing `flutter_map` + OpenStreetMap tiles (as the
-/// chat "share location" map) — no Google Maps API key is configured in the
-/// project, so a Google map would draw blank. The address search uses the
-/// device geocoder (`geocoding`, Apple / Google on the phone, no key).
-/// Under `flutter test` the tiles are skipped (no network) — the pin and the
-/// circle still draw on the plain map background.
+/// Updated: 13/10/2026 - owner: core customs ONLY — the search is the core
+/// search bar (`TtSearchField` → `AppSearchTextField` 35), my-location the
+/// core icon button (`customButtonWithSvg` 6), Map / Satellite and the quick
+/// radius the core segmented control (`TtSegmentedToggle` →
+/// `CustomSegmentedTabs` 9), the pin `CustomSvgImage` 32, the spinner
+/// `CircleProgressMaster` 66. "Satellite" shows the real buildings and
+/// places from above (Esri World Imagery + place labels — free, no key).
+///
+/// The map is the app's existing `flutter_map` (as the chat "share location"
+/// map) — no Google Maps API key is configured in the project, so a Google
+/// map would draw blank. The address search uses the device geocoder
+/// (`geocoding`, Apple / Google on the phone, no key). Under `flutter test`
+/// the tiles are skipped (no network) — the pin and the circle still draw.
 /// Haptics: map tap LOW, search / my-location MEDIUM.
 
 import 'dart:io';
@@ -27,8 +34,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:latlong2/latlong.dart';
 
 import 'package:knowticed_plus/core/custom/16-custom_card_styles.dart';
-import 'package:knowticed_plus/core/custom/2-custom_textfield.dart';
-import 'package:knowticed_plus/core/custom/41-custom_button_sizing.dart';
+import 'package:knowticed_plus/core/custom/6-custom_button_with_svg.dart';
 import 'package:knowticed_plus/core/custom/66-circle_progress.dart';
 import 'package:knowticed_plus/core/extensions/context_extensions.dart';
 import 'package:knowticed_plus/core/helper/main_helper/localized_number.dart';
@@ -36,6 +42,7 @@ import 'package:knowticed_plus/core/theme/app_animations.dart';
 import 'package:knowticed_plus/core/theme/app_colors.dart';
 import 'package:knowticed_plus/core/theme/app_theme.dart';
 import 'package:knowticed_plus/core/theme/haptic_controller.dart';
+import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_controls.dart';
 import 'package:knowticed_plus/generated/l10n.dart';
 
 /// Where the map opens when the location has no coordinates yet (Cairo).
@@ -58,7 +65,7 @@ class GeofenceMapPicker extends StatefulWidget {
   final double? longitude;
   final double radiusMeters;
 
-  /// Geofence ON → draw the circle (and the quick radius buttons).
+  /// Geofence ON → draw the circle (and the quick radius choices).
   final bool showCircle;
 
   /// "Use my location" is running.
@@ -68,7 +75,7 @@ class GeofenceMapPicker extends StatefulWidget {
   final ValueChanged<LatLng> onPoint;
   final VoidCallback onLocate;
 
-  /// A quick radius button (100 / 250 / 500 / 1000 m); null = no buttons.
+  /// A quick radius choice (100 / 250 / 500 / 1000 m); null = none.
   final ValueChanged<int>? onRadius;
 
   /// Quick radius choices, in meters.
@@ -84,6 +91,9 @@ class _GeofenceMapPickerState extends State<GeofenceMapPicker> {
   bool _ready = false;
   bool _searching = false;
   bool _notFound = false;
+
+  /// 13/10/2026 (owner): the satellite view shows the real buildings.
+  bool _satellite = true;
 
   /// Real tiles only on a device (a widget test has no network).
   static final bool _tiles = !Platform.environment.containsKey('FLUTTER_TEST');
@@ -120,22 +130,23 @@ class _GeofenceMapPickerState extends State<GeofenceMapPicker> {
     final double r = widget.radiusMeters;
     if (widget.showCircle && r > 0) {
       const Distance d = Distance();
-      final LatLng north = d.offset(p, r, 0);
-      final LatLng south = d.offset(p, r, 180);
-      final LatLng east = d.offset(p, r, 90);
-      final LatLng west = d.offset(p, r, 270);
       _map.fitCamera(CameraFit.bounds(
-        bounds: LatLngBounds.fromPoints(<LatLng>[north, south, east, west]),
+        bounds: LatLngBounds.fromPoints(<LatLng>[
+          d.offset(p, r, 0),
+          d.offset(p, r, 90),
+          d.offset(p, r, 180),
+          d.offset(p, r, 270),
+        ]),
         padding: EdgeInsets.all(24.r),
         maxZoom: 18,
       ));
     } else {
-      _map.move(p, 16);
+      _map.move(p, 17);
     }
   }
 
-  Future<void> _search() async {
-    final String q = _query.text.trim();
+  Future<void> _search(String text) async {
+    final String q = text.trim();
     if (q.isEmpty || _searching) return;
     HapticController.medium();
     FocusScope.of(context).unfocus();
@@ -157,67 +168,87 @@ class _GeofenceMapPickerState extends State<GeofenceMapPicker> {
     if (found.isNotEmpty) widget.onPoint(LatLng(found.first.latitude, found.first.longitude));
   }
 
+  List<Widget> _tileLayers() {
+    if (!_tiles) return const <Widget>[];
+    if (!_satellite) {
+      return <Widget>[
+        TileLayer(
+          urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+          userAgentPackageName: 'com.ensightvision',
+          maxNativeZoom: 19,
+        ),
+      ];
+    }
+    return <Widget>[
+      TileLayer(
+        urlTemplate: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        userAgentPackageName: 'com.ensightvision',
+        maxNativeZoom: 19,
+      ),
+      // Street and place names over the photo.
+      TileLayer(
+        urlTemplate:
+            'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
+        userAgentPackageName: 'com.ensightvision',
+        maxNativeZoom: 19,
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     final S s = S.of(context);
     final LatLng? p = _point;
     final double r = widget.radiusMeters;
     final bool circle = widget.showCircle && r > 0 && p != null;
+    final int quick = GeofenceMapPicker.quickRadii.indexOf(r.round());
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         Text(s.timeTrackerGeofencePreview, style: StyleText.fontSize14Weight500.copyWith(color: AppColors.text)),
         SizedBox(height: 8.h),
         Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Expanded(
-              child: CustomTextField(
-                key: const ValueKey<String>('geofenceSearchField'),
-                controller: _query,
-                hint: s.timeTrackerSearchAddress,
-                height: 36,
-                hideCounter: true,
-                textInputAction: TextInputAction.search,
-                prefixIcon: Padding(
-                  padding: EdgeInsetsDirectional.symmetric(horizontal: 10.w),
-                  child: _searching
-                      ? SizedBox(width: 16.r, height: 16.r, child: const CircleProgressMaster())
-                      : Icon(Icons.search, size: 18.r, color: AppColors.secondaryText),
-                ),
-                valueStyle: StyleText.fontSize12Weight400.copyWith(color: AppColors.text),
-                onSubmitted: (_) => _search(),
-              ),
+            // Core search bar (self-Expanded in a Row).
+            TtSearchField(
+              key: const ValueKey<String>('geofenceSearchField'),
+              controller: _query,
+              hint: s.timeTrackerSearchAddress,
+              fillColor: AppColors.background,
+              onChanged: (_) {
+                if (_notFound) setState(() => _notFound = false);
+              },
+              onSubmitted: _search,
+              suffixIcon: _searching
+                  ? Padding(
+                      padding: EdgeInsets.all(10.r),
+                      child: SizedBox(width: 16.r, height: 16.r, child: const CircleProgressMaster()),
+                    )
+                  : null,
             ),
             SizedBox(width: 10.w),
-            // Owner S5: "use my current location" is an ICON next to the
-            // search (not a whole row).
+            // Owner S5: "use my current location" is the core icon button
+            // next to the search (not a whole row).
             Semantics(
               button: true,
               label: s.timeTrackerUseMyLocation,
-              child: ShrinkOnTap(
-                child: GestureDetector(
-                  key: const ValueKey<String>('locationUseMyLocation'),
-                  behavior: HitTestBehavior.opaque,
-                  onTap: widget.locating
-                      ? null
-                      : () {
-                          HapticController.medium();
-                          widget.onLocate();
-                        },
-                  child: Container(
-                    width: 36.sp,
-                    height: 36.sp,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      borderRadius: BorderRadius.circular(ButtonSizing.radius),
-                    ),
-                    child: widget.locating
-                        ? SizedBox(width: 16.r, height: 16.r, child: const CircleProgressMaster())
-                        : Icon(Icons.my_location, size: 18.r, color: AppColors.textButton),
-                  ),
-                ),
+              child: KeyedSubtree(
+                key: const ValueKey<String>('locationUseMyLocation'),
+                child: widget.locating
+                    ? SizedBox(width: 38.sp, height: 38.sp, child: const Center(child: CircleProgressMaster()))
+                    : ShrinkOnTap(
+                        child: customButtonWithSvg(
+                          title: '',
+                          function: widget.onLocate,
+                          color: AppColors.primary,
+                          colorBorder: AppColors.transparent,
+                          image: TtAssets.location,
+                          widthImage: TtToolbar.iconSize,
+                          heightImage: TtToolbar.iconSize,
+                          svgColor: AppColors.textButton,
+                          textStyle: StyleText.fontSize14Weight500.copyWith(color: AppColors.textButton),
+                        ),
+                      ),
               ),
             ),
           ],
@@ -229,78 +260,64 @@ class _GeofenceMapPickerState extends State<GeofenceMapPicker> {
               style: StyleText.fontSize12Weight400.copyWith(color: AppColors.red)),
         ],
         SizedBox(height: 10.h),
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: TtSegmentedToggle(
+            key: const ValueKey<String>('geofenceMapStyle'),
+            tabs: <String>[s.timeTrackerSatelliteView, s.timeTrackerMapView],
+            tabKeys: const <Key>[ValueKey<String>('geofenceSatellite'), ValueKey<String>('geofenceStreetMap')],
+            compact: true,
+            selectedIndex: _satellite ? 0 : 1,
+            onChanged: (int i) => setState(() => _satellite = i == 0),
+          ),
+        ),
+        SizedBox(height: 10.h),
         ClipRRect(
           borderRadius: CardStyles.radius(),
           child: SizedBox(
             key: const ValueKey<String>('geofenceMap'),
-            height: context.isPhone ? 220.h : 280.h,
-            child: Stack(
+            height: context.isPhone ? 240.h : 320.h,
+            child: FlutterMap(
+              mapController: _map,
+              options: MapOptions(
+                initialCenter: p ?? _fallbackCenter,
+                initialZoom: p == null ? 11 : 17,
+                backgroundColor: AppColors.background,
+                onMapReady: () {
+                  _ready = true;
+                  _frame();
+                },
+                onTap: (TapPosition _, LatLng point) {
+                  HapticController.low();
+                  widget.onPoint(point);
+                },
+              ),
               children: <Widget>[
-                FlutterMap(
-                  mapController: _map,
-                  options: MapOptions(
-                    initialCenter: p ?? _fallbackCenter,
-                    initialZoom: p == null ? 11 : 16,
-                    backgroundColor: AppColors.background,
-                    onMapReady: () {
-                      _ready = true;
-                      _frame();
-                    },
-                    onTap: (TapPosition _, LatLng point) {
-                      HapticController.low();
-                      widget.onPoint(point);
-                    },
-                  ),
-                  children: <Widget>[
-                    if (_tiles)
-                      TileLayer(
-                        urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                        userAgentPackageName: 'com.ensightvision',
-                        maxNativeZoom: 19,
-                      ),
-                    if (circle)
-                      CircleLayer(
-                        circles: <CircleMarker>[
-                          CircleMarker(
-                            point: p,
-                            radius: r,
-                            useRadiusInMeter: true,
-                            color: AppColors.primary.withValues(alpha: 0.22),
-                            borderColor: AppColors.primary,
-                            borderStrokeWidth: 2,
-                          ),
-                        ],
-                      ),
-                    if (p != null)
-                      MarkerLayer(
-                        markers: <Marker>[
-                          Marker(
-                            point: p,
-                            width: 36.r,
-                            height: 36.r,
-                            alignment: Alignment.topCenter,
-                            child: Icon(Icons.location_on, size: 36.r, color: AppColors.red),
-                          ),
-                        ],
-                      ),
-                  ],
-                ),
+                ..._tileLayers(),
                 if (circle)
-                  PositionedDirectional(
-                    start: 8.w,
-                    bottom: 8.h,
-                    child: Container(
-                      key: const ValueKey<String>('geofenceRadiusBadge'),
-                      padding: EdgeInsetsDirectional.symmetric(horizontal: 10.w, vertical: 4.h),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary,
-                        borderRadius: BorderRadius.circular(ButtonSizing.radius),
+                  CircleLayer(
+                    circles: <CircleMarker>[
+                      CircleMarker(
+                        point: p,
+                        radius: r,
+                        useRadiusInMeter: true,
+                        color: AppColors.primary.withValues(alpha: 0.25),
+                        borderColor: AppColors.primary,
+                        borderStrokeWidth: 2.5,
                       ),
-                      child: Text(
-                        s.timeTrackerMetersValue(LocalizedNumber.of(context, r.round())),
-                        style: StyleText.fontSize12Weight500.copyWith(color: AppColors.textButton),
+                    ],
+                  ),
+                if (p != null)
+                  MarkerLayer(
+                    markers: <Marker>[
+                      Marker(
+                        point: p,
+                        width: 34.r,
+                        height: 34.r,
+                        alignment: Alignment.topCenter,
+                        child: TtIcon(const TtGlyph.svg(TtAssets.location), size: 34.r, color: AppColors.red),
                       ),
-                    ),
+                    ],
                   ),
               ],
             ),
@@ -310,54 +327,24 @@ class _GeofenceMapPickerState extends State<GeofenceMapPicker> {
         Text(s.timeTrackerTapMapHint, style: StyleText.fontSize10Weight400.copyWith(color: AppColors.secondaryText)),
         if (widget.showCircle && widget.onRadius != null) ...<Widget>[
           SizedBox(height: 10.h),
-          Wrap(
-            spacing: 8.w,
-            runSpacing: 8.h,
-            children: <Widget>[
-              for (final int m in GeofenceMapPicker.quickRadii)
-                _RadiusChip(
-                  key: ValueKey<String>('geofenceQuickRadius_$m'),
-                  label: s.timeTrackerMetersValue(LocalizedNumber.of(context, m)),
-                  selected: r.round() == m,
-                  onTap: () {
-                    HapticController.low();
-                    widget.onRadius!(m);
-                  },
-                ),
-            ],
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: TtSegmentedToggle(
+              key: const ValueKey<String>('geofenceQuickRadius'),
+              tabs: <String>[
+                for (final int m in GeofenceMapPicker.quickRadii)
+                  s.timeTrackerMetersValue(LocalizedNumber.of(context, m)),
+              ],
+              tabKeys: <Key>[
+                for (final int m in GeofenceMapPicker.quickRadii) ValueKey<String>('geofenceQuickRadius_$m'),
+              ],
+              compact: true,
+              selectedIndex: quick,
+              onChanged: (int i) => widget.onRadius!(GeofenceMapPicker.quickRadii[i]),
+            ),
           ),
         ],
       ],
-    );
-  }
-}
-
-/// A quick radius choice ("500 m"); yellow when it is the current radius.
-class _RadiusChip extends StatelessWidget {
-  const _RadiusChip({super.key, required this.label, required this.selected, required this.onTap});
-
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsetsDirectional.symmetric(horizontal: 12.w, vertical: 6.h),
-        decoration: BoxDecoration(
-          color: selected ? AppColors.primary : AppColors.background,
-          borderRadius: BorderRadius.circular(ButtonSizing.radius),
-        ),
-        child: Text(
-          label,
-          style: StyleText.fontSize12Weight500.copyWith(
-            color: selected ? AppColors.textButton : AppColors.text,
-          ),
-        ),
-      ),
     );
   }
 }

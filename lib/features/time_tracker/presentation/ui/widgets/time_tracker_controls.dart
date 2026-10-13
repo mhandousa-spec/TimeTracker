@@ -289,10 +289,19 @@ class TtSearchField extends StatelessWidget {
     required this.onChanged,
     this.fillColor,
     this.hint,
+    this.onSubmitted,
+    this.suffixIcon,
   });
 
   final TextEditingController controller;
   final ValueChanged<String> onChanged;
+
+  /// ADDED 13/10/2026 (location address search): the keyboard "Search" key
+  /// (core `AppSearchTextField.onSubmitted`); null = a plain filter field.
+  final ValueChanged<String>? onSubmitted;
+
+  /// ADDED 13/10/2026: e.g. a spinner while a search runs.
+  final Widget? suffixIcon;
 
   /// Defaults to the card colour (the field sits on the page background).
   final Color? fillColor;
@@ -308,6 +317,9 @@ class TtSearchField extends StatelessWidget {
       hintText: hint ?? S.of(context).search,
       fillColor: fillColor ?? AppColors.card,
       onChanged: onChanged,
+      onSubmitted: onSubmitted,
+      textInputAction: onSubmitted == null ? null : TextInputAction.search,
+      suffixIcon: suffixIcon,
       contentPadding: EdgeInsets.symmetric(horizontal: 12.sp),
       valueStyle: StyleText.fontSize14Weight400.copyWith(
         color: AppColors.text,

@@ -16,7 +16,6 @@ import 'package:flutter/material.dart';
 
 import 'package:knowticed_plus/features/time_tracker/domain/enums/setup_status.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_filter_frame.dart';
-import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_setup_widgets.dart';
 import 'package:knowticed_plus/features/time_tracker/tt8_request_types/presentation/ui/widgets/request_type_text.dart';
 import 'package:knowticed_plus/generated/l10n.dart';
 
@@ -49,17 +48,16 @@ class _RequestTypeFilterDialogState extends State<RequestTypeFilterDialog> {
       applyKey: const ValueKey<String>('requestTypeFilterApply'),
       onReset: () => Navigator.of(context).pop(const RequestTypeStatusChoice(null)),
       onApply: () => Navigator.of(context).pop(RequestTypeStatusChoice(_status)),
+      // 13/10/2026 (owner): a single field takes the full width.
       rows: <Widget>[
-        TtPair(
-          start: TtFilterDropdown<RequestTypeStatus>(
-            key: const ValueKey<String>('requestTypeStatusFilter'),
-            label: s.timeTrackerStatus,
-            value: _status,
-            items: <(RequestTypeStatus, String)>[
-              for (final RequestTypeStatus st in RequestTypeStatus.values) (st, RequestTypeText.status(context, st)),
-            ],
-            onChanged: (RequestTypeStatus? v) => setState(() => _status = v),
-          ),
+        TtFilterDropdown<RequestTypeStatus>(
+          key: const ValueKey<String>('requestTypeStatusFilter'),
+          label: s.timeTrackerStatus,
+          value: _status,
+          items: <(RequestTypeStatus, String)>[
+            for (final RequestTypeStatus st in RequestTypeStatus.values) (st, RequestTypeText.status(context, st)),
+          ],
+          onChanged: (RequestTypeStatus? v) => setState(() => _status = v),
         ),
       ],
     );

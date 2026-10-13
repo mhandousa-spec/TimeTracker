@@ -7624,6 +7624,18 @@ class MessageLookup extends MessageLookupByLibrary {
       "الموظفون المشمولون",
     ),
     "timeTrackerEmployeesSelected": m37,
+    "timeTrackerEnDescription": MessageLookupByLibrary.simpleMessage(
+      "Description",
+    ),
+    "timeTrackerEnGroupName": MessageLookupByLibrary.simpleMessage(
+      "Group Name",
+    ),
+    "timeTrackerEnLocationName": MessageLookupByLibrary.simpleMessage(
+      "Location Name",
+    ),
+    "timeTrackerEnRequestName": MessageLookupByLibrary.simpleMessage(
+      "Request Name",
+    ),
     "timeTrackerEndAfterStart": MessageLookupByLibrary.simpleMessage(
       "يجب أن تكون النهاية بعد البداية.",
     ),
@@ -7918,6 +7930,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "موافقة المدير",
     ),
     "timeTrackerManagerStep": MessageLookupByLibrary.simpleMessage("المدير"),
+    "timeTrackerMapView": MessageLookupByLibrary.simpleMessage("خريطة"),
     "timeTrackerMaxPauseMinutes": MessageLookupByLibrary.simpleMessage(
       "أقصى مدة للإيقاف المؤقت (بالدقائق)",
     ),
@@ -8212,6 +8225,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerRulesFromLocationTag": MessageLookupByLibrary.simpleMessage(
       "من الموقع",
     ),
+    "timeTrackerSatelliteView": MessageLookupByLibrary.simpleMessage(
+      "قمر صناعي",
+    ),
     "timeTrackerScreensComingSoon": MessageLookupByLibrary.simpleMessage(
       "يجري إنشاء شاشات تتبع الوقت وستظهر هنا قريبا.",
     ),
@@ -8297,6 +8313,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "اضغط على الخريطة لتحديد الموقع. الدائرة الصفراء هي نطاق تسجيل الحضور.",
     ),
     "timeTrackerTextHereAr": MessageLookupByLibrary.simpleMessage("اكتب هنا"),
+    "timeTrackerTextHereEn": MessageLookupByLibrary.simpleMessage("Text here"),
     "timeTrackerTimeframeValue": m57,
     "timeTrackerTitle": MessageLookupByLibrary.simpleMessage("تتبع الوقت"),
     "timeTrackerTitleLabel": MessageLookupByLibrary.simpleMessage(

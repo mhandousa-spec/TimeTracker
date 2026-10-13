@@ -13,6 +13,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:knowticed_plus/core/custom/9-filter_tab_with_container.dart';
 import 'package:knowticed_plus/core/custom/10-custom_tabs.dart';
 import 'package:knowticed_plus/core/custom/89-custom_empty_state.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/entities/employee_assignment.dart';
@@ -161,16 +162,17 @@ void main() {
           .map((EditableText e) => e.controller.text)
           .firstWhere((String t) => t.contains('.'), orElse: () => label);
       expect(text(''), isNot(''), reason: 'a coordinate was written');
-      // Geofence ON → the quick radius buttons; 500 m draws the badge.
+      // Geofence ON → the quick radius choices; 500 m becomes selected.
       await tester.ensureVisible(_key('locationGeofenceSwitch'));
       await tester.tap(find.descendant(of: _key('locationGeofenceSwitch'), matching: find.byType(GestureDetector)).last);
       await h.settle(tester);
       await tester.ensureVisible(_key('geofenceQuickRadius_500'));
       await tester.tap(_key('geofenceQuickRadius_500'));
       await h.settle(tester);
-      expect(_key('geofenceRadiusBadge'), findsOneWidget);
-      expect(find.descendant(of: _key('geofenceRadiusBadge'), matching: find.text(S.current.timeTrackerMetersValue('500'))),
-          findsOneWidget);
+      // The 500 m choice is now selected (the core segmented control).
+      final CustomSegmentedTabs radius = tester.widget<CustomSegmentedTabs>(
+          find.descendant(of: _key('geofenceQuickRadius'), matching: find.byType(CustomSegmentedTabs)));
+      expect(radius.selectedIndex, 2);
       await h.dispose(tester);
     });
 
