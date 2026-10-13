@@ -174,6 +174,40 @@ class TimeTrackerNotificationService {
         isArabic: isArabic,
       );
 
+  /// Function Name: [notifyWorkLocationUpdated] / [notifyShiftUpdated]
+  ///
+  /// Purpose: ADDED 13/10/2026 (decision 34): HR assigned / reassigned the
+  /// employee — "Assigned Work Location Updated" when the place(s) changed,
+  /// "Shift Schedule Updated" when the working rules changed. Opens the
+  /// module's main page.
+  ///
+  /// Return type: [Future<bool>]
+  Future<bool> notifyWorkLocationUpdated({
+    required String senderEmail,
+    required String employeeEmail,
+    required bool isArabic,
+  }) =>
+      send(
+        event: TimeTrackerNotificationEvent.workLocationUpdatedSelf,
+        page: TimeTrackerNotificationPage.mainPage,
+        senderEmail: senderEmail,
+        receiverEmail: employeeEmail,
+        isArabic: isArabic,
+      );
+
+  Future<bool> notifyShiftUpdated({
+    required String senderEmail,
+    required String employeeEmail,
+    required bool isArabic,
+  }) =>
+      send(
+        event: TimeTrackerNotificationEvent.shiftUpdated,
+        page: TimeTrackerNotificationPage.mainPage,
+        senderEmail: senderEmail,
+        receiverEmail: employeeEmail,
+        isArabic: isArabic,
+      );
+
   Future<bool> _toRequester({
     required TimeTrackerNotificationEvent event,
     required String senderEmail,

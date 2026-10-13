@@ -195,6 +195,55 @@ enum TimeTrackerNotificationEvent implements NotificationEvent {
     bodyEn: '30 minutes have passed since the end of your scheduled shift and no check-out has been recorded. Please record your check-out, or submit an attendance correction request if you have already left.',
     bodyAr: 'مرت 30 دقيقة على انتهاء ورديتك المجدولة ولم يتم تسجيل انصرافك بعد. يرجى تسجيل الانصراف، أو تقديم طلب تصحيح حضور إذا كنت قد غادرت بالفعل.',
     variables: {},
+  ),
+  // ADDED 13/10/2026 (Time Tracker decision 34): the events the server
+  // (functions/time_tracker, not deployed yet) sends under their NEW keys —
+  // listed here so Notification Control can show / edit / switch them. Texts
+  // are exactly the server defaults (functions/time_tracker/src/texts.js).
+  pendingApprovals(
+    key: 'pending_approvals',
+    group: '',
+    titleEn: 'Action Required — Pending Approval Requests',
+    titleAr: 'مطلوب إجراء — طلبات بانتظار الموافقة',
+    bodyEn: 'You have {{countedRequests}} awaiting your decision. Please review at your earliest convenience to avoid delays in the approval workflow.',
+    bodyAr: 'لديك {{countedRequests}} بانتظار قرارك. يرجى المراجعة في أقرب وقت لتفادي التأخير في سير عمل الموافقة.',
+    variables: {TemplateVariable.count, TemplateVariable.countedRequests},
+  ),
+  breakPolicyViolationManager(
+    key: 'break_policy_violation_manager',
+    group: '',
+    titleEn: 'Break Policy Non-Compliance Detected',
+    titleAr: 'تم رصد عدم امتثال لسياسة الاستراحات',
+    bodyEn: '{{employeeName}} has exceeded the permitted break duration of {{minutes}} minutes and is still on break. The overrun has been recorded in their attendance alerts.',
+    bodyAr: 'تجاوز {{employeeName}} مدة الاستراحة المسموح بها وهي {{minutes}} دقيقة ولا يزال في استراحة. تم تسجيل التجاوز في تنبيهات الحضور الخاصة به.',
+    variables: {TemplateVariable.employeeName, TemplateVariable.minutes},
+  ),
+  pauseDurationExceeded(
+    key: 'pause_duration_exceeded',
+    group: '',
+    titleEn: 'Pause Duration Exceeded',
+    titleAr: 'تجاوز مدة الإيقاف المؤقت',
+    bodyEn: 'Your pause has exceeded the permitted {{minutes}} minutes and is still running. Please resume work; the overrun is recorded in your attendance.',
+    bodyAr: 'تجاوز إيقافك المؤقت المدة المسموح بها وهي {{minutes}} دقيقة ولا يزال مستمرا. يرجى استئناف العمل؛ يتم تسجيل التجاوز في سجل حضورك.',
+    variables: {TemplateVariable.minutes},
+  ),
+  shiftStartReminder(
+    key: 'shift_start_reminder',
+    group: '',
+    titleEn: 'Shift Starting Soon',
+    titleAr: 'اقتراب بدء الوردية',
+    bodyEn: 'Your shift starts at {{time}}. Please remember to check in from your assigned work location.',
+    bodyAr: 'تبدأ ورديتك في الساعة {{time}}. يرجى تذكر تسجيل الحضور من موقع العمل المعين لك.',
+    variables: {TemplateVariable.time},
+  ),
+  shiftEndReminder(
+    key: 'shift_end_reminder',
+    group: '',
+    titleEn: 'Shift Ended — Please Check Out',
+    titleAr: 'انتهت الوردية — يرجى تسجيل الانصراف',
+    bodyEn: 'Your shift ended at {{time}}. Please remember to check out from your assigned work location.',
+    bodyAr: 'انتهت ورديتك في الساعة {{time}}. يرجى تذكر تسجيل الانصراف من موقع العمل المعين لك.',
+    variables: {TemplateVariable.time},
   );
 
   const TimeTrackerNotificationEvent({

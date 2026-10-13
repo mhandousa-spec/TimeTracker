@@ -12,6 +12,7 @@
 /// Created at: 9/10/2026
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:knowticed_plus/features/notification/domain/enums/time_tracker_module/time_tracker_events.dart';
 
 import 'package:knowticed_plus/features/time_tracker/data/models/location_assignment_model.dart';
 import 'package:knowticed_plus/features/time_tracker/data/models/work_location_model.dart';
@@ -42,6 +43,7 @@ import 'package:knowticed_plus/features/time_tracker/tt8_request_types/presentat
 import 'package:knowticed_plus/features/time_tracker/tt8_request_types/presentation/controller/request_types_cubit.dart';
 
 import '../_support/time_tracker_phase3_fakes.dart';
+import '../_support/time_tracker_phase4_fakes.dart';
 import '../_support/time_tracker_test_fakes.dart';
 
 const WorkLocation _hq = WorkLocation(id: 'hq', nameEn: 'Main Office', nameAr: 'المكتب الرئيسي');
@@ -80,7 +82,10 @@ class _Env {
   LocationsCubit locations() => LocationsCubit(
       locations: places, assignments: assignments, resolver: resolver, access: access, log: log);
 
+  final FakeNotifications notes = FakeNotifications();
+
   EmployeesCubit employees() => EmployeesCubit(
+        notifications: notes,
         directory: FakeDirectory(),
         assignments: assignments,
         groups: groups,
@@ -255,6 +260,12 @@ void main() {
       await _settle();
       expect(c.state.assignedCount, 2);
       expect(_storedAssignment(e.remote, 'me@co.com').rules.isPauseAllowed, isTrue);
+      // 13/10/2026 (decision 34): both employees are told their work location.
+      expect(
+        e.notes.of(TimeTrackerNotificationEvent.workLocationUpdatedSelf).map((SentNotification n) => n.receiver),
+        unorderedEquals(<String>['me@co.com', 'amr@co.com']),
+      );
+      expect(e.notes.of(TimeTrackerNotificationEvent.shiftUpdated), isEmpty);
       expect(await c.grantAccess(
         emails: <String>['me@co.com'],
         locationId: 'b2',
@@ -270,6 +281,31 @@ void main() {
         TimeTrackerLogService.actionAssignEmployee,
         TimeTrackerLogService.actionRemoveEmployee,
       ]);
+      await c.close();
+    });
+
+    test('reassign with new break rules → "Shift Updated"; same place → no location notice (decision 34)', () async {
+      final _Env e = _Env();
+      seedLocations(e.remote, <WorkLocation>[_hq]);
+      final EmployeesCubit c = e.employees();
+      await c.init();
+      await _settle();
+      expect(await c.grantAccess(
+        emails: <String>['me@co.com'],
+        locationId: 'hq',
+        startDate: DateTime(2026, 10, 12),
+        rules: AttendanceRules.fromLocation,
+      ), isTrue);
+      await _settle();
+      e.notes.sent.clear();
+      expect(await c.grantAccess(
+        emails: <String>['me@co.com'],
+        locationId: 'hq',
+        startDate: DateTime(2026, 10, 12),
+        rules: const AttendanceRules(isBreakAllowed: true, breakMinutes: 45),
+      ), isTrue);
+      expect(e.notes.of(TimeTrackerNotificationEvent.shiftUpdated).single.receiver, 'me@co.com');
+      expect(e.notes.of(TimeTrackerNotificationEvent.workLocationUpdatedSelf), isEmpty);
       await c.close();
     });
 

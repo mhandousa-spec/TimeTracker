@@ -531,16 +531,17 @@ void main() {
   });
 
   group('Notification Control', () {
-    test('every Time Tracker event sits under the Time Tracker tab (17 incl. missed_check_out)', () {
+    test('every Time Tracker event sits under the Time Tracker tab (22 incl. missed_check_out + the 5 server keys)', () {
       expect(NotificationTab.forModule(AppModule.timeTracker), NotificationTab.tracking);
       expect(NotificationCatalog.eventsOf(AppModule.timeTracker), TimeTrackerNotificationEvent.values);
-      expect(TimeTrackerNotificationEvent.values, hasLength(17));
+      expect(TimeTrackerNotificationEvent.values, hasLength(22));
       for (final TimeTrackerNotificationEvent e in TimeTrackerNotificationEvent.values) {
         expect(e.module, AppModule.timeTracker, reason: e.key);
         expect(NotificationCatalog.find(module: AppModule.timeTracker, key: e.key), e, reason: e.key);
         expect(e.templateId, 'time_tracker_${e.key}');
         // Owner rule: no tanween / diacritics in new Arabic copy.
-        if (e == TimeTrackerNotificationEvent.missedCheckOut) {
+        if (e == TimeTrackerNotificationEvent.missedCheckOut ||
+            e.index >= TimeTrackerNotificationEvent.pendingApprovals.index) {
           expect(RegExp('[ً-ْ]').hasMatch('${e.titleAr}${e.bodyAr}'), isFalse);
         }
       }

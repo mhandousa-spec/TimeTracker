@@ -67,10 +67,21 @@ void main() {
 
   group('catalogue', () {
     // Updated 9/10/2026 (phase 6): + missed_check_out → 17.
-    test('the Time Tracker tab carries the 15 events + request_canceled + missed_check_out', () {
+    test('the Time Tracker tab carries the 15 events + request_canceled + missed_check_out + the 5 server keys', () {
       expect(NotificationCatalog.modules, contains(AppModule.timeTracker));
       expect(NotificationCatalog.eventsOf(AppModule.timeTracker), TimeTrackerNotificationEvent.values);
-      expect(TimeTrackerNotificationEvent.values, hasLength(17));
+      // 13/10/2026: + pending_approvals, break_policy_violation_manager,
+      // pause_duration_exceeded, shift_start_reminder, shift_end_reminder.
+      expect(TimeTrackerNotificationEvent.values, hasLength(22));
+      for (final String key in <String>[
+        'pending_approvals',
+        'break_policy_violation_manager',
+        'pause_duration_exceeded',
+        'shift_start_reminder',
+        'shift_end_reminder',
+      ]) {
+        expect(TimeTrackerNotificationEvent.fromKey(key), isNotNull, reason: key);
+      }
       expect(
         NotificationCatalog.find(module: AppModule.timeTracker, key: 'request_canceled'),
         TimeTrackerNotificationEvent.requestCanceled,

@@ -57,6 +57,21 @@ class AttendanceRules {
   /// were chosen explicitly), so nothing changes for them.
   final bool isCustom;
 
+  /// ADDED 13/10/2026: the same working rules (break / pause / custom flag)
+  /// — a change sends "Shift Updated" to the employee.
+  bool sameShiftAs(AttendanceRules o) =>
+      isCustom == o.isCustom &&
+      isBreakAllowed == o.isBreakAllowed &&
+      breakMinutes == o.breakMinutes &&
+      isPauseAllowed == o.isPauseAllowed &&
+      pauseMinutes == o.pauseMinutes;
+
+  /// ADDED 13/10/2026: the same extra check-in places.
+  bool samePlacesAs(AttendanceRules o) =>
+      isDifferentLocationAllowed == o.isDifferentLocationAllowed &&
+      allowedLocationIds.toSet().containsAll(o.allowedLocationIds) &&
+      o.allowedLocationIds.toSet().containsAll(allowedLocationIds);
+
   /// Function Name: [copyWith]
   ///
   /// Purpose: Immutable update.

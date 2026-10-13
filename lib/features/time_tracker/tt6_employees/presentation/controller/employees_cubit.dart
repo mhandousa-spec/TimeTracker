@@ -28,6 +28,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:knowticed_plus/features/time_tracker/data/repository/work_setup_source_resolver.dart';
 import 'package:knowticed_plus/features/time_tracker/data/services/group_service.dart';
 import 'package:knowticed_plus/features/time_tracker/data/services/time_tracker_access.dart';
+import 'package:knowticed_plus/features/time_tracker/data/services/time_tracker_notification_service.dart';
 import 'package:knowticed_plus/features/time_tracker/data/services/time_tracker_log_service.dart';
 import 'package:knowticed_plus/features/time_tracker/data/services/transaction_service.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/base_repository/employee_directory_base_repository.dart';
@@ -53,7 +54,9 @@ class EmployeesCubit extends Cubit<EmployeesState> {
     required WorkSetupSourceResolver resolver,
     required TimeTrackerAccess access,
     required TimeTrackerLogService log,
+    TimeTrackerNotificationService notifications = const TimeTrackerNotificationService(),
   })  : _directory = directory,
+        _notifications = notifications,
         _assignments = assignments,
         _groups = groups,
         _locations = locations,
@@ -70,6 +73,10 @@ class EmployeesCubit extends Cubit<EmployeesState> {
   final GroupService _groupService;
   final WorkSetupSourceResolver _resolver;
   final TimeTrackerAccess _access;
+  final TimeTrackerNotificationService _notifications;
+
+  /// The app language at [init] (the notification sender's language).
+  bool _isArabic = false;
   final TimeTrackerLogService _log;
   final List<StreamSubscription<dynamic>> _subs = <StreamSubscription<dynamic>>[];
 
@@ -89,6 +96,7 @@ class EmployeesCubit extends Cubit<EmployeesState> {
   ///
   /// Return type: [Future<void>]
   Future<void> init({bool isArabic = false}) async {
+    _isArabic = isArabic;
     emit(state.copyWith(
       status: EmployeesLoadStatus.loading,
       errorMessage: '',
@@ -190,7 +198,8 @@ class EmployeesCubit extends Cubit<EmployeesState> {
           if (!allowed) throw const TimeTrackerPermissionDenied();
         }
         for (final String email in emails) {
-          final bool reassign = state.assignmentOf(email)?.isAssigned ?? false;
+          final LocationAssignment? before = state.assignmentOf(email);
+          final bool reassign = before?.isAssigned ?? false;
           await _assignments.saveAssignment(
             assignment: LocationAssignment(
               employeeEmail: email,
@@ -202,6 +211,18 @@ class EmployeesCubit extends Cubit<EmployeesState> {
           _log.log(reassign
               ? TimeTrackerLogService.actionReassignEmployee
               : TimeTrackerLogService.actionAssignEmployee);
+          // 13/10/2026 (decision 34): tell the employee — never blocks the save.
+          final bool placeChanged =
+              before == null || before.locationId != locationId || !before.rules.samePlacesAs(rules);
+          final bool shiftChanged = before != null && before.isAssigned && !before.rules.sameShiftAs(rules);
+          final String me = _access.currentUserEmail;
+          if (placeChanged) {
+            unawaited(_notifications.notifyWorkLocationUpdated(
+                senderEmail: me, employeeEmail: email, isArabic: _isArabic));
+          }
+          if (shiftChanged) {
+            unawaited(_notifications.notifyShiftUpdated(senderEmail: me, employeeEmail: email, isArabic: _isArabic));
+          }
         }
         emit(state.copyWith(selected: const <String>{}));
       });

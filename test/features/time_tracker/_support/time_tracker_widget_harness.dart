@@ -322,6 +322,8 @@ class TimeTrackerHarness {
           log: log,
         );
     _makers[EmployeesCubit] = () => EmployeesCubit(
+          // Never the real sender in a widget test (no Firebase).
+          notifications: FakeNotifications(),
           directory: directory,
           assignments: assignments,
           groups: groups,
