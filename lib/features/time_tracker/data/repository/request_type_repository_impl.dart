@@ -11,6 +11,7 @@
 /// and old requests keep resolving their type name.
 /// Updated: 9/10/2026 - phase 4: [fetchRequestType] (approval side effects).
 
+import 'package:knowticed_plus/features/time_tracker/data/data_source/remote_data_source/time_tracker_remote_data_source.dart';
 import 'package:knowticed_plus/features/time_tracker/data/models/request_type_model.dart';
 import 'package:knowticed_plus/features/time_tracker/data/models/time_tracker_document.dart';
 import 'package:knowticed_plus/features/time_tracker/data/models/time_tracker_field_codec.dart';
@@ -56,7 +57,7 @@ class RequestTypeRepositoryImpl extends TimeTrackerHistoryRepository<RequestType
 
   @override
   Future<RequestType> createRequestType({required RequestType type}) async =>
-      write(type, id: null, mustExist: false);
+      write(type, id: null, mustExist: false, newId: const NewDocId('RQT'));
 
   @override
   Future<RequestType> updateRequestType({required RequestType type}) async =>

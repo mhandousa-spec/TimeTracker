@@ -60,6 +60,11 @@ class TimeTrackerFirestorePaths {
   static const String vacationBalances = '$root/Vacation_Balances';
   static const String notificationLog = '$root/Notification_Log';
 
+  /// ADDED 13/10/2026 (owner decision 48): one counter document per id
+  /// series (`REQ-2026`, `TRX-2026`, `LOC`, `GRP`, `RQT`, `CMT__{request}`)
+  /// holding `Last_Number`.
+  static const String counters = '$root/Counters';
+
   /// Firebase STORAGE folder (not Firestore) for request / transaction
   /// attachments: `Demo/{cid}/Modules/time_tracker/Request_Attachments/
   /// {email}/{ms}_{file}`. Added 8/10/2026 (phase 2).

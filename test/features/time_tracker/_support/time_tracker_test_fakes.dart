@@ -184,11 +184,12 @@ class FakeTimeTrackerRemote implements TimeTrackerRemoteDataSource {
     required String? id,
     required bool mustExist,
     required HistoryRowBuilder row,
+    NewDocId? newId,
   }) async {
     _maybeFail();
     await ensureModuleDocument();
     beforeTransaction?.call();
-    final String docId = id ?? 'auto-${++_autoId}';
+    final String docId = id ?? _newId(relativePath, newId);
     final Map<String, dynamic>? old = _col(relativePath)[docId];
     if (mustExist && old == null) {
       throw StateError('This record no longer exists.');
@@ -212,7 +213,7 @@ class FakeTimeTrackerRemote implements TimeTrackerRemoteDataSource {
     await ensureModuleDocument();
     beforeTransaction?.call();
     final List<String> ids = <String>[
-      for (final HistoryRowWrite w in writes) w.id ?? 'auto-${++_autoId}',
+      for (final HistoryRowWrite w in writes) w.id ?? _newId(w.relativePath, w.newId),
     ];
     final List<TimeTrackerDocument?> out = <TimeTrackerDocument?>[];
     for (int i = 0; i < writes.length; i++) {
@@ -236,6 +237,20 @@ class FakeTimeTrackerRemote implements TimeTrackerRemoteDataSource {
     }
     _changes.add(null);
     return out;
+  }
+
+  /// Like the real source (owner decision 48): `{prefix}-0001` from the
+  /// counter of [newId]; an automatic id without one.
+  String _newId(String relativePath, NewDocId? newId) {
+    if (newId == null) return 'auto-${++_autoId}';
+    final Map<String, dynamic> counters = _col(TimeTrackerFirestorePaths.counters);
+    int n = ((counters[newId.counterKey]?[NewDocId.lastNumber]) as int?) ?? 0;
+    String id;
+    do {
+      id = newId.idFor(++n);
+    } while (_col(relativePath).containsKey(id));
+    counters[newId.counterKey] = <String, dynamic>{NewDocId.lastNumber: n};
+    return id;
   }
 
   @override

@@ -188,7 +188,7 @@ void main() {
       f.toggleDay(5); // Friday on
       expect(f.state.canSubmit, isTrue);
       expect(await f.submit(), isTrue);
-      final WorkLocation saved = _storedLocation(e.remote, 'auto-1');
+      final WorkLocation saved = _storedLocation(e.remote, 'LOC-0001');
       expect(saved.latitude, 30.05);
       expect(saved.country, 'EG');
       expect(saved.city, 'Cairo');

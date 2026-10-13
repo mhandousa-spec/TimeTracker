@@ -51,6 +51,25 @@ typedef OptionalHistoryRowBuilder = Map<String, Object?>? Function(
   Map<String, dynamic>? stored,
 );
 
+/// ADDED 13/10/2026 (owner decision 48): a readable id for a NEW document —
+/// `{prefix}-{0001}` from the per-company counter [counterKey] (default
+/// [prefix]), taken inside the same transaction as the write: REQ-2026-0001,
+/// TRX-2026-0001, LOC-0001, GRP-0001, RQT-0001, CMT-0001 (per request).
+class NewDocId {
+  const NewDocId(this.prefix, {String? counterKey}) : _counterKey = counterKey;
+
+  final String prefix;
+  final String? _counterKey;
+
+  String get counterKey => _counterKey ?? prefix;
+
+  /// The id for counter value [n].
+  String idFor(int n) => '$prefix-${n.toString().padLeft(4, '0')}';
+
+  /// Field of the counter document.
+  static const String lastNumber = 'Last_Number';
+}
+
 /// One document of a multi-document history write ([TimeTrackerRemoteDataSource.appendRows]).
 class HistoryRowWrite {
   const HistoryRowWrite({
@@ -58,7 +77,12 @@ class HistoryRowWrite {
     required this.id,
     required this.row,
     this.mustExist = false,
+    this.newId,
   });
+
+  /// With [id] null: the readable id series of the new document (null = an
+  /// automatic Firestore id).
+  final NewDocId? newId;
 
   /// The collection.
   final String relativePath;
@@ -214,14 +238,17 @@ class TimeTrackerRemoteDataSource {
     required String? id,
     required bool mustExist,
     required HistoryRowBuilder row,
+    NewDocId? newId,
   }) async {
     final CollectionReference<Map<String, dynamic>> collection =
         _collection(relativePath);
     await ensureModuleDocument();
-    final DocumentReference<Map<String, dynamic>> ref =
-        id == null ? collection.doc() : collection.doc(id);
     return _firestore.runTransaction<TimeTrackerDocument>(
       (Transaction tx) async {
+        final Map<String, int> taken = <String, int>{};
+        final DocumentReference<Map<String, dynamic>> ref = id != null
+            ? collection.doc(id)
+            : (newId == null ? collection.doc() : await _allocate(tx, collection, newId, taken));
         final DocumentSnapshot<Map<String, dynamic>> stored = await tx.get(ref);
         if (mustExist && !stored.exists) {
           throw StateError('This record no longer exists.');
@@ -232,10 +259,43 @@ class TimeTrackerRemoteDataSource {
           values: row(ref.id, old),
           now: DateTime.now(),
         );
+        _writeCounters(tx, taken);
         tx.set(ref, data);
         return TimeTrackerDocument(id: ref.id, data: data);
       },
     );
+  }
+
+  /// The next free readable id of [newId] (inside [tx]; [taken] collects the
+  /// counter values to write once every read is done).
+  Future<DocumentReference<Map<String, dynamic>>> _allocate(
+    Transaction tx,
+    CollectionReference<Map<String, dynamic>> collection,
+    NewDocId newId,
+    Map<String, int> taken,
+  ) async {
+    int n = taken[newId.counterKey] ??
+        (((await tx.get(_collection(TimeTrackerFirestorePaths.counters).doc(newId.counterKey)))
+                    .data()?[NewDocId.lastNumber] as num?)
+                ?.toInt() ??
+            0);
+    // Skip an id that already exists (a counter reset by hand).
+    for (int guard = 0; guard < 50; guard++) {
+      n++;
+      final DocumentReference<Map<String, dynamic>> ref = collection.doc(newId.idFor(n));
+      if (!(await tx.get(ref)).exists) {
+        taken[newId.counterKey] = n;
+        return ref;
+      }
+    }
+    throw StateError('Could not find a free ${newId.prefix} number.');
+  }
+
+  void _writeCounters(Transaction tx, Map<String, int> taken) {
+    for (final MapEntry<String, int> e in taken.entries) {
+      tx.set(_collection(TimeTrackerFirestorePaths.counters).doc(e.key),
+          <String, Object>{NewDocId.lastNumber: e.value}, SetOptions(merge: true));
+    }
   }
 
   /// Function Name: [appendRows]
@@ -255,12 +315,17 @@ class TimeTrackerRemoteDataSource {
   /// written document (null = untouched).
   Future<List<TimeTrackerDocument?>> appendRows(List<HistoryRowWrite> writes) async {
     await ensureModuleDocument();
-    final List<DocumentReference<Map<String, dynamic>>> refs =
-        <DocumentReference<Map<String, dynamic>>>[
-      for (final HistoryRowWrite w in writes)
-        w.id == null ? _collection(w.relativePath).doc() : _collection(w.relativePath).doc(w.id),
-    ];
     return _firestore.runTransaction<List<TimeTrackerDocument?>>((Transaction tx) async {
+      final Map<String, int> taken = <String, int>{};
+      final List<DocumentReference<Map<String, dynamic>>> refs = <DocumentReference<Map<String, dynamic>>>[];
+      for (final HistoryRowWrite w in writes) {
+        final NewDocId? newId = w.newId;
+        refs.add(w.id != null
+            ? _collection(w.relativePath).doc(w.id)
+            : (newId == null
+                ? _collection(w.relativePath).doc()
+                : await _allocate(tx, _collection(w.relativePath), newId, taken)));
+      }
       final List<DocumentSnapshot<Map<String, dynamic>>> stored =
           <DocumentSnapshot<Map<String, dynamic>>>[
         for (final DocumentReference<Map<String, dynamic>> ref in refs) await tx.get(ref),
@@ -282,6 +347,7 @@ class TimeTrackerRemoteDataSource {
           data: TimeTrackerHistoryCodec.append(old: old, values: values, now: now),
         ));
       }
+      _writeCounters(tx, taken);
       for (int i = 0; i < writes.length; i++) {
         final TimeTrackerDocument? doc = out[i];
         if (doc != null) tx.set(refs[i], doc.data);

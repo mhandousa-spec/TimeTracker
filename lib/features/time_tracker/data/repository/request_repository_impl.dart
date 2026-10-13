@@ -130,7 +130,12 @@ class RequestRepositoryImpl
   Future<TimeTrackerRequest> createRequest({
     required TimeTrackerRequest request,
   }) async =>
-      write(request, id: null, mustExist: false);
+      write(request, id: null, mustExist: false, newId: newIdOf(request));
+
+  /// 13/10/2026 (owner decision 48): REQ-2026-0001 / TRX-2026-0001 — the
+  /// year the request is created.
+  static NewDocId newIdOf(TimeTrackerRequest request) =>
+      NewDocId('${request.isTransaction ? 'TRX' : 'REQ'}-${DateTime.now().year}');
 
   @override
   Future<TimeTrackerRequest> updateRequest({
@@ -161,6 +166,7 @@ class RequestRepositoryImpl
         relativePath: collectionPath,
         id: isNew ? null : request.id,
         mustExist: !isNew,
+        newId: isNew ? newIdOf(request) : null,
         row: (String id, Map<String, dynamic>? stored) {
           checkStored(request, stored);
           return encode(request, id: id, audit: audit(stored));

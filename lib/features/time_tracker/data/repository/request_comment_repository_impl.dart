@@ -138,6 +138,8 @@ class RequestCommentRepositoryImpl implements RequestCommentBaseRepository {
         relativePath: TimeTrackerFirestorePaths.requestComments(requestId),
         id: id,
         mustExist: id != null,
+        // 13/10/2026 (owner decision 48): CMT-0001 numbered per request.
+        newId: id == null ? NewDocId('CMT', counterKey: 'CMT__$requestId') : null,
         row: (String docId, Map<String, dynamic>? stored) => RequestCommentModel.row(
           next(stored == null ? null : RequestCommentModel.fromMap(docId, stored), actor),
           id: docId,

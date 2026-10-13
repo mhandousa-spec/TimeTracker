@@ -9,6 +9,7 @@
 ///
 /// Delete is soft (`Is_Deleted`) — STATUS.md assumption A4.
 
+import 'package:knowticed_plus/features/time_tracker/data/data_source/remote_data_source/time_tracker_remote_data_source.dart';
 import 'package:knowticed_plus/features/time_tracker/data/models/employee_group_model.dart';
 import 'package:knowticed_plus/features/time_tracker/data/models/time_tracker_document.dart';
 import 'package:knowticed_plus/features/time_tracker/data/models/time_tracker_field_codec.dart';
@@ -57,7 +58,7 @@ class GroupRepositoryImpl extends TimeTrackerHistoryRepository<EmployeeGroup>
 
   @override
   Future<EmployeeGroup> createGroup({required EmployeeGroup group}) async =>
-      write(group, id: null, mustExist: false);
+      write(group, id: null, mustExist: false, newId: const NewDocId('GRP'));
 
   @override
   Future<EmployeeGroup> updateGroup({required EmployeeGroup group}) async =>

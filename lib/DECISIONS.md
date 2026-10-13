@@ -75,3 +75,6 @@ Facts found in code (8/10):
 47. No self-id fields in any document (ALL Time Tracker + To-Do docs).
 48. Readable professional IDs: REQ-2026-0001 (requests), TRX-2026-0001 (transactions), LOC-0001, GRP-0001, RQT-0001, CMT-0001 (per request), TODO-0001 (per employee folder); natural keys kept: attendance {email}_{date}, balances {email}_{year}, assignments {email}. Per-company counters in a transaction; reference shown in the UI. Existing data renamed only via a dry-run migration. (Playbook §3b updated.)
 49. Cross-year leave (round 9 b): split per year on final approval, Deducted_Vacation_Days = per-year map, refunds per year; insufficient year → blocked with that year's remaining days. (Supersedes the earlier block.)
+
+## Built 13 Oct 2026 — readable IDs (decision 48)
+50. New records get readable ids inside the same Firestore transaction as the write: REQ-{year}-0001, TRX-{year}-0001 (year of creation), LOC-0001, GRP-0001, RQT-0001, CMT-0001 (numbered per request). Counter documents: `Modules/time_tracker/Counters/{series}` with `Last_Number` (series = `REQ-2026`, `TRX-2026`, `LOC`, `GRP`, `RQT`, `CMT__{requestId}`). An id that already exists is skipped. Existing records keep their old ids (no migration). **Amr:** the security rules must allow company users to read/write `Counters` like the other Time Tracker collections.

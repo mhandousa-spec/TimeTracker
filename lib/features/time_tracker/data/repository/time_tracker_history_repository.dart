@@ -120,7 +120,7 @@ abstract class TimeTrackerHistoryRepository<T> {
   ///   [bool] mustExist: an update — refuse to recreate a vanished doc.
   ///
   /// Return type: [Future<T>] — the stored entity.
-  Future<T> write(T entity, {required String? id, required bool mustExist}) async {
+  Future<T> write(T entity, {required String? id, required bool mustExist, NewDocId? newId}) async {
     validate(entity);
     final String actor = _actor();
     try {
@@ -128,6 +128,7 @@ abstract class TimeTrackerHistoryRepository<T> {
         relativePath: collectionPath,
         id: id,
         mustExist: mustExist,
+        newId: newId,
         row: (String docId, Map<String, dynamic>? stored) {
           checkStored(entity, stored);
           return encode(

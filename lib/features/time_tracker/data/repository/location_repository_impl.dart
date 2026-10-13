@@ -10,6 +10,7 @@
 /// Delete is a status (`deleted`, STATUS.md assumption A4) so the history and
 /// every attendance session pointing at the location stay readable.
 
+import 'package:knowticed_plus/features/time_tracker/data/data_source/remote_data_source/time_tracker_remote_data_source.dart';
 import 'package:knowticed_plus/features/time_tracker/data/models/time_tracker_document.dart';
 import 'package:knowticed_plus/features/time_tracker/data/models/time_tracker_field_codec.dart';
 import 'package:knowticed_plus/features/time_tracker/data/models/work_location_model.dart';
@@ -75,7 +76,7 @@ class LocationRepositoryImpl extends TimeTrackerHistoryRepository<WorkLocation>
 
   @override
   Future<WorkLocation> createLocation({required WorkLocation location}) async =>
-      write(location, id: null, mustExist: false);
+      write(location, id: null, mustExist: false, newId: const NewDocId('LOC'));
 
   @override
   Future<WorkLocation> updateLocation({required WorkLocation location}) async =>
