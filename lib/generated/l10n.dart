@@ -39236,6 +39236,56 @@ class S {
     );
   }
 
+  /// `Search An Address Or Place`
+  String get timeTrackerSearchAddress {
+    return Intl.message(
+      'Search An Address Or Place',
+      name: 'timeTrackerSearchAddress',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No place was found for this address. Try a fuller address, or tap the map.`
+  String get timeTrackerAddressNotFound {
+    return Intl.message(
+      'No place was found for this address. Try a fuller address, or tap the map.',
+      name: 'timeTrackerAddressNotFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tap the map to place the pin. The yellow circle is the check-in area.`
+  String get timeTrackerTapMapHint {
+    return Intl.message(
+      'Tap the map to place the pin. The yellow circle is the check-in area.',
+      name: 'timeTrackerTapMapHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Location On Map`
+  String get timeTrackerGeofencePreview {
+    return Intl.message(
+      'Location On Map',
+      name: 'timeTrackerGeofencePreview',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Searching…`
+  String get timeTrackerSearching {
+    return Intl.message(
+      'Searching…',
+      name: 'timeTrackerSearching',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Checked In Now`
   String get timeTrackerCheckedInNow {
     return Intl.message(

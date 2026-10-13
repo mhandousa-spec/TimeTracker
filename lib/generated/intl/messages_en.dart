@@ -7457,6 +7457,9 @@ class MessageLookup extends MessageLookupByLibrary {
         ),
     "timeTrackerActive": MessageLookupByLibrary.simpleMessage("Active"),
     "timeTrackerAddedBy": MessageLookupByLibrary.simpleMessage("Added By"),
+    "timeTrackerAddressNotFound": MessageLookupByLibrary.simpleMessage(
+      "No place was found for this address. Try a fuller address, or tap the map.",
+    ),
     "timeTrackerAll": MessageLookupByLibrary.simpleMessage("All"),
     "timeTrackerAllClear": MessageLookupByLibrary.simpleMessage(
       "Nothing needs your attention right now.",
@@ -7983,6 +7986,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerFrequentAbsences": MessageLookupByLibrary.simpleMessage(
       "3 Or More Absences This Month",
     ),
+    "timeTrackerGeofencePreview": MessageLookupByLibrary.simpleMessage(
+      "Location On Map",
+    ),
     "timeTrackerGeofenceRadius": MessageLookupByLibrary.simpleMessage(
       "Geofencing Radius (Meters)",
     ),
@@ -8501,6 +8507,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerScreensComingSoon": MessageLookupByLibrary.simpleMessage(
       "The Time Tracker screens are being built and will appear here soon.",
     ),
+    "timeTrackerSearchAddress": MessageLookupByLibrary.simpleMessage(
+      "Search An Address Or Place",
+    ),
+    "timeTrackerSearching": MessageLookupByLibrary.simpleMessage("Searching…"),
     "timeTrackerSectionComingSoon": MessageLookupByLibrary.simpleMessage(
       "This section is coming soon.",
     ),
@@ -8571,6 +8581,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerTabRequests": MessageLookupByLibrary.simpleMessage("Requests"),
     "timeTrackerTabVacationBalances": MessageLookupByLibrary.simpleMessage(
       "Vacation Balances",
+    ),
+    "timeTrackerTapMapHint": MessageLookupByLibrary.simpleMessage(
+      "Tap the map to place the pin. The yellow circle is the check-in area.",
     ),
     "timeTrackerTextHereAr": MessageLookupByLibrary.simpleMessage("اكتب هنا"),
     "timeTrackerTimeframeValue": m57,

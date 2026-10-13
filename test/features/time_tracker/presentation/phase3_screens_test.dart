@@ -142,6 +142,38 @@ void main() {
       await h.dispose(tester);
     });
 
+    testWidgets('location map (owner L1 / S5): tap the map sets the pin; geofence circle + quick radius',
+        (WidgetTester tester) async {
+      final TimeTrackerHarness h = TimeTrackerHarness();
+      await h.pump(tester, const TimeTrackerHomePage());
+      await _open(tester, h, S.current.timeTrackerTabLocations);
+      await tester.tap(_key('locationsAddButton'));
+      await h.settle(tester);
+      await tester.ensureVisible(_key('geofenceMap'));
+      await h.settle(tester);
+      expect(_key('locationUseMyLocation'), findsOneWidget);
+      expect(_key('geofenceSearchField'), findsOneWidget);
+      // No coordinates yet → tap the map → latitude / longitude filled.
+      await tester.tap(_key('geofenceMap'));
+      await h.settle(tester);
+      String text(String label) => tester
+          .widgetList<EditableText>(find.byType(EditableText))
+          .map((EditableText e) => e.controller.text)
+          .firstWhere((String t) => t.contains('.'), orElse: () => label);
+      expect(text(''), isNot(''), reason: 'a coordinate was written');
+      // Geofence ON → the quick radius buttons; 500 m draws the badge.
+      await tester.ensureVisible(_key('locationGeofenceSwitch'));
+      await tester.tap(find.descendant(of: _key('locationGeofenceSwitch'), matching: find.byType(GestureDetector)).last);
+      await h.settle(tester);
+      await tester.ensureVisible(_key('geofenceQuickRadius_500'));
+      await tester.tap(_key('geofenceQuickRadius_500'));
+      await h.settle(tester);
+      expect(_key('geofenceRadiusBadge'), findsOneWidget);
+      expect(find.descendant(of: _key('geofenceRadiusBadge'), matching: find.text(S.current.timeTrackerMetersValue('500'))),
+          findsOneWidget);
+      await h.dispose(tester);
+    });
+
     testWidgets('phone: one card per location', (WidgetTester tester) async {
       final TimeTrackerHarness h = TimeTrackerHarness();
       seedLocations(h.remote, <WorkLocation>[_hq]);

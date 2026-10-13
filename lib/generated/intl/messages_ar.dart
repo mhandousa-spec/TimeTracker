@@ -7140,6 +7140,9 @@ class MessageLookup extends MessageLookupByLibrary {
         ),
     "timeTrackerActive": MessageLookupByLibrary.simpleMessage("نشط"),
     "timeTrackerAddedBy": MessageLookupByLibrary.simpleMessage("أضيف بواسطة"),
+    "timeTrackerAddressNotFound": MessageLookupByLibrary.simpleMessage(
+      "لم يتم العثور على مكان لهذا العنوان. جرّب عنوانًا أكمل أو اضغط على الخريطة.",
+    ),
     "timeTrackerAll": MessageLookupByLibrary.simpleMessage("الكل"),
     "timeTrackerAllClear": MessageLookupByLibrary.simpleMessage(
       "لا يوجد ما يحتاج إلى متابعتك الآن.",
@@ -7668,6 +7671,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerFrequentAbsences": MessageLookupByLibrary.simpleMessage(
       "ثلاثة غيابات أو أكثر هذا الشهر",
     ),
+    "timeTrackerGeofencePreview": MessageLookupByLibrary.simpleMessage(
+      "الموقع على الخريطة",
+    ),
     "timeTrackerGeofenceRadius": MessageLookupByLibrary.simpleMessage(
       "نصف قطر السياج الجغرافي (متر)",
     ),
@@ -8186,6 +8192,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerScreensComingSoon": MessageLookupByLibrary.simpleMessage(
       "يجري إنشاء شاشات تتبع الوقت وستظهر هنا قريبا.",
     ),
+    "timeTrackerSearchAddress": MessageLookupByLibrary.simpleMessage(
+      "ابحث عن عنوان أو مكان",
+    ),
+    "timeTrackerSearching": MessageLookupByLibrary.simpleMessage("جارٍ البحث…"),
     "timeTrackerSectionComingSoon": MessageLookupByLibrary.simpleMessage(
       "هذا القسم قادم قريبا.",
     ),
@@ -8252,6 +8262,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerTabRequests": MessageLookupByLibrary.simpleMessage("الطلبات"),
     "timeTrackerTabVacationBalances": MessageLookupByLibrary.simpleMessage(
       "أرصدة الإجازات",
+    ),
+    "timeTrackerTapMapHint": MessageLookupByLibrary.simpleMessage(
+      "اضغط على الخريطة لتحديد الموقع. الدائرة الصفراء هي نطاق تسجيل الحضور.",
     ),
     "timeTrackerTextHereAr": MessageLookupByLibrary.simpleMessage("اكتب هنا"),
     "timeTrackerTimeframeValue": m57,

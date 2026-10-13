@@ -31,6 +31,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
 
+import 'package:latlong2/latlong.dart';
+
 import 'package:knowticed_plus/core/extensions/context_extensions.dart';
 import 'package:knowticed_plus/core/constants/app_assets.dart';
 import 'package:knowticed_plus/core/custom/1-custom_dropdown.dart';
@@ -48,6 +50,7 @@ import 'package:knowticed_plus/features/time_tracker/domain/rules/geofence.dart'
 import 'package:knowticed_plus/features/time_tracker/domain/rules/location_form_rules.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/controller/time_tracker_action_failure.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_setup_widgets.dart';
+import 'package:knowticed_plus/features/time_tracker/tt5_locations/presentation/ui/widgets/geofence_map_picker.dart';
 import 'package:knowticed_plus/features/time_tracker/tt5_locations/presentation/controller/location_form_cubit.dart';
 import 'package:knowticed_plus/features/time_tracker/tt5_locations/presentation/ui/widgets/location_form_fields.dart';
 import 'package:knowticed_plus/core/helper/main_helper/localized_number.dart';
@@ -55,7 +58,6 @@ import 'package:knowticed_plus/features/time_tracker/data/services/time_tracker_
 import 'package:knowticed_plus/features/time_tracker/domain/enums/setup_status.dart';
 import 'package:knowticed_plus/features/time_tracker/tt5_locations/presentation/controller/locations_cubit.dart';
 import 'package:knowticed_plus/generated/l10n.dart';
-import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_controls.dart';
 
 class LocationFormPage extends StatelessWidget {
   const LocationFormPage({super.key, this.original});
@@ -467,16 +469,6 @@ class _LocationFormViewState extends State<_LocationFormView> {
               formatters: coords, onChanged: (_) => _coordinates(),
               error: state.shows(LocationFormError.longitudeInvalid) ? s.timeTrackerLongitudeInvalid : null),
         ),
-        Align(
-          alignment: AlignmentDirectional.centerStart,
-          child: TextButton.icon(
-            key: const ValueKey<String>('locationUseMyLocation'),
-            onPressed: state.isLocating ? null : _locate,
-            icon: TtIcon(const TtGlyph.svg(TtAssets.location), size: 16.r, color: AppColors.blue),
-            label: Text(s.timeTrackerUseMyLocation,
-                style: StyleText.fontSize14Weight500.copyWith(color: AppColors.blue)),
-          ),
-        ),
         TtFieldError(state.shows(LocationFormError.coordinatesRequired) ? s.timeTrackerCoordinatesRequired : null),
         SizedBox(height: 10.h),
         TtPair(
@@ -498,6 +490,27 @@ class _LocationFormViewState extends State<_LocationFormView> {
                     _draft.copyWith(geofenceRadiusMeters: (int.tryParse(v) ?? 0).toDouble()))),
           ),
         ],
+        // 12/10/2026 (owner L1 / S5): address search + my-location icon +
+        // the live map (pin, and the geofence circle at the typed radius).
+        SizedBox(height: 15.h),
+        GeofenceMapPicker(
+          key: const ValueKey<String>('locationGeofenceMap'),
+          latitude: d.latitude,
+          longitude: d.longitude,
+          radiusMeters: d.geofenceRadiusMeters,
+          showCircle: d.isGeofenceEnabled,
+          locating: state.isLocating,
+          onLocate: _locate,
+          onPoint: (LatLng p) {
+            _c['lat']!.text = p.latitude.toStringAsFixed(6);
+            _c['lng']!.text = p.longitude.toStringAsFixed(6);
+            _coordinates();
+          },
+          onRadius: (int m) {
+            _c['radius']!.text = '$m';
+            _cubit.update(_draft.copyWith(geofenceRadiusMeters: m.toDouble()));
+          },
+        ),
         SizedBox(height: 15.h),
         _address(d),
       ],
