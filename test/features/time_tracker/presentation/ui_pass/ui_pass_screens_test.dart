@@ -322,6 +322,10 @@ void main() {
         await _run(tester, v, (_Ctx c) async {
           await c.tab(TimeTrackerTab.requestTypes);
           await c.shot('40_request_types_cards');
+          // 12/10/2026 (owner): the Request Types filter = the Approvals one.
+          await c.tap('requestTypesFilterButton');
+          await c.shot('40_request_types_filter');
+          await c.closeDialog();
           c.h.requestTypes.setGrid(false);
           await c.settle();
           await c.shot('41_request_types_table');

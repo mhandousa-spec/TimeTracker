@@ -141,7 +141,8 @@ class _RequestTypesTabState extends State<RequestTypesTab> {
             final RequestTypeStatusChoice? picked =
                 await CustomDialogManager.showContent<RequestTypeStatusChoice>(
               context: context,
-              width: 420,
+              // 12/10/2026 (owner): the Approvals filter's width.
+              width: 520,
               child: RequestTypeFilterDialog(initial: state.statusFilter),
             );
             if (picked != null) cubit.filterStatus(picked.status);
