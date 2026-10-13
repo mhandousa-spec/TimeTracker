@@ -23,7 +23,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
 
-import 'package:knowticed_plus/core/constants/app_assets.dart';
 import 'package:knowticed_plus/core/custom/16-custom_card_styles.dart';
 import 'package:knowticed_plus/core/custom/47-custom_sort_button.dart';
 import 'package:knowticed_plus/core/custom/88-stacked_avatars.dart';
@@ -112,8 +111,7 @@ class _GroupsViewState extends State<GroupsView> {
                     TtToolbarButton(
                       key: const ValueKey<String>('groupsAddButton'),
                       title: s.timeTrackerGroupButton,
-                      icon: AppAssets.add,
-                      iconSize: 16.r,
+                      icon: TtAssets.add,
                       onTap: () => _push(const GroupFormPage()),
                     ),
                   ],

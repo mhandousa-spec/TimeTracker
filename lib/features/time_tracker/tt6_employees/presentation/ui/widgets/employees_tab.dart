@@ -247,8 +247,7 @@ class _EmployeesTabState extends State<EmployeesTab> {
           TtToolbarButton(
             key: const ValueKey<String>('employeesAssignSelected'),
             title: s.timeTrackerAssignCount(LocalizedNumber.of(context, state.selected.length)),
-            icon: AppAssets.add,
-            iconSize: 16.r,
+            icon: TtAssets.add,
             onTap: () => showGrantAccessFlow(context, <TimeTrackerEmployee>[
               for (final EmployeeAssignmentRow r in state.unassigned)
                 if (state.selected.contains(r.employee.email)) r.employee,

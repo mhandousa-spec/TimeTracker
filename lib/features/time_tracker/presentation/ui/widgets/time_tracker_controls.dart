@@ -66,6 +66,12 @@ abstract class TtAssets {
   /// "Linear / Arrows Action / Upload" (`661:17006`).
   static const String upload = '$_dir/ic_upload.svg';
 
+  /// ADDED 12/10/2026 (owner R7): toolbar "+" and Import with the SAME
+  /// drawn stroke as Filter / Export at `TtToolbar.iconSize` (the house
+  /// plus.svg was a 1-unit hairline; upload_arrow a 3-unit bold line).
+  static const String add = '$_dir/ic_add.svg';
+  static const String import = '$_dir/ic_import.svg';
+
   // ── Existing app line icons (9/10/2026, code review) ──────────────────────
   static const String _main = 'assets/icons_assets/main_icons_assets';
   static const String _form = 'assets/icons_assets/form_builder_assets';
@@ -264,6 +270,10 @@ abstract class TtToolbar {
 
   /// The corner radius of every toolbar control.
   static BorderRadius get radius => BorderRadius.circular(ButtonSizing.radius);
+
+  /// ADDED 12/10/2026 (owner R7): ONE icon size for Filter, Export, Import
+  /// and "+" (they were 23 / 24 / 16 / 16).
+  static double get iconSize => 20.r;
 }
 
 /// The module's search box: core `AppSearchTextField` (self-Expanded — put
@@ -339,8 +349,8 @@ class TtFilterButton extends StatelessWidget {
           ),
           child: CustomSvgImage(
             assetPath: TtAssets.filter,
-            width: 23.r,
-            height: 23.r,
+            width: TtToolbar.iconSize,
+            height: TtToolbar.iconSize,
             fit: BoxFit.contain,
             color: active ? AppColors.textButton : AppColors.secondaryText,
           ),
@@ -369,8 +379,8 @@ class TtExportButton extends StatelessWidget {
           color: AppColors.primary,
           colorBorder: AppColors.transparent,
           image: TtAssets.export,
-          widthImage: 24.r,
-          heightImage: 24.r,
+          widthImage: TtToolbar.iconSize,
+          heightImage: TtToolbar.iconSize,
           svgColor: AppColors.textButton,
           textStyle: StyleText.fontSize14Weight500.copyWith(color: AppColors.textButton),
         ),

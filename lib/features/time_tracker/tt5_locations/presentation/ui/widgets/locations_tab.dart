@@ -150,7 +150,7 @@ class _LocationsTabState extends State<LocationsTab> {
           TtToolbarButton(
             key: const ValueKey<String>('locationsImportButton'),
             title: s.timeTrackerImport,
-            icon: AppAssets.upload,
+            icon: TtAssets.import,
             onTap: () => showLocationImportDialog(context),
           ),
         ],
@@ -159,8 +159,7 @@ class _LocationsTabState extends State<LocationsTab> {
           TtToolbarButton(
             key: const ValueKey<String>('locationsAddButton'),
             title: s.timeTrackerLocation,
-            icon: AppAssets.add,
-            iconSize: 16.r,
+            icon: TtAssets.add,
             onTap: () => _open(const LocationFormPage()),
           ),
         ],

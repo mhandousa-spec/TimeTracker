@@ -161,8 +161,7 @@ class _VacationBalancesTabState extends State<VacationBalancesTab> {
           TtToolbarButton(
             key: const ValueKey<String>('vacationImportButton'),
             title: s.timeTrackerImport,
-            icon: AppAssets.upload,
-            iconSize: 16.r,
+            icon: TtAssets.import,
             onTap: () => showVacationBalanceImport(context),
           ),
         ],

@@ -30,13 +30,13 @@ import 'package:knowticed_plus/core/custom/24-custom_chart_card.dart';
 import 'package:knowticed_plus/core/custom/30-custom_attendance_tiles_card.dart';
 import 'package:knowticed_plus/core/custom/32-custom_svg.dart';
 import 'package:knowticed_plus/core/custom/57-custom_dialog_manager.dart';
-import 'package:knowticed_plus/core/custom/6-custom_button_with_svg.dart';
 import 'package:knowticed_plus/core/custom/66-circle_progress.dart';
 import 'package:knowticed_plus/core/custom/89-custom_empty_state.dart';
 import 'package:knowticed_plus/core/extensions/context_extensions.dart';
 import 'package:knowticed_plus/core/theme/app_animations.dart';
 import 'package:knowticed_plus/core/theme/app_colors.dart';
 import 'package:knowticed_plus/core/theme/app_theme.dart';
+import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_setup_widgets.dart';
 import 'package:knowticed_plus/features/time_tracker/data/services/time_tracker_access.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/entities/attendance_day.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/enums/attendance_status.dart';
@@ -142,7 +142,6 @@ class _AttendanceTabState extends State<AttendanceTab> {
     List<AttendanceDay> rows,
   ) {
     final S s = S.of(context);
-    final bool phone = context.isPhone;
     final TimeTrackerAccess access = _access;
     return Row(
       children: <Widget>[
@@ -165,20 +164,12 @@ class _AttendanceTabState extends State<AttendanceTab> {
         ],
         if (access.canRequestTransaction) ...<Widget>[
           SizedBox(width: 15.w),
-          ShrinkOnTap(
+          // 12/10/2026 (owner R7 / O2): the shared toolbar button.
+          TtToolbarButton(
             key: const ValueKey<String>('attendanceTransactionButton'),
-            child: customButtonWithSvg(
-              title: phone ? '' : s.timeTrackerTransactionButton,
-              function: _openTransaction,
-              color: AppColors.primary,
-              colorBorder: AppColors.transparent,
-              image: AppAssets.add,
-              widthImage: 16.r,
-              heightImage: 16.r,
-              svgColor: AppColors.textButton,
-              textStyle: StyleText.fontSize16Weight500
-                  .copyWith(color: AppColors.textButton),
-            ),
+            title: s.timeTrackerTransactionButton,
+            icon: TtAssets.add,
+            onTap: _openTransaction,
           ),
         ],
       ],

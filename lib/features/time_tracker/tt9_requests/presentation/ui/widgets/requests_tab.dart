@@ -177,8 +177,7 @@ class _RequestsTabState extends State<RequestsTab> {
           TtToolbarButton(
             key: const ValueKey<String>('requestsAddButton'),
             title: s.timeTrackerRequestWord,
-            icon: AppAssets.add,
-            iconSize: 16.r,
+            icon: TtAssets.add,
             onTap: () => _push(const RequestFormPage()),
           ),
         ],
