@@ -452,7 +452,13 @@ class TimeTrackerFormActions extends StatelessWidget {
     required this.onSubmit,
     required this.onDisabledTap,
     this.primaryKey,
+    this.hint,
   });
+
+  /// ADDED 12/10/2026 (owner R4 / K2): a reason shown above the row after a
+  /// tap on the disabled primary when no FIELD is wrong — e.g. an Edit form
+  /// with nothing changed ("No Change Found"). Null = nothing.
+  final String? hint;
 
   final String primaryTitle;
   final bool canSubmit;
@@ -488,18 +494,33 @@ class TimeTrackerFormActions extends StatelessWidget {
               textStyle: StyleText.fontSize16Weight500.copyWith(color: AppColors.colorGreyDark),
             ),
     );
-    if (context.isPhone) {
-      return Row(children: <Widget>[
-        Expanded(child: discard),
-        SizedBox(width: 15.w),
-        Expanded(child: primary),
-      ]);
-    }
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    final Widget row = context.isPhone
+        ? Row(children: <Widget>[
+            Expanded(child: discard),
+            SizedBox(width: 15.w),
+            Expanded(child: primary),
+          ])
+        : Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              SizedBox(width: 150.w, child: discard),
+              SizedBox(width: 150.w, child: primary),
+            ],
+          );
+    final String? reason = hint;
+    if (reason == null) return row;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        SizedBox(width: 150.w, child: discard),
-        SizedBox(width: 150.w, child: primary),
+        Text(
+          reason,
+          key: const ValueKey<String>('formActionsHint'),
+          textAlign: TextAlign.end,
+          style: StyleText.fontSize12Weight400.copyWith(color: AppColors.red),
+        ),
+        SizedBox(height: 8.h),
+        row,
       ],
     );
   }

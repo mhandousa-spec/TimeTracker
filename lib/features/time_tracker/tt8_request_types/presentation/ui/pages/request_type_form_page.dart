@@ -132,6 +132,8 @@ class _RequestTypeFormViewState extends State<_RequestTypeFormView> {
       onDiscard: () => Navigator.of(context).maybePop(),
       onSubmit: _submit,
       onDisabledTap: _cubit.revealErrors,
+      // 12/10/2026 (owner R4 / K2): an unchanged Edit form says why Save is grey.
+      hint: state.isEdit && state.showErrors && state.errors.isEmpty && !state.isDirty ? s.noChangeFound : null,
     );
   }
 

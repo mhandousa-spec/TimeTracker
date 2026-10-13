@@ -63,6 +63,10 @@ class TransactionDateTimeRow extends StatelessWidget {
     final S s = S.of(context);
     final String? message = error;
     final DateTime today = DateTime.now();
+    // 12/10/2026 (owner R4 / G1): the red border goes on the part that is
+    // MISSING — the date, the time or both (a wrong order marks the time).
+    final bool dateMissing = message != null && date == null;
+    final bool timeMissing = message != null && (time == null || date != null);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -77,16 +81,24 @@ class TransactionDateTimeRow extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Expanded(
-              child: CustomDropdownCalendar(
-                value: date,
-                hint: s.chooseDate,
-                height: 36,
-                // A correction is for a day that already happened.
-                lastDate: DateTime(today.year, today.month, today.day),
-                dateFormatter: (DateTime d) => LocalizedDate.of(context, d),
-                onChanged: (DateTime? d) {
-                  if (d != null) onDate(d);
-                },
+              child: Container(
+                foregroundDecoration: dateMissing
+                    ? BoxDecoration(
+                        borderRadius: BorderRadius.circular(4.r),
+                        border: Border.all(color: AppColors.red),
+                      )
+                    : null,
+                child: CustomDropdownCalendar(
+                  value: date,
+                  hint: s.chooseDate,
+                  height: 36,
+                  // A correction is for a day that already happened.
+                  lastDate: DateTime(today.year, today.month, today.day),
+                  dateFormatter: (DateTime d) => LocalizedDate.of(context, d),
+                  onChanged: (DateTime? d) {
+                    if (d != null) onDate(d);
+                  },
+                ),
               ),
             ),
             SizedBox(width: 15.w),
@@ -94,7 +106,7 @@ class TransactionDateTimeRow extends StatelessWidget {
               child: TimeTrackerTimeField(
                 value: time,
                 hint: s.chooseTime,
-                hasError: message != null,
+                hasError: timeMissing,
                 onPicked: onTime,
               ),
             ),
@@ -219,8 +231,7 @@ class TransactionFormActions extends StatelessWidget {
       title: s.discard,
       function: onDiscard,
       color: AppColors.secondaryAction,
-      textStyle:
-          StyleText.fontSize16Weight500.copyWith(color: AppColors.onSecondaryAction),
+      textStyle: StyleText.fontSize16Weight500.copyWith(color: AppColors.onSecondaryAction),
     );
     final Widget submit = KeyedSubtree(
       key: const ValueKey<String>('transactionSubmitButton'),
@@ -230,8 +241,7 @@ class TransactionFormActions extends StatelessWidget {
                 title: s.submit,
                 function: onSubmit,
                 color: AppColors.primary,
-                textStyle: StyleText.fontSize16Weight500
-                    .copyWith(color: AppColors.textButton),
+                textStyle: StyleText.fontSize16Weight500.copyWith(color: AppColors.textButton),
               ),
             )
           : customButton(
@@ -239,8 +249,7 @@ class TransactionFormActions extends StatelessWidget {
               function: onDisabledTap,
               haptic: () {},
               color: AppColors.disabledButton,
-              textStyle: StyleText.fontSize16Weight500
-                  .copyWith(color: AppColors.colorGreyDark),
+              textStyle: StyleText.fontSize16Weight500.copyWith(color: AppColors.colorGreyDark),
             ),
     );
     if (context.isPhone) {

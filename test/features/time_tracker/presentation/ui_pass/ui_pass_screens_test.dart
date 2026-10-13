@@ -262,6 +262,9 @@ void main() {
           await c.closeDialog();
           await c.push(const TransactionFormPage());
           await c.shot('12_transaction_form');
+          // 12/10/2026 (owner R4 / G1): a tap on the grey Submit shows every missing field.
+          await c.tap('transactionSubmitButton');
+          await c.shot('12_transaction_form_required');
         });
       });
 
@@ -332,6 +335,10 @@ void main() {
           await c.closeDialog();
           await c.tap('requestTypeEditButton');
           await c.shot('45_request_type_edit');
+          // 12/10/2026 (owner R4 / K2): an unchanged Edit says why Save is grey.
+          await c.tap('requestTypeSubmitButton');
+          await c.shot('45_request_type_edit_no_change');
+          expect(find.byKey(const ValueKey<String>('formActionsHint')), findsOneWidget);
         });
       });
 
