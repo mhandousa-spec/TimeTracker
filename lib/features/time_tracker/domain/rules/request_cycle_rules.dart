@@ -98,6 +98,7 @@ class RequestCycleRules {
     required DateTime at,
     bool overrideBlockedManager = false,
     bool managerIsFinal = false,
+    String justification = '',
   }) {
     if (actionableStep(request) == null) {
       throw StateError('Nothing is waiting for a decision.');
@@ -107,6 +108,9 @@ class RequestCycleRules {
       decision: ApprovalDecision.approved,
       approverEmail: approverEmail,
       at: at,
+      // 13/10/2026 (owner): the approver's justification is kept on the
+      // step, like a rejection reason.
+      reason: justification.trim(),
       skipCurrentFirst: overrideBlockedManager,
       closeFollowingHr: managerIsFinal,
     );

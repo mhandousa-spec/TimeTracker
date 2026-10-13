@@ -242,19 +242,19 @@ class HrDashboardCubit extends Cubit<HrDashboardState> {
     await loadAttendance();
   }
 
-  /// Function Name: [setDepartment] / [setLocation] / [setEmployees] /
-  /// [setSeries] / [setRequestType] / [setShowHr]
+  /// Function Name: [setDepartments] / [setLocations] / [setEmployees] /
+  /// [setSeries] / [setRequestTypes] / [setShowHr]
   ///
   /// Purpose: The filters ('' = all), the picked employees (empty = all),
   /// the Attendance History status, the Request Types bars' type, and the
   /// Overview toggle. None of them reads Firestore.
   ///
   /// Return type: [void]
-  void setDepartment(String departmentId) =>
-      _set(state.copyWith(filters: state.filters.copyWith(departmentId: departmentId)));
+  void setDepartments(Set<String> ids) =>
+      _set(state.copyWith(filters: state.filters.copyWith(departmentIds: Set<String>.unmodifiable(ids))));
 
-  void setLocation(String locationId) =>
-      _set(state.copyWith(filters: state.filters.copyWith(locationId: locationId)));
+  void setLocations(Set<String> ids) =>
+      _set(state.copyWith(filters: state.filters.copyWith(locationIds: Set<String>.unmodifiable(ids))));
 
   void setEmployees(Set<String> emails) => _set(state.copyWith(
         filters: state.filters.copyWith(
@@ -264,7 +264,8 @@ class HrDashboardCubit extends Cubit<HrDashboardState> {
 
   void setSeries(HrAttendanceSeries series) => emit(state.copyWith(series: series));
 
-  void setRequestType(String typeId) => _set(state.copyWith(requestTypeId: typeId));
+  void setRequestTypes(Set<String> typeIds) =>
+      _set(state.copyWith(requestTypeIds: Set<String>.unmodifiable(typeIds)));
 
   void setShowHr(bool showHr) => emit(state.copyWith(showHr: showHr));
 
@@ -284,7 +285,7 @@ class HrDashboardCubit extends Cubit<HrDashboardState> {
         requests: withStatus.requests,
         span: withStatus.span,
         now: withStatus.now,
-        requestTypeId: withStatus.requestTypeId,
+        requestTypeIds: withStatus.requestTypeIds,
       ),
     ));
   }

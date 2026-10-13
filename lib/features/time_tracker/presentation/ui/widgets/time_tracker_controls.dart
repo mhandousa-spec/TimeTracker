@@ -119,6 +119,20 @@ abstract class TtAssets {
   static const String btnReject = '$_dir/tt_btn_reject.svg';
   static const String btnCancel = '$_dir/tt_btn_cancel.svg';
 
+  /// 13/10/2026 (owner): Request Details icons from Figma — the big request
+  /// box (`661:22417`), Request Type (`661:23117`), Requested By
+  /// (`661:46528`), Job Title (`661:46535`) and the status-button badges
+  /// (Pending `661:22459`, Under Review `661:23162`, Canceled `661:22963`,
+  /// Approved `661:22043`).
+  static const String reqBox = '$_dir/tt_req_box.svg';
+  static const String reqType = '$_dir/tt_req_type.svg';
+  static const String reqUser = '$_dir/tt_req_user.svg';
+  static const String reqJob = '$_dir/tt_req_job.svg';
+  static const String statusPending = '$_dir/tt_status_pending.svg';
+  static const String statusReview = '$_dir/tt_status_review.svg';
+  static const String statusCanceled = '$_dir/tt_status_canceled.svg';
+  static const String statusApproved = '$_dir/tt_status_approved.svg';
+
   /// 13/10/2026 (owner I4): the approval-cycle arrow (Figma `661:23090`).
   static const String cycleArrow = '$_dir/tt_cycle_arrow.svg';
 

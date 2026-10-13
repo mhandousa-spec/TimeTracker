@@ -142,6 +142,9 @@ class RequestFlows {
         RequestText.typeNames(context, request, context.read<RequestsCubit>().state);
     final bool ar = _ar(context);
     final bool review = request.status == RequestStatus.underReview;
+    // 13/10/2026 (owner): Approve asks for a justification, like Reject asks
+    // for a reason (required — the requester and HR read why).
+    final TextEditingController justification = TextEditingController();
     await CustomDialogManager.showDialogFlow(
       context: context,
       confirmWidth: 411,
@@ -152,15 +155,24 @@ class RequestFlows {
       confirmSubtitle: review ? s.timeTrackerApproveCancellationConfirm : s.timeTrackerApproveRequestConfirm,
       confirmYesText: s.yes,
       confirmNoText: s.no,
+      comment: true,
+      commentRequired: true,
+      commentController: justification,
+      customReasonTitle: s.timeTrackerApprovalJustification,
+      customReasonIconAsset: AppAssets.success,
+      commentSubmitText: s.submit,
+      commentDiscardText: s.discard,
       onConfirm: () => actions.approve(
         request,
         typeName: names,
         isArabic: ar,
+        justification: justification.text,
       ),
       successLottie: AppAssets.successful,
       successTitle: review ? s.timeTrackerCancellationApprovedTitle : s.timeTrackerApproved,
       successSubtitle: review ? s.timeTrackerCancellationApproved : s.timeTrackerRequestApproved,
     );
+    justification.dispose();
     if (context.mounted) await _afterFlow(context);
   }
 

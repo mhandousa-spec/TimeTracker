@@ -88,37 +88,47 @@ enum RequestKind { request, transaction }
 class RequestFilter {
   const RequestFilter({
     this.kind,
-    this.requestTypeId,
-    this.status,
+    this.requestTypeIds = const <String>{},
+    this.includeTransactions = false,
+    this.statuses = const <RequestStatus>{},
     this.from,
     this.to,
-    this.departmentId,
+    this.departmentIds = const <String>{},
     this.employeeEmail,
   });
 
+  /// Requests only / transactions only (HR dashboard links); null = both.
   final RequestKind? kind;
-  final String? requestTypeId;
-  final RequestStatus? status;
+
+  /// 13/10/2026 (owner): MULTI-select. Request types picked (and/or
+  /// "Transaction" = [includeTransactions]); both empty = every type.
+  final Set<String> requestTypeIds;
+  final bool includeTransactions;
+
+  /// 13/10/2026 (owner): multi-select statuses; empty = all.
+  final Set<RequestStatus> statuses;
 
   /// The request must touch [from] … [to] (calendar days, both optional).
   final DateTime? from;
   final DateTime? to;
 
-  /// Approvals only: the requester's department.
-  final String? departmentId;
+  /// Approvals only: the requesters' departments (multi-select; empty = all).
+  final Set<String> departmentIds;
 
-  /// Approvals only: the requester (lower-cased).
+  /// Approvals only: one requester (HR dashboard links; lower-cased). The
+  /// Filter dialog no longer offers it — the search finds employees.
   final String? employeeEmail;
 
   static const RequestFilter none = RequestFilter();
 
   bool get isActive =>
       kind != null ||
-      requestTypeId != null ||
-      status != null ||
+      requestTypeIds.isNotEmpty ||
+      includeTransactions ||
+      statuses.isNotEmpty ||
       from != null ||
       to != null ||
-      departmentId != null ||
+      departmentIds.isNotEmpty ||
       (employeeEmail ?? '').isNotEmpty;
 
   static DateTime _day(DateTime d) => DateTime(d.year, d.month, d.day);
@@ -129,18 +139,23 @@ class RequestFilter {
   bool matches(TimeTrackerRequest request) {
     final RequestKind? k = kind;
     if (k != null && (k == RequestKind.transaction) != request.isTransaction) return false;
-    final String? type = requestTypeId;
-    if (type != null && request.requestTypeId != type) return false;
-    final RequestStatus? st = status;
-    if (st != null && request.status != st) return false;
+    if (requestTypeIds.isNotEmpty || includeTransactions) {
+      final bool typeOk = request.isTransaction
+          ? includeTransactions
+          : requestTypeIds.contains(request.requestTypeId);
+      if (!typeOk) return false;
+    }
+    if (statuses.isNotEmpty && !statuses.contains(request.status)) return false;
     final DateTime first = _day(request.startAt);
     final DateTime last = _day(request.endAt);
     final DateTime? a = from;
     if (a != null && last.isBefore(_day(a))) return false;
     final DateTime? b = to;
     if (b != null && first.isAfter(_day(b))) return false;
-    final String? dep = departmentId;
-    if (dep != null && request.requesterDepartmentId.trim() != dep.trim()) return false;
+    if (departmentIds.isNotEmpty &&
+        !departmentIds.map((String d) => d.trim()).contains(request.requesterDepartmentId.trim())) {
+      return false;
+    }
     final String who = (employeeEmail ?? '').trim().toLowerCase();
     if (who.isNotEmpty && request.requesterEmail.trim().toLowerCase() != who) return false;
     return true;

@@ -22,16 +22,17 @@
 import 'package:knowticed_plus/features/time_tracker/domain/entities/employee_placement.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/entities/time_tracker_employee.dart';
 
-/// The HR view's filters ('' / empty = no filter).
+/// The HR view's filters (empty = no filter).
+/// 13/10/2026 (owner): Department and Location are MULTI-select.
 class HrDashboardFilters {
   const HrDashboardFilters({
-    this.departmentId = '',
-    this.locationId = '',
+    this.departmentIds = const <String>{},
+    this.locationIds = const <String>{},
     this.employeeEmails = const <String>{},
   });
 
-  final String departmentId;
-  final String locationId;
+  final Set<String> departmentIds;
+  final Set<String> locationIds;
 
   /// Lower-cased e-mails picked in the Employee picker.
   final Set<String> employeeEmails;
@@ -44,13 +45,13 @@ class HrDashboardFilters {
   ///
   /// Return type: [HrDashboardFilters]
   HrDashboardFilters copyWith({
-    String? departmentId,
-    String? locationId,
+    Set<String>? departmentIds,
+    Set<String>? locationIds,
     Set<String>? employeeEmails,
   }) =>
       HrDashboardFilters(
-        departmentId: departmentId ?? this.departmentId,
-        locationId: locationId ?? this.locationId,
+        departmentIds: departmentIds ?? this.departmentIds,
+        locationIds: locationIds ?? this.locationIds,
         employeeEmails: employeeEmails ?? this.employeeEmails,
       );
 }
@@ -104,15 +105,17 @@ class HrDashboardScope {
     required bool allDepartments,
     required bool canFilterByEmployee,
   }) {
-    final String department = allDepartments ? filters.departmentId.trim() : '';
-    final String location = filters.locationId.trim();
+    final Set<String> departments = allDepartments
+        ? <String>{for (final String d in filters.departmentIds) if (d.trim().isNotEmpty) d.trim()}
+        : const <String>{};
+    final Set<String> locations = <String>{for (final String l in filters.locationIds) if (l.trim().isNotEmpty) l.trim()};
     final Set<String> picked = canFilterByEmployee
         ? <String>{for (final String e in filters.employeeEmails) _norm(e)}
         : const <String>{};
     return List<TimeTrackerEmployee>.unmodifiable(<TimeTrackerEmployee>[
       for (final TimeTrackerEmployee e in permitted)
-        if ((department.isEmpty || e.departmentId.trim() == department) &&
-            (location.isEmpty || placements[_norm(e.email)]?.locationId == location) &&
+        if ((departments.isEmpty || departments.contains(e.departmentId.trim())) &&
+            (locations.isEmpty || locations.contains(placements[_norm(e.email)]?.locationId)) &&
             (picked.isEmpty || picked.contains(_norm(e.email))))
           e,
     ]);

@@ -22,7 +22,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:knowticed_plus/features/time_tracker/domain/entities/request_type.dart';
-import 'package:knowticed_plus/features/time_tracker/domain/entities/time_tracker_employee.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/enums/request_status.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/rules/request_list_rules.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_filter_frame.dart';
@@ -33,13 +32,15 @@ import 'package:knowticed_plus/generated/l10n.dart';
 /// "Transaction" in the Request Type dropdown.
 const String _transaction = '__transaction__';
 
+/// 13/10/2026 (owner): Request Type, Status and Department are MULTI-select;
+/// the Employee list is gone (a company can have thousands — the search bar
+/// finds employees by name).
 class RequestFilterDialog extends StatefulWidget {
   const RequestFilterDialog({
     super.key,
     required this.initial,
     required this.types,
     this.departments,
-    this.employees,
   });
 
   final RequestFilter initial;
@@ -50,41 +51,41 @@ class RequestFilterDialog extends StatefulWidget {
   /// Approvals with "All Departments": id → name (null = no Department field).
   final Map<String, String>? departments;
 
-  /// Approvals: the requesters to choose from (null = no Employee field).
-  final List<TimeTrackerEmployee>? employees;
-
   @override
   State<RequestFilterDialog> createState() => _RequestFilterDialogState();
 }
 
 class _RequestFilterDialogState extends State<RequestFilterDialog> {
-  String? _type;
-  RequestStatus? _status;
+  Set<String> _types = <String>{};
+  Set<RequestStatus> _statuses = <RequestStatus>{};
   DateTime? _from;
   DateTime? _to;
-  String? _department;
-  String? _employee;
+  Set<String> _departments = <String>{};
 
   @override
   void initState() {
     super.initState();
     final RequestFilter f = widget.initial;
-    _type = f.kind == RequestKind.transaction ? _transaction : f.requestTypeId;
-    _status = f.status;
+    _types = <String>{
+      ...f.requestTypeIds,
+      if (f.includeTransactions || f.kind == RequestKind.transaction) _transaction,
+    };
+    _statuses = <RequestStatus>{...f.statuses};
     _from = f.from;
     _to = f.to;
-    _department = f.departmentId;
-    _employee = (f.employeeEmail ?? '').isEmpty ? null : f.employeeEmail;
+    _departments = <String>{...f.departmentIds};
   }
 
   RequestFilter _collect() => RequestFilter(
-        kind: _type == _transaction ? RequestKind.transaction : null,
-        requestTypeId: _type == _transaction ? null : _type,
-        status: _status,
+        kind: widget.initial.kind == RequestKind.request ? RequestKind.request : null,
+        requestTypeIds: <String>{for (final String t in _types) if (t != _transaction) t},
+        includeTransactions: _types.contains(_transaction),
+        statuses: _statuses,
         from: _from,
         to: _to,
-        departmentId: _department,
-        employeeEmail: _employee,
+        departmentIds: _departments,
+        // An HR-dashboard link's employee stays until Reset.
+        employeeEmail: widget.initial.employeeEmail,
       );
 
   @override
@@ -92,52 +93,41 @@ class _RequestFilterDialogState extends State<RequestFilterDialog> {
     final S s = S.of(context);
     final bool ar = Localizations.localeOf(context).languageCode == 'ar';
     final Map<String, String>? departments = widget.departments;
-    final List<TimeTrackerEmployee>? people = widget.employees;
-    final List<TimeTrackerEmployee> choosable = <TimeTrackerEmployee>[
-      for (final TimeTrackerEmployee e in people ?? const <TimeTrackerEmployee>[])
-        if (_department == null || e.departmentId == _department) e,
-    ];
-    final Widget type = TtFilterDropdown<String>(
+    // One entry per name: two types that share a name are one choice.
+    final Map<String, Set<String>> byName = <String, Set<String>>{};
+    for (final RequestType t in widget.types) {
+      byName.putIfAbsent(t.name(isArabic: ar).trim(), () => <String>{}).add(t.id);
+    }
+    final Widget type = TtFilterMultiDropdown<String>(
       label: s.timeTrackerRequestType,
-      value: _type,
+      values: <String>{
+        for (final MapEntry<String, Set<String>> e in byName.entries)
+          if (e.value.any(_types.contains)) e.key,
+        if (_types.contains(_transaction)) _transaction,
+      },
       items: <(String, String)>[
-        for (final RequestType t in widget.types) (t.id, t.name(isArabic: ar)),
+        for (final String n in byName.keys) (n, n),
         (_transaction, s.timeTrackerTransactionButton),
       ],
-      onChanged: (String? v) => setState(() => _type = v),
+      onChanged: (Set<String> picked) => setState(() => _types = <String>{
+            for (final String n in picked) ...(n == _transaction ? <String>{_transaction} : byName[n] ?? <String>{}),
+          }),
     );
-    final Widget status = TtFilterDropdown<RequestStatus>(
+    final Widget status = TtFilterMultiDropdown<RequestStatus>(
       label: s.timeTrackerStatus,
-      value: _status,
+      values: _statuses,
       items: <(RequestStatus, String)>[
         for (final RequestStatus st in RequestStatus.values) (st, RequestText.statusLabel(context, st)),
       ],
-      onChanged: (RequestStatus? v) => setState(() => _status = v),
+      onChanged: (Set<RequestStatus> v) => setState(() => _statuses = v),
     );
     final Widget? department = departments == null
         ? null
-        : TtFilterDropdown<String>(
+        : TtFilterMultiDropdown<String>(
             label: s.timeTrackerDepartment,
-            value: _department,
+            values: _departments,
             items: <(String, String)>[for (final MapEntry<String, String> d in departments.entries) (d.key, d.value)],
-            onChanged: (String? v) => setState(() {
-              _department = v;
-              // Child follows its parent (house rule): a requester of another
-              // department is no longer a valid choice.
-              if (v != null && _employee != null &&
-                  !(people ?? const <TimeTrackerEmployee>[])
-                      .any((TimeTrackerEmployee e) => e.email == _employee && e.departmentId == v)) {
-                _employee = null;
-              }
-            }),
-          );
-    final Widget? employee = people == null
-        ? null
-        : TtFilterDropdown<String>(
-            label: S.of(context).employee,
-            value: choosable.any((TimeTrackerEmployee e) => e.email == _employee) ? _employee : null,
-            items: <(String, String)>[for (final TimeTrackerEmployee e in choosable) (e.email, e.name(isArabic: ar))],
-            onChanged: (String? v) => setState(() => _employee = v),
+            onChanged: (Set<String> v) => setState(() => _departments = v),
           );
     return TtFilterFrame(
       applyKey: const ValueKey<String>('requestFilterApply'),
@@ -152,8 +142,7 @@ class _RequestFilterDialogState extends State<RequestFilterDialog> {
           onFrom: (DateTime? d) => setState(() => _from = d),
           onTo: (DateTime? d) => setState(() => _to = d),
         ),
-        if (department != null || employee != null)
-          TtPair(start: department ?? employee!, end: department != null ? employee : null),
+        if (department != null) department,
       ],
     );
   }

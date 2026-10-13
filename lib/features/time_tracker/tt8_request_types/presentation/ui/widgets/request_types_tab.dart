@@ -28,6 +28,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
 
+import 'package:knowticed_plus/features/time_tracker/domain/enums/setup_status.dart';
+import 'package:knowticed_plus/features/time_tracker/tt9_requests/presentation/ui/widgets/request_widgets.dart';
+import 'package:knowticed_plus/core/custom/8-custom_filter_app.dart';
 import 'package:knowticed_plus/core/constants/app_assets.dart';
 import 'package:knowticed_plus/core/custom/16-custom_card_styles.dart';
 import 'package:knowticed_plus/core/custom/39-custom_grid_button.dart';
@@ -106,6 +109,10 @@ class _RequestTypesTabState extends State<RequestTypesTab> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
+            // 13/10/2026 (owner): status counters like Approvals — All ·
+            // Active · Inactive · Removed (a tap filters, same as the Filter).
+            SlideInContent(child: _counters(state)),
+            SizedBox(height: 15.h),
             SlideInContent(child: _toolbar(state, rows)),
             // iPhone rule (owner 9/10/2026): no List / Grid toggle, no table.
             if (!context.isPhone) ...<Widget>[
@@ -120,6 +127,32 @@ class _RequestTypesTabState extends State<RequestTypesTab> {
             SizedBox(height: 15.h),
           ],
         );
+      },
+    );
+  }
+
+  Widget _counters(RequestTypesState state) {
+    final S s = S.of(context);
+    final RequestTypesCubit cubit = context.read<RequestTypesCubit>();
+    int count(RequestTypeStatus st) => state.types.where((RequestType t) => t.status == st).length;
+    return StatusChipFilter(
+      key: const ValueKey<String>('requestTypeCounters'),
+      items: <StatusChipItem>[
+        StatusChipItem(key: 'all', label: s.timeTrackerAll, count: state.types.length),
+        for (final RequestTypeStatus st in RequestTypeStatus.values)
+          StatusChipItem(
+            key: st.storageKey,
+            label: RequestTypeText.status(context, st),
+            count: count(st),
+            labelColor: RequestTypeStatusText.colorOf(st),
+          ),
+      ],
+      selectedKey: state.statusFilter?.storageKey ?? 'all',
+      onSelected: (String key) {
+        HapticController.low();
+        cubit.filterStatus(key == 'all'
+            ? null
+            : RequestTypeStatus.values.firstWhere((RequestTypeStatus st) => st.storageKey == key));
       },
     );
   }
@@ -275,14 +308,9 @@ class _RequestTypeCard extends StatelessWidget {
             SizedBox(height: 2.h),
             Row(
               children: <Widget>[
-                Container(
-                  padding: EdgeInsetsDirectional.all(5.r),
-                  decoration: BoxDecoration(
-                    color: AppColors.background,
-                    borderRadius: BorderRadiusDirectional.circular(8.r),
-                  ),
-                  child: TtIcon(const TtGlyph.svg(TtAssets.edit), size: 16.r, color: AppColors.text),
-                ),
+                // 13/10/2026 (owner): the same request box as the Approvals
+                // card (size and icon).
+                const RequestIconBox(),
                 SizedBox(width: 8.w),
                 Flexible(
                   child: Text('${s.timeTrackerRequestType}: ',
@@ -309,18 +337,17 @@ class _RequestTypeCard extends StatelessWidget {
             // Fills only when a neighbour in the row is taller (TtCardGrid).
             const Spacer(),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
-                Expanded(child: line(const TtGlyph.svg(TtAssets.rtStatus), s.timeTrackerStatus,
-                    RequestTypeStatusText(status: type.status, maxLines: 1, small: true))),
-                // 9/10/2026: the date shares the row (it squeezed the status
-                // into a tall column on a phone).
-                Flexible(
-                  child: Text(s.timeTrackerCreatedDateValue(TimeTrackerFormat.date(context, type.audit.createdAt)),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.end,
-                      style: StyleText.fontSize10Weight400.copyWith(color: AppColors.secondaryText)),
+                Expanded(
+                  child: line(const TtGlyph.svg(TtAssets.rtStatus), s.timeTrackerStatus,
+                      RequestTypeStatusText(status: type.status, maxLines: 1, small: true)),
                 ),
+                // 13/10/2026 (owner): Created Date at the card's END edge
+                // (it floated mid-card), level with Last Update above.
+                SizedBox(width: 8.w),
+                Text(s.timeTrackerCreatedDateValue(TimeTrackerFormat.date(context, type.audit.createdAt)),
+                    style: StyleText.fontSize10Weight400.copyWith(color: AppColors.secondaryText)),
               ],
             ),
           ],

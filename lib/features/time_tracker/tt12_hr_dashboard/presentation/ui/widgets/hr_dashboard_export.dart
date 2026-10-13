@@ -50,7 +50,11 @@ class HrDashboardExport {
     final HrDashboardStats st = state.stats;
     String n(int v) => '$v';
     String month(DateTime m) => DateFormat('MMM yyyy', locale).format(m);
-    final WorkLocation? location = state.locationById(state.filters.locationId);
+    String namesOr(Iterable<String> names) => names.isEmpty ? s.timeTrackerAll : names.join(' · ');
+    final List<String> locationNames = <String>[
+      for (final String id in state.filters.locationIds)
+        if (state.locationById(id) case final WorkLocation l) l.name(isArabic: ar),
+    ];
     final List<TimeTrackerEmployee> picked = state.canFilterByEmployee ? state.pickedEmployees : const <TimeTrackerEmployee>[];
     final List<List<String>> out = <List<String>>[
       <String>[
@@ -65,9 +69,12 @@ class HrDashboardExport {
         <String>[
           s.timeTrackerFiltersTitle,
           s.timeTrackerDepartment,
-          state.departments[state.filters.departmentId] ?? s.timeTrackerAll,
+          namesOr(<String>[
+            for (final String id in state.filters.departmentIds)
+              if (state.departments[id] case final String name) name,
+          ]),
         ],
-      <String>[s.timeTrackerFiltersTitle, s.timeTrackerLocation, location?.name(isArabic: ar) ?? s.timeTrackerAll],
+      <String>[s.timeTrackerFiltersTitle, s.timeTrackerLocation, namesOr(locationNames)],
       if (state.canFilterByEmployee)
         <String>[
           s.timeTrackerFiltersTitle,
@@ -102,7 +109,7 @@ class HrDashboardExport {
       for (final HrMonthCount m in st.typeByMonth)
         <String>[
           '${s.timeTrackerTabRequestTypes} · '
-              '${state.requestTypeId.isEmpty ? s.timeTrackerAll : hrTypeName(context, state, state.requestTypeId)}',
+              '${state.requestTypeIds.isEmpty ? s.timeTrackerAll : <String>{for (final String id in state.requestTypeIds) hrTypeName(context, state, id)}.join(' · ')}',
           month(m.month),
           n(m.count),
         ],

@@ -136,8 +136,11 @@ class RequestsState {
   String searchTextOf(TimeTrackerRequest r) {
     final RequestType? t = typeOf(r);
     final TimeTrackerEmployee? who = employeeOf(r.requesterEmail);
+    // 13/10/2026 (owner): the department too — Approvals searches employee,
+    // type and department.
     return '${t?.nameEn ?? ''} ${t?.nameAr ?? ''} ${r.description} '
-        '${who?.nameEn ?? ''} ${who?.nameAr ?? ''} ${r.requesterEmail}';
+        '${who?.nameEn ?? ''} ${who?.nameAr ?? ''} ${r.requesterEmail} '
+        '${who?.departmentNameEn ?? ''} ${who?.departmentNameAr ?? ''} ${departments[r.requesterDepartmentId] ?? ''}';
   }
 
   // ── Requests tab ─────────────────────────────────────────────────────────

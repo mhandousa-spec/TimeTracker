@@ -186,6 +186,8 @@ class _HrEmployeePickerState extends State<HrEmployeePicker> {
         subtitle2: e.jobTitle(isArabic: ar),
         avatar: e.photo.startsWith('http') ? NetworkImage(e.photo) : null,
         avatarRadius: 24,
+        // 13/10/2026 (owner): names wrap and keep clear of the tick box.
+        wrapText: true,
         backgroundColor: AppColors.background,
         trailing: CustomCheckBox(key: ValueKey<String>('hrPickerTick_${e.email}'), isSelected: on),
         onTap: () => _toggle(e.email),

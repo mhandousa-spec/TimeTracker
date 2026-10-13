@@ -5,6 +5,7 @@
 /// Purpose: Declares `PersonChipCard`.
 /// Author: Knowticed Plus team
 /// Updated: 11/8/2026 - Added the standard module + FILE INFO header.
+/// Updated: 13/10/2026 - PersonChipCard opt-in `wrapText` (no "…", name clear of the tick box).
 
 // Figma node 6550:9608 — person chip card (265x65, light grey).
 import 'package:flutter/material.dart';
@@ -61,6 +62,11 @@ class PersonChipCard extends StatelessWidget {
   /// owner review C1, 13/10/2026).
   final double avatarRadius;
 
+  /// ADDED 13/10/2026 (Time Tracker owner rule: data is never cut with
+  /// "…"): the texts wrap instead of ending in "…", and the name keeps clear
+  /// of the tick box in the corner. False keeps the historical one-line look.
+  final bool wrapText;
+
   const PersonChipCard({
     super.key,
     required this.name,
@@ -75,6 +81,7 @@ class PersonChipCard extends StatelessWidget {
     this.backgroundColor,
     this.width,
     this.avatarRadius = 20,
+    this.wrapText = false,
   });
 
   @override
@@ -113,25 +120,31 @@ class PersonChipCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        FormatHelper.capitalize(name),
-                        style: CardStyles.title(14),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                      Padding(
+                        // [wrapText]: the name never runs under the tick box.
+                        padding: EdgeInsetsDirectional.only(
+                          end: wrapText && (trailing != null || showCheckBox) ? 30.r : 0,
+                        ),
+                        child: Text(
+                          FormatHelper.capitalize(name),
+                          style: CardStyles.title(14),
+                          maxLines: wrapText ? null : 1,
+                          overflow: wrapText ? null : TextOverflow.ellipsis,
+                        ),
                       ),
                       if (subtitle1 != null)
                         Text(
                           FormatHelper.capitalize(subtitle1!),
                           style: CardStyles.label(12),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                          maxLines: wrapText ? null : 1,
+                          overflow: wrapText ? null : TextOverflow.ellipsis,
                         ),
                       if (subtitle2 != null)
                         Text(
                           FormatHelper.capitalize(subtitle2!),
                           style: CardStyles.label(12),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                          maxLines: wrapText ? null : 1,
+                          overflow: wrapText ? null : TextOverflow.ellipsis,
                         ),
                     ],
                   ),

@@ -31,6 +31,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:knowticed_plus/core/custom/1-custom_dropdown.dart';
+import 'package:knowticed_plus/core/custom/31-custom_multi_select_dropdown.dart';
 import 'package:knowticed_plus/core/custom/57-custom_dialog_manager.dart';
 import 'package:knowticed_plus/core/extensions/context_extensions.dart';
 import 'package:knowticed_plus/core/theme/app_colors.dart';
@@ -83,22 +84,22 @@ class HrDashboardFilterBar extends StatelessWidget {
           )
         : null;
     final Widget? department = state.allDepartments
-        ? _FilterDropdown(
+        ? _MultiFilter(
             key: const ValueKey<String>('hrDepartmentFilter'),
             hint: s.timeTrackerDepartment,
-            value: state.filters.departmentId,
+            values: state.filters.departmentIds,
             items: <String, String>{...state.departments},
-            onChanged: cubit.setDepartment,
+            onChanged: cubit.setDepartments,
           )
         : null;
-    final Widget location = _FilterDropdown(
+    final Widget location = _MultiFilter(
       key: const ValueKey<String>('hrLocationFilter'),
       hint: s.timeTrackerLocation,
-      value: state.filters.locationId,
+      values: state.filters.locationIds,
       items: <String, String>{
         for (final WorkLocation l in state.locations) l.id: l.name(isArabic: ar),
       },
-      onChanged: cubit.setLocation,
+      onChanged: cubit.setLocations,
     );
     final Widget time = DashboardRangeDropdown(
       key: const ValueKey<String>('hrRangeMenu'),
@@ -183,40 +184,44 @@ class _EmployeeButton extends StatelessWidget {
 }
 
 /// A white filter dropdown: placeholder [hint] until chosen, "All" clears.
-class _FilterDropdown extends StatelessWidget {
-  const _FilterDropdown({
+/// 13/10/2026 (owner): Department / Location are multi-select (core
+/// `CustomMultiSelectDropdown`). The trigger reads the one picked name, or
+/// "Department (3)" for several — never a cut-off list.
+class _MultiFilter extends StatelessWidget {
+  const _MultiFilter({
     super.key,
     required this.hint,
-    required this.value,
+    required this.values,
     required this.items,
     required this.onChanged,
   });
 
   final String hint;
-
-  /// '' = nothing chosen.
-  final String value;
+  final Set<String> values;
 
   /// Id → name.
   final Map<String, String> items;
-  final ValueChanged<String> onChanged;
+  final ValueChanged<Set<String>> onChanged;
 
   @override
   Widget build(BuildContext context) {
-    return CustomDropdown<String>(
+    return CustomMultiSelectDropdown<String>(
       hint: hint,
       height: TtToolbar.height,
+      heightSizesWholeTrigger: true,
       borderRadius: TtToolbar.radius,
       fillColor: AppColors.card,
       itemStyle: StyleText.fontSize12Weight400,
-      value: value.isEmpty || !items.containsKey(value) ? null : value,
-      items: <DropdownItem<String>>[
-        DropdownItem<String>(value: '', label: S.of(context).timeTrackerAll),
-        for (final MapEntry<String, String> e in items.entries) DropdownItem<String>(value: e.key, label: e.value),
+      values: <String>[for (final String v in values) if (items.containsKey(v)) v],
+      items: <MultiSelectDropdownItem<String>>[
+        for (final MapEntry<String, String> e in items.entries)
+          MultiSelectDropdownItem<String>(value: e.key, label: e.value),
       ],
-      onChanged: (String v) {
+      selectedTextBuilder: (List<MultiSelectDropdownItem<String>> picked) =>
+          picked.length == 1 ? picked.single.label : '$hint (${picked.length})',
+      onChanged: (List<String> v) {
         HapticController.low();
-        onChanged(v);
+        onChanged(v.toSet());
       },
     );
   }

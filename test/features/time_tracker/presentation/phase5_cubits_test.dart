@@ -98,7 +98,7 @@ void main() {
       expect(c.state.stats.employeeCount, 2);
       expect(c.state.placements.keys.toSet(), <String>{'me@co.com', 'amr@co.com'});
       expect(c.state.stats.kpi.lateToday, 0, reason: 'Sara (dep-2) is out of scope');
-      c.setDepartment('dep-2');
+      c.setDepartments(<String>{'dep-2'});
       expect(c.state.stats.employeeCount, 2, reason: 'the hidden Department filter is ignored');
       await c.close();
     });
@@ -112,12 +112,12 @@ void main() {
       expect(c.state.stats.employeeCount, 3);
       expect(c.state.stats.kpi.lateToday, 1);
       expect(c.state.stats.approved, 1);
-      c.setDepartment('dep-2');
+      c.setDepartments(<String>{'dep-2'});
       expect(c.state.stats.employeeCount, 1);
-      c.setDepartment('');
-      c.setLocation('hq');
+      c.setDepartments(<String>{});
+      c.setLocations(<String>{'hq'});
       expect(c.state.stats.employeeCount, 2);
-      c.setLocation('');
+      c.setLocations(<String>{});
       c.setEmployees(<String>{'AMR@co.com'});
       expect(c.state.filters.employeeEmails, <String>{'amr@co.com'});
       expect(c.state.pickedEmployees.single.email, 'amr@co.com');

@@ -116,8 +116,11 @@ class _ApprovalsTabState extends State<ApprovalsTab> {
     final Set<String> usedDepartments = <String>{for (final TimeTrackerEmployee e in people) e.departmentId};
     return Row(
       children: <Widget>[
+        // 13/10/2026 (owner): the search finds the employee (no Employee
+        // list in the Filter) — the hint says so.
         TtSearchField(
           controller: _search,
+          hint: S.of(context).timeTrackerSearchApprovalsHint,
           onChanged: (String q) => cubit.search(RequestScope.approvals, q),
         ),
         SizedBox(width: 15.w),
@@ -135,11 +138,12 @@ class _ApprovalsTabState extends State<ApprovalsTab> {
                     ? state.approvals.filter
                     : RequestFilter(
                         kind: state.approvals.filter.kind,
-                        requestTypeId: state.approvals.filter.requestTypeId,
-                        status: state.approvals.filter.status,
+                        requestTypeIds: state.approvals.filter.requestTypeIds,
+                        includeTransactions: state.approvals.filter.includeTransactions,
+                        statuses: state.approvals.filter.statuses,
                         from: state.approvals.filter.from,
                         to: state.approvals.filter.to,
-                        departmentId: state.approvals.filter.departmentId,
+                        departmentIds: state.approvals.filter.departmentIds,
                         employeeEmail: state.approvals.employeeEmail,
                       ),
                 types: state.types,
@@ -149,7 +153,6 @@ class _ApprovalsTabState extends State<ApprovalsTab> {
                           if (usedDepartments.contains(d.key)) d.key: d.value,
                       }
                     : null,
-                employees: people,
               ),
             );
             if (picked == null) return;

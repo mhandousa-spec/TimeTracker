@@ -61,7 +61,8 @@ class RequestIconBox extends StatelessWidget {
         color: AppColors.background,
         borderRadius: BorderRadiusDirectional.circular(8.r),
       ),
-      child: Center(child: TtIcon(const TtGlyph.svg(TtAssets.edit), size: s * 0.55, color: AppColors.text)),
+      // 13/10/2026 (owner): the Figma request icon (`661:22417`).
+      child: Center(child: TtIcon(const TtGlyph.svg(TtAssets.reqBox), size: s * 0.52, color: AppColors.text)),
     );
   }
 }
@@ -82,10 +83,13 @@ class RequestInfoLine extends StatelessWidget {
     return Padding(
       padding: EdgeInsetsDirectional.only(top: 6.h),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        // 13/10/2026 (owner): a row with a widget value (Requested By: avatar
+        // + name) centres the icon on it; a text row keeps the icon on the
+        // first line of a wrapping value.
+        crossAxisAlignment: custom == null ? CrossAxisAlignment.start : CrossAxisAlignment.center,
         children: <Widget>[
           Padding(
-            padding: EdgeInsetsDirectional.only(top: 2.sp),
+            padding: EdgeInsetsDirectional.only(top: custom == null ? 2.sp : 0),
             child: TtIcon(icon, size: 14.r, color: AppColors.secondaryText),
           ),
           SizedBox(width: 6.w),
@@ -231,44 +235,52 @@ class RequestStatusPill extends StatelessWidget {
 
   final RequestStatus status;
 
-  // No OUTLINE status icons exist in the app's assets (only filled colour
-  // badges), so these stay Material (code review 9/10/2026).
-  static TtGlyph iconOf(RequestStatus status) {
+  /// 13/10/2026 (owner, Figma `661:22458` / `661:23161` / `661:22962`): the
+  /// status badge — a full-colour circle with a white glyph.
+  static String badgeOf(RequestStatus status) {
     switch (status) {
       case RequestStatus.approved:
-        return const TtGlyph.icon(Icons.check_circle_outline);
+        return TtAssets.statusApproved;
       case RequestStatus.rejected:
-        return const TtGlyph.icon(Icons.block);
       case RequestStatus.canceled:
       case RequestStatus.canceledByHr:
-        return const TtGlyph.icon(Icons.cancel_outlined);
+        return TtAssets.statusCanceled;
       case RequestStatus.pending:
+        return TtAssets.statusPending;
       case RequestStatus.underReview:
-        return const TtGlyph.icon(Icons.hourglass_empty);
+        return TtAssets.statusReview;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final Color color = RequestText.statusColor(status);
-    return Container(
-      key: ValueKey<String>('requestStatusPill_${status.storageKey}'),
-      height: ButtonSizing.height,
-      padding: EdgeInsetsDirectional.symmetric(horizontal: 12.w),
-      decoration: BoxDecoration(
-        color: AppColors.card,
-        borderRadius: BorderRadiusDirectional.circular(8.r),
-        border: Border.all(color: color),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          TtIcon(iconOf(status), size: 18.r, color: color),
-          SizedBox(width: 6.w),
-          Text(RequestText.statusLabel(context, status),
-              style: StyleText.fontSize14Weight500.copyWith(color: color)),
-        ],
+    // Figma: a 200-wide outlined button at the END of the card (not the
+    // full width), badge 24 + label 16 Medium.
+    return Align(
+      alignment: AlignmentDirectional.centerEnd,
+      child: Container(
+        key: ValueKey<String>('requestStatusPill_${status.storageKey}'),
+        width: context.isPhone ? double.infinity : 200.w,
+        height: ButtonSizing.height,
+        padding: EdgeInsetsDirectional.symmetric(horizontal: 12.w),
+        decoration: BoxDecoration(
+          color: AppColors.card,
+          borderRadius: BorderRadiusDirectional.circular(8.r),
+          border: Border.all(color: color),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            TtIcon(TtGlyph.svg(badgeOf(status), tinted: false), size: 24.r),
+            SizedBox(width: 8.w),
+            Flexible(
+              child: Text(RequestText.statusLabel(context, status),
+                  style: StyleText.fontSize16Weight500.copyWith(color: color)),
+            ),
+          ],
+        ),
       ),
     );
   }

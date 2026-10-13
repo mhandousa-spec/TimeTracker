@@ -153,8 +153,13 @@ class RequestActionsCubit extends Cubit<RequestActionsState> {
   /// Function Name: [approve] / [reject] / [cancelAfterApproving]
   ///
   /// Return type: [Future<bool>] — saved.
-  Future<bool> approve(TimeTrackerRequest r, {required TimeTrackerTypeName typeName, required bool isArabic}) =>
-      _run(() => _approvals.approve(r, typeName: typeName, isArabic: isArabic));
+  Future<bool> approve(
+    TimeTrackerRequest r, {
+    required TimeTrackerTypeName typeName,
+    required bool isArabic,
+    String justification = '',
+  }) =>
+      _run(() => _approvals.approve(r, typeName: typeName, isArabic: isArabic, justification: justification));
 
   Future<bool> reject(
     TimeTrackerRequest r, {

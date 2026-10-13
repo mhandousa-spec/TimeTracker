@@ -47,7 +47,7 @@ class HrDashboardState {
     this.customSpan,
     this.filters = HrDashboardFilters.none,
     this.series = HrAttendanceSeries.all,
-    this.requestTypeId = '',
+    this.requestTypeIds = const <String>{},
     this.attendanceLoading = false,
     this.stats = const HrDashboardStats(),
     DateTime? now,
@@ -90,7 +90,7 @@ class HrDashboardState {
   final HrAttendanceSeries series;
 
   /// The Request Types bars' type ('' = all).
-  final String requestTypeId;
+  final Set<String> requestTypeIds;
 
   /// A range change is being read.
   final bool attendanceLoading;
@@ -169,7 +169,7 @@ class HrDashboardState {
     DateSpan? customSpan,
     HrDashboardFilters? filters,
     HrAttendanceSeries? series,
-    String? requestTypeId,
+    Set<String>? requestTypeIds,
     bool? attendanceLoading,
     HrDashboardStats? stats,
     DateTime? now,
@@ -192,7 +192,7 @@ class HrDashboardState {
         customSpan: customSpan ?? this.customSpan,
         filters: filters ?? this.filters,
         series: series ?? this.series,
-        requestTypeId: requestTypeId ?? this.requestTypeId,
+        requestTypeIds: requestTypeIds ?? this.requestTypeIds,
         attendanceLoading: attendanceLoading ?? this.attendanceLoading,
         stats: stats ?? this.stats,
         now: now ?? this.now,

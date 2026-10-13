@@ -35541,10 +35541,10 @@ class S {
     );
   }
 
-  /// `Tracking Time`
+  /// `Time Tracker`
   String get timeTrackerTitle {
     return Intl.message(
-      'Tracking Time',
+      'Time Tracker',
       name: 'timeTrackerTitle',
       desc: '',
       args: [],
@@ -38371,10 +38371,10 @@ class S {
     );
   }
 
-  /// `Requested Timeframe`
+  /// `Period`
   String get timeTrackerRequestedTimeframe {
     return Intl.message(
-      'Requested Timeframe',
+      'Period',
       name: 'timeTrackerRequestedTimeframe',
       desc: '',
       args: [],
@@ -38946,6 +38946,36 @@ class S {
     );
   }
 
+  /// `Justification`
+  String get timeTrackerApprovalJustification {
+    return Intl.message(
+      'Justification',
+      name: 'timeTrackerApprovalJustification',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{role} Justification`
+  String timeTrackerStepJustification(Object role) {
+    return Intl.message(
+      '$role Justification',
+      name: 'timeTrackerStepJustification',
+      desc: '',
+      args: [role],
+    );
+  }
+
+  /// `This approved request is being canceled — the approvers are reviewing the cancellation.`
+  String get timeTrackerCancellationReviewNote {
+    return Intl.message(
+      'This approved request is being canceled — the approvers are reviewing the cancellation.',
+      name: 'timeTrackerCancellationReviewNote',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `You Successfully Rejected This Request`
   String get timeTrackerRequestRejected {
     return Intl.message(
@@ -39281,6 +39311,16 @@ class S {
     return Intl.message(
       'Search by date, status or time',
       name: 'timeTrackerSearchAttendanceHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search by employee, type or department`
+  String get timeTrackerSearchApprovalsHint {
+    return Intl.message(
+      'Search by employee, type or department',
+      name: 'timeTrackerSearchApprovalsHint',
       desc: '',
       args: [],
     );

@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_setup_widgets.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_controls.dart';
 import 'package:knowticed_plus/core/custom/24-custom_chart_card.dart';
 import 'package:knowticed_plus/core/theme/app_colors.dart';
@@ -141,10 +142,15 @@ class RequestTypeText {
   /// Table cells: index + [cells], status coloured.
   static List<TtCell> tableCells(BuildContext context, int index, RequestType t, RequestTypesState state) {
     final List<String> c = cells(context, t, state);
+    final String by = t.audit.createdBy;
     return <TtCell>[
       TtCell(TimeTrackerFormat.count(context, index + 1)),
       for (int i = 0; i < c.length; i++)
-        TtCell(c[i], color: i == 1 ? RequestTypeStatusText.colorOf(t.status) : null),
+        // 13/10/2026 (owner): "Added By" shows the person's photo + name.
+        if (i == 3 && by.isNotEmpty)
+          TtCell.widget(TtPersonCell(photo: state.employeeByEmail(by)?.photo ?? '', name: c[i]))
+        else
+          TtCell(c[i], color: i == 1 ? RequestTypeStatusText.colorOf(t.status) : null),
     ];
   }
 }

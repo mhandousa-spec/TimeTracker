@@ -157,7 +157,8 @@ class HrDashboardStats {
   ///   [List<TimeTrackerRequest>] requests: the company's requests.
   ///   [DateSpan] span: the chosen range.
   ///   [DateTime] now
-  ///   [String] requestTypeId: the Request Types bars' type ('' = all).
+  ///   [Set<String>] requestTypeIds: the Request Types bars' types (empty =
+  ///     all; 13/10/2026 multi-select).
   ///   [int] topTypes: named slices of the Request Types donut.
   ///
   /// Return type: [HrDashboardStats]
@@ -168,7 +169,7 @@ class HrDashboardStats {
     required List<TimeTrackerRequest> requests,
     required DateSpan span,
     required DateTime now,
-    String requestTypeId = '',
+    Set<String> requestTypeIds = const <String>{},
     int topTypes = defaultTopTypes,
   }) {
     final Set<String> emails = HrDashboardScope.emailsOf(employees);
@@ -210,7 +211,7 @@ class HrDashboardStats {
           canceled++;
       }
       byType[r.requestTypeId] = (byType[r.requestTypeId] ?? 0) + 1;
-      if (requestTypeId.isEmpty || r.requestTypeId == requestTypeId) {
+      if (requestTypeIds.isEmpty || requestTypeIds.contains(r.requestTypeId)) {
         final DateTime key = DateTime(r.startAt.year, r.startAt.month);
         typeMonths[key] = (typeMonths[key] ?? 0) + 1;
       }

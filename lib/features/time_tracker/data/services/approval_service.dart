@@ -139,6 +139,7 @@ class ApprovalService {
     TimeTrackerRequest request, {
     required TimeTrackerTypeName typeName,
     required bool isArabic,
+    String justification = '',
   }) async {
     final TimeTrackerRequest fresh = await _fresh(request);
     final bool override = await _overridesManager(fresh);
@@ -156,6 +157,7 @@ class ApprovalService {
       at: _clock(),
       overrideBlockedManager: override,
       managerIsFinal: managerIsFinal,
+      justification: justification,
     );
     final RequestCommit commit = await _commit(outcome);
     final TimeTrackerRequest saved = commit.request;

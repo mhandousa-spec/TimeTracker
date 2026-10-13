@@ -87,3 +87,8 @@ Facts found in code (8/10):
 55. No divider lines inside cards (e.g. above Send Reminder).
 56. Request counters follow the life of a request: All · Pending · Under Review · Approved · Rejected · Canceled (Approvals: All · Pending · Approved · Rejected · Canceled).
 57. Dashboard "Custom" range = one date-range picker (no Start / End form). Two-option toggles slide (animation) with a LOW haptic; the yellow pill of "My Dashboard | HR" has radius 2.
+58. HR dashboard: Department, Location and "Monthly Requests By Type" are multi-select; a request-type list shows each NAME once (types sharing a name are one choice). Collapsed header on tablet: Check In sits on the Expand row.
+59. Title is "Time Tracker" (EN).
+60. Approve asks for a REQUIRED justification (kept on the approval step and shown on Request Details), like Reject asks for a reason.
+61. Approvals Filter: no Employee list (the search finds employees by name, type or department); Request Type, Status and Department are multi-select. Request Types tab: status counters All · Active · Inactive · Removed.
+62. "Requested Timeframe" is labelled "Period". Under Review = an approved request whose requester asked to cancel — Request Details says so.

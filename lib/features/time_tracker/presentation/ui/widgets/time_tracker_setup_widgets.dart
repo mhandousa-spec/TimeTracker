@@ -54,6 +54,28 @@ import 'package:knowticed_plus/generated/l10n.dart';
 
 const String _defaultAvatar = 'assets/icons_assets/main_icons_assets/male_avatar.png';
 
+/// 13/10/2026 (owner): a person in a table cell — photo + name, the name
+/// wraps (never "…"). Used by "Added By" / "Approved By".
+class TtPersonCell extends StatelessWidget {
+  const TtPersonCell({super.key, required this.photo, required this.name});
+
+  final String photo;
+  final String name;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: <Widget>[
+        TimeTrackerAvatar(photo: photo, size: 24.r),
+        SizedBox(width: 6.w),
+        Expanded(
+          child: Text(name, style: StyleText.fontSize12Weight400.copyWith(color: AppColors.text)),
+        ),
+      ],
+    );
+  }
+}
+
 /// Round employee photo (network URL, asset path, or the default avatar).
 class TimeTrackerAvatar extends StatelessWidget {
   const TimeTrackerAvatar({super.key, required this.photo, this.size});

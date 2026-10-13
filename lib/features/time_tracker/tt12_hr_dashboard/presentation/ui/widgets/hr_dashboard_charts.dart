@@ -24,6 +24,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 
 import 'package:knowticed_plus/core/custom/1-custom_dropdown.dart';
+import 'package:knowticed_plus/core/custom/31-custom_multi_select_dropdown.dart';
 import 'package:knowticed_plus/core/custom/24-custom_chart_card.dart';
 import 'package:knowticed_plus/core/custom/26-custom_bar_chart_card.dart';
 import 'package:knowticed_plus/core/custom/27-custom_donut_chart_card.dart';
@@ -73,6 +74,7 @@ class HrRequestsDonut extends StatelessWidget {
       centerValue: TimeTrackerFormat.count(context, stats.totalRequests),
       centerLabel: s.timeTrackerTotal,
       legendMaxLines: 2,
+      ringAtEnd: true,
       sections: <ChartData>[
         ChartData(label: s.timeTrackerApproved, value: stats.approved.toDouble(), color: AppColors.lightGreen),
         ChartData(label: s.timeTrackerPending, value: stats.pending.toDouble(), color: AppColors.orange),
@@ -108,6 +110,7 @@ class HrRequestTypesDonut extends StatelessWidget {
       centerValue: TimeTrackerFormat.count(context, state.stats.totalTypeRequests),
       centerLabel: s.timeTrackerTotal,
       legendMaxLines: 2,
+      ringAtEnd: true,
       sections: <ChartData>[
         for (int i = 0; i < slices.length; i++)
           ChartData(
@@ -222,25 +225,47 @@ class HrRequestTypeBarsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final S s = S.of(context);
     final bool ar = Localizations.localeOf(context).languageCode == 'ar';
-    final List<RequestType> types = <RequestType>[...state.types]
-      ..sort((RequestType a, RequestType b) =>
-          a.name(isArabic: ar).toLowerCase().compareTo(b.name(isArabic: ar).toLowerCase()));
+    // 13/10/2026 (owner): one entry per NAME — two types that share a name
+    // ("Sick Leave" twice in the company list) are one choice that covers
+    // both ids. Multi-select.
+    final Map<String, Set<String>> byName = <String, Set<String>>{};
+    for (final RequestType t in state.types) {
+      byName.putIfAbsent(t.name(isArabic: ar).trim(), () => <String>{}).add(t.id);
+    }
+    final List<String> names = byName.keys.toList()
+      ..sort((String a, String b) => a.toLowerCase().compareTo(b.toLowerCase()));
+    final List<String> picked = <String>[
+      for (final String n in names)
+        if (byName[n]!.any(state.requestTypeIds.contains)) n,
+    ];
     return BarChartCard(
       key: const ValueKey<String>('hrRequestTypeBars'),
       title: s.timeTrackerChartMonthlyRequestsByType,
       dotIcon: _barsIcon,
       barColor: AppColors.yellow,
       barWidth: 40,
-      trailing: _ChartDropdown<String>(
-        key: const ValueKey<String>('hrRequestTypeFilter'),
-        width: 151.w,
-        hint: s.timeTrackerRequestType,
-        value: state.requestTypeId.isEmpty ? null : state.requestTypeId,
-        items: <DropdownItem<String>>[
-          DropdownItem<String>(value: '', label: s.timeTrackerAll),
-          for (final RequestType t in types) DropdownItem<String>(value: t.id, label: t.name(isArabic: ar)),
-        ],
-        onChanged: context.read<HrDashboardCubit>().setRequestType,
+      trailing: SizedBox(
+        width: 170.w,
+        child: CustomMultiSelectDropdown<String>(
+          key: const ValueKey<String>('hrRequestTypeFilter'),
+          hint: s.timeTrackerRequestType,
+          height: 30,
+          heightSizesWholeTrigger: true,
+          fillColor: AppColors.background,
+          itemStyle: StyleText.fontSize12Weight400,
+          values: picked,
+          items: <MultiSelectDropdownItem<String>>[
+            for (final String n in names) MultiSelectDropdownItem<String>(value: n, label: n),
+          ],
+          selectedTextBuilder: (List<MultiSelectDropdownItem<String>> chosen) =>
+              chosen.length == 1 ? chosen.single.label : '${s.timeTrackerRequestType} (${chosen.length})',
+          onChanged: (List<String> chosen) {
+            HapticController.low();
+            context.read<HrDashboardCubit>().setRequestTypes(<String>{
+              for (final String n in chosen) ...?byName[n],
+            });
+          },
+        ),
       ),
       bars: <ChartData>[
         for (final HrMonthCount m in state.stats.typeByMonth)

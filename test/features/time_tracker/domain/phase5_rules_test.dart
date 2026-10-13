@@ -94,9 +94,9 @@ void main() {
       };
       List<TimeTrackerEmployee> apply(HrDashboardFilters f, {bool all = true, bool byEmployee = true}) =>
           HrDashboardScope.apply(_all, filters: f, placements: places, allDepartments: all, canFilterByEmployee: byEmployee);
-      expect(apply(const HrDashboardFilters(departmentId: 'dep-2')), <TimeTrackerEmployee>[_sara]);
-      expect(apply(const HrDashboardFilters(departmentId: 'dep-2'), all: false), hasLength(3));
-      expect(apply(const HrDashboardFilters(locationId: 'branch')), <TimeTrackerEmployee>[_sara]);
+      expect(apply(const HrDashboardFilters(departmentIds: <String>{'dep-2'})), <TimeTrackerEmployee>[_sara]);
+      expect(apply(const HrDashboardFilters(departmentIds: <String>{'dep-2'}), all: false), hasLength(3));
+      expect(apply(const HrDashboardFilters(locationIds: <String>{'branch'})), <TimeTrackerEmployee>[_sara]);
       expect(apply(const HrDashboardFilters(employeeEmails: <String>{'AMR@co.com'})), <TimeTrackerEmployee>[_amr]);
       expect(apply(const HrDashboardFilters(employeeEmails: <String>{'amr@co.com'}), byEmployee: false), hasLength(3));
     });
@@ -235,7 +235,7 @@ void main() {
         requests: list,
         span: year,
         now: _now,
-        requestTypeId: 'annual',
+        requestTypeIds: <String>{'annual'},
       );
       expect(s.typeSlices.map((HrTypeSlice t) => t.typeId).toList(), <String>['annual', 'sick', 'mission', 'emergency', '']);
       expect(s.typeSlices.last.count, 2);

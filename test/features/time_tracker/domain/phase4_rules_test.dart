@@ -349,16 +349,19 @@ void main() {
           .map((TimeTrackerRequest r) => r.id)
           .toList();
       expect(ids(const RequestFilter(kind: RequestKind.transaction)), <String>['tx']);
-      expect(ids(const RequestFilter(requestTypeId: 'sick')), <String>['r1']);
+      expect(ids(const RequestFilter(requestTypeIds: <String>{'sick'})), <String>['r1']);
       // UI quality pass (9/10/2026, owner): Request Type · Status · From–To
       // (+ Department / Employee on Approvals).
       expect(ids(RequestFilter(from: DateTime(2026, 10, 13), to: DateTime(2026, 10, 13))), <String>['r1']);
       expect(ids(RequestFilter(to: DateTime(2026, 10, 1))), <String>['tx']);
       expect(ids(RequestFilter(from: DateTime(2026, 10, 2))), <String>['r1']);
-      expect(ids(const RequestFilter(status: RequestStatus.approved)), isEmpty);
-      expect(ids(const RequestFilter(status: RequestStatus.pending)), <String>['r1', 'tx']);
-      expect(ids(const RequestFilter(departmentId: 'dep-1')), <String>['r1']);
+      expect(ids(const RequestFilter(statuses: <RequestStatus>{RequestStatus.approved})), isEmpty);
+      expect(ids(const RequestFilter(statuses: <RequestStatus>{RequestStatus.pending})), <String>['r1', 'tx']);
+      expect(ids(const RequestFilter(departmentIds: <String>{'dep-1'})), <String>['r1']);
       expect(ids(const RequestFilter(employeeEmail: 'AMR@co.com')), <String>['tx']);
+      // 13/10/2026 (owner): multi-select.
+      expect(ids(const RequestFilter(statuses: <RequestStatus>{RequestStatus.pending, RequestStatus.approved})), <String>['r1', 'tx']);
+      expect(ids(const RequestFilter(requestTypeIds: <String>{'sick'}, includeTransactions: true)), <String>['r1', 'tx']);
       expect(ids(RequestFilter.none, q: 'SICK'), <String>['r1']);
       expect(ids(RequestFilter.none, who: 'amr@co.com'), <String>['tx']);
     });

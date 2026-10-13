@@ -108,7 +108,7 @@ class RequestDetailsCard extends StatelessWidget {
         : state.departments[request.requesterDepartmentId] ?? '';
     final List<Widget> person = <Widget>[
       RequestInfoLine(
-        icon: const TtGlyph.svg(TtAssets.person),
+        icon: const TtGlyph.svg(TtAssets.reqUser),
         label: s.timeTrackerRequestedBy,
         child: Row(
           children: <Widget>[
@@ -124,7 +124,8 @@ class RequestDetailsCard extends StatelessWidget {
         ),
       ),
       RequestInfoLine(
-        icon: const TtGlyph.icon(Icons.work_outline),
+        // 13/10/2026 (owner): the Figma job-title case (`661:46535`).
+        icon: const TtGlyph.svg(TtAssets.reqJob),
         label: s.timeTrackerJobTitle,
         value: _orDash(who?.jobTitle(isArabic: ar) ?? ''),
       ),
@@ -136,7 +137,7 @@ class RequestDetailsCard extends StatelessWidget {
     ];
     final List<Widget> details = <Widget>[
       RequestInfoLine(
-        icon: const TtGlyph.svg(TtAssets.edit),
+        icon: const TtGlyph.svg(TtAssets.reqType),
         label: request.isTransaction ? s.timeTrackerRequestWord : s.timeTrackerRequestType,
         value: RequestText.typeName(context, request, state),
       ),
@@ -215,7 +216,8 @@ class RequestDetailsCard extends StatelessWidget {
         arrowColor: AppColors.orange,
         tabletArrow: Transform.flip(
           flipX: ar,
-          child: TtIcon(const TtGlyph.svg(TtAssets.cycleArrow, tinted: false), size: 25.r),
+          // 13/10/2026 (owner): smaller — it out-weighed the names.
+          child: TtIcon(const TtGlyph.svg(TtAssets.cycleArrow, tinted: false), size: 14.r),
         ),
         steps: <ApprovalStep>[
           for (final RequestApprovalStep st in steps)
@@ -258,7 +260,34 @@ class RequestDetailsCard extends StatelessWidget {
             ],
           ),
         );
+    final bool ar = Localizations.localeOf(context).languageCode == 'ar';
     return <Widget>[
+      // 13/10/2026 (owner): each approver's justification.
+      for (final RequestApprovalStep st in request.approvalSteps)
+        if (st.decision == ApprovalDecision.approved && !st.isCancellation && st.reason.trim().isNotEmpty)
+          Padding(
+            key: ValueKey<String>('requestJustification_${st.step.name}'),
+            padding: EdgeInsetsDirectional.only(top: 12.h),
+            child: Text.rich(
+              TextSpan(
+                text: '${s.timeTrackerStepJustification(RequestText.stepRole(context, st))} '
+                    '(${state.employeeOf(st.approverEmail)?.name(isArabic: ar) ?? st.approverEmail}): ',
+                style: StyleText.fontSize12Weight500.copyWith(color: AppColors.lightGreen),
+                children: <InlineSpan>[
+                  TextSpan(text: st.reason.trim(), style: StyleText.fontSize12Weight400.copyWith(color: AppColors.text)),
+                ],
+              ),
+            ),
+          ),
+      // 13/10/2026 (owner): Under Review = the requester asked to cancel an
+      // APPROVED request; say so — the cycle above is the cancellation's.
+      if (request.status == RequestStatus.underReview)
+        Padding(
+          key: const ValueKey<String>('requestCancellationReviewNote'),
+          padding: EdgeInsetsDirectional.only(top: 12.h),
+          child: Text(s.timeTrackerCancellationReviewNote,
+              style: StyleText.fontSize12Weight500.copyWith(color: AppColors.yellow)),
+        ),
       if (request.status == RequestStatus.rejected && rejection.isNotEmpty)
         line(s.timeTrackerReasonsOfRejection, rejection, const ValueKey<String>('requestRejectionReason')),
       if (showCancel)

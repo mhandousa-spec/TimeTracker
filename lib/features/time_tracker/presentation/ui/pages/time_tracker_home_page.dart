@@ -142,8 +142,6 @@ class _TitleRow extends StatelessWidget {
                       .copyWith(color: AppColors.text),
                 ),
               ),
-              if (collapsed && state.canCheckIn && !context.isPhone)
-                const CheckInControl(compact: true),
               // DEBUG builds only (kDebugMode is a compile-time constant, so
               // this is tree-shaken from release): demo data (9/10/2026).
               if (kDebugMode) ...<Widget>[
@@ -152,10 +150,23 @@ class _TitleRow extends StatelessWidget {
               ],
             ],
           ),
-          // UI quality pass (9/10/2026): on a phone the collapsed check-in
-          // control gets its own row, so "Tracking Time" never wraps.
-          // 13/10/2026 (owner N4): that row also holds Expand — same line.
-          if (collapsed && state.canCheckIn && context.isPhone) ...<Widget>[
+          // UI quality pass (9/10/2026): the collapsed check-in control gets
+          // its own row, so the title never wraps. 13/10/2026 (owner N4 + iPad
+          // review): that row also holds Expand — Check In and Expand on ONE
+          // line, centred on each other (phone: Check In at the start; tablet:
+          // both at the end).
+          if (collapsed && state.canCheckIn && !context.isPhone) ...<Widget>[
+            SizedBox(height: 8.h),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                const CheckInControl(compact: true),
+                SizedBox(width: 15.w),
+                _link(context, s, collapsed),
+              ],
+            ),
+          ] else if (collapsed && state.canCheckIn && context.isPhone) ...<Widget>[
             SizedBox(height: 8.h),
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,

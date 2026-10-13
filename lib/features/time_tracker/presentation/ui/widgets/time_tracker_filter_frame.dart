@@ -23,6 +23,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:knowticed_plus/core/constants/app_assets.dart';
+import 'package:knowticed_plus/core/custom/31-custom_multi_select_dropdown.dart';
 import 'package:knowticed_plus/core/custom/1-custom_dropdown.dart';
 import 'package:knowticed_plus/core/custom/3-custom_dropdown_calander.dart';
 import 'package:knowticed_plus/core/custom/5-custom_button.dart';
@@ -145,6 +146,50 @@ class TtFilterDropdown<T> extends StatelessWidget {
       onChanged: (T? v) {
         HapticController.low();
         onChanged(v);
+      },
+    );
+  }
+}
+
+/// 13/10/2026 (owner): a MULTI-select filter field (core
+/// `CustomMultiSelectDropdown`) — nothing picked reads "All"; one pick shows
+/// its name; several read "Label (3)" (never a cut-off list).
+class TtFilterMultiDropdown<T> extends StatelessWidget {
+  const TtFilterMultiDropdown({
+    super.key,
+    required this.label,
+    required this.values,
+    required this.items,
+    required this.onChanged,
+  });
+
+  final String label;
+  final Set<T> values;
+
+  /// (value, text) in display order.
+  final List<(T, String)> items;
+  final ValueChanged<Set<T>> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final S s = S.of(context);
+    return CustomMultiSelectDropdown<T>(
+      label: label,
+      hint: s.timeTrackerAll,
+      // Same grey field as the single-choice filters beside it.
+      fillColor: kDropdownFillColor,
+      height: 36,
+      heightSizesWholeTrigger: true,
+      itemStyle: StyleText.fontSize12Weight400,
+      values: <T>[for (final (T v, String _) in items) if (values.contains(v)) v],
+      items: <MultiSelectDropdownItem<T>>[
+        for (final (T v, String text) in items) MultiSelectDropdownItem<T>(value: v, label: text),
+      ],
+      selectedTextBuilder: (List<MultiSelectDropdownItem<T>> picked) =>
+          picked.length == 1 ? picked.single.label : '$label (${picked.length})',
+      onChanged: (List<T> v) {
+        HapticController.low();
+        onChanged(v.toSet());
       },
     );
   }
