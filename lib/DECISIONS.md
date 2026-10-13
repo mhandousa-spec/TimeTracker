@@ -92,3 +92,15 @@ Facts found in code (8/10):
 60. Approve asks for a REQUIRED justification (kept on the approval step and shown on Request Details), like Reject asks for a reason.
 61. Approvals Filter: no Employee list (the search finds employees by name, type or department); Request Type, Status and Department are multi-select. Request Types tab: status counters All · Active · Inactive · Removed.
 62. "Requested Timeframe" is labelled "Period". Under Review = an approved request whose requester asked to cancel — Request Details says so.
+
+## Round 12 (13 Oct 2026) — owner round 3 (Locations, Employees, Vacation Balances)
+63. Small status dialogs (Are you sure? · success · export done · warnings) all have ONE width: `TtDialogWidth.status` (411). People pickers and import reviews use `TtDialogWidth.wide` (820).
+64. Every import shows a bulk-upload review after the file is read (house CRM pattern, `TtImportReview`): every column of the file, the row's result (New / Update / No Change / Skipped), red cells with the reason under them, fixable in place (the file is re-checked on each edit). Information-only columns are read-only.
+65. Import templates are pre-filled with the CURRENT data (that is the example). The Vacation Balances template carries Employee Name · Email · Department · Job Title · Year · Total Days · Used · Remaining; only Email · Year · Total Days are imported.
+66. Every Department filter is multi-select (nothing picked = all).
+67. Locations tab: List / Grid on a tablet (Grid = the phone card), status Active / Inactive on the card, counters All · Active · Inactive.
+68. Location form: a NEW location starts empty (no work times, no working days — the user picks them). Country is required; State and City are required when the country / state has a list. Country · State · City (+ postal code) are filled from the pin (device geocoder). The Maps link must be a real map link; Late After must be shorter than the work day; the pause limit is at most one day. The pause field has no title (its meaning is the hint) so it lines up with the break length. Map styles: Satellite · Map · Terrain (true 3D needs a paid Google / Apple maps key).
+69. Employees tab (Figma `661:93542`): Employees | Locations toggle on top; inside, Assigned · Unassigned · Groups are number-box counters (like Approvals). The card's corner tag says where the rules come from: "Group Rules" or "Custom Rules" (no tag = the location's rules).
+70. Employee header card: name, department and job title stacked and centred with the photo; Email · Phone below; Message on every employee page except one's own (also Vacation History).
+71. Long job titles are abbreviated in compact places (HR → "Human Resources", Mgr., Dir., Coord., Admin. …, `TtJobTitle.short`).
+72. Vacation History: the request status counters (All · Pending · Under Review · Approved · Rejected · Canceled) above the list. The Edit balance dialog says in one sentence what it changes (the year's Total Days; Used comes from approved vacations; Remaining = Total − Used).

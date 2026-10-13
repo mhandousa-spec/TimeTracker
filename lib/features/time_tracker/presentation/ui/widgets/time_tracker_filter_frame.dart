@@ -32,6 +32,7 @@ import 'package:knowticed_plus/core/theme/app_animations.dart';
 import 'package:knowticed_plus/core/theme/app_colors.dart';
 import 'package:knowticed_plus/core/theme/app_theme.dart';
 import 'package:knowticed_plus/core/theme/haptic_controller.dart';
+import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_controls.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_setup_widgets.dart';
 import 'package:knowticed_plus/generated/l10n.dart';
 
@@ -181,7 +182,10 @@ class TtFilterMultiDropdown<T> extends StatelessWidget {
       height: 36,
       heightSizesWholeTrigger: true,
       itemStyle: StyleText.fontSize12Weight400,
-      values: <T>[for (final (T v, String _) in items) if (values.contains(v)) v],
+      values: <T>[
+        for (final (T v, String _) in items)
+          if (values.contains(v)) v
+      ],
       items: <MultiSelectDropdownItem<T>>[
         for (final (T v, String text) in items) MultiSelectDropdownItem<T>(value: v, label: text),
       ],
@@ -217,7 +221,9 @@ class TtDateRangeFields extends StatelessWidget {
   ///
   /// Return type: [bool]
   static bool isValid(DateTime? from, DateTime? to) =>
-      from == null || to == null || !DateTime(to.year, to.month, to.day).isBefore(DateTime(from.year, from.month, from.day));
+      from == null ||
+      to == null ||
+      !DateTime(to.year, to.month, to.day).isBefore(DateTime(from.year, from.month, from.day));
 
   @override
   Widget build(BuildContext context) {
@@ -235,6 +241,52 @@ class TtDateRangeFields extends StatelessWidget {
     return TtPair(
       start: field(s.timeTrackerDateFrom, from, onFrom),
       end: field(s.timeTrackerDateTo, to, onTo, error: isValid(from, to) ? null : s.timeTrackerDateRangeError),
+    );
+  }
+}
+
+/// MOVED 13/10/2026 from the HR dashboard (owner: every Department filter is
+/// multi-select): a toolbar multi-select — toolbar height + radius, card
+/// fill; "Department (2)" when several are picked; nothing picked = all.
+class TtToolbarMultiFilter extends StatelessWidget {
+  const TtToolbarMultiFilter({
+    super.key,
+    required this.hint,
+    required this.values,
+    required this.items,
+    required this.onChanged,
+  });
+
+  final String hint;
+  final Set<String> values;
+
+  /// Id → name.
+  final Map<String, String> items;
+  final ValueChanged<Set<String>> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomMultiSelectDropdown<String>(
+      hint: hint,
+      height: TtToolbar.height,
+      heightSizesWholeTrigger: true,
+      borderRadius: TtToolbar.radius,
+      fillColor: AppColors.card,
+      itemStyle: StyleText.fontSize12Weight400,
+      values: <String>[
+        for (final String v in values)
+          if (items.containsKey(v)) v
+      ],
+      items: <MultiSelectDropdownItem<String>>[
+        for (final MapEntry<String, String> e in items.entries)
+          MultiSelectDropdownItem<String>(value: e.key, label: e.value),
+      ],
+      selectedTextBuilder: (List<MultiSelectDropdownItem<String>> picked) =>
+          picked.length == 1 ? picked.single.label : '$hint (${picked.length})',
+      onChanged: (List<String> v) {
+        HapticController.low();
+        onChanged(v.toSet());
+      },
     );
   }
 }

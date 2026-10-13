@@ -210,9 +210,9 @@ void main() {
       expect(c.state.rows.firstWhere((r) => r.employee.email == 'me@co.com').isStored, isFalse);
       await c.setYear(2026);
       await Future<void>.delayed(Duration.zero);
-      c.setDepartment('dep-2');
+      c.setDepartments(<String>{'dep-2'});
       expect(c.state.visible.single.employee.email, 'sara@co.com');
-      c.setDepartment('');
+      c.setDepartments(<String>{});
       c.search('moataz');
       expect(c.state.visible.single.employee.email, 'me@co.com');
       await c.close();

@@ -11,6 +11,9 @@
 /// Author: Knowticed Plus team
 /// Created at: 13/10/2026 (owner review V1)
 ///
+/// Updated: 13/10/2026 - owner: the employee card has Message (as on the
+/// dashboard); status counters (All · Pending · Under Review · Approved ·
+/// Rejected · Canceled) above the requests.
 /// Balance live from `VacationBalancesCubit`; requests from
 /// `VacationHistoryCubit` (`watchRequestsOf`); type names / the "deducts
 /// from vacation" flag from `RequestsCubit`.
@@ -32,12 +35,14 @@ import 'package:knowticed_plus/features/time_tracker/domain/base_repository/requ
 import 'package:knowticed_plus/features/time_tracker/domain/entities/request_type.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/entities/time_tracker_request.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/enums/request_status.dart';
+import 'package:knowticed_plus/features/time_tracker/domain/rules/request_list_rules.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/rules/vacation_balance_list_rules.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/controller/requests_cubit.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/controller/requests_state.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_controls.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_setup_widgets.dart';
 import 'package:knowticed_plus/features/time_tracker/tt12_hr_dashboard/presentation/ui/widgets/hr_employee_header_card.dart';
+import 'package:knowticed_plus/features/time_tracker/tt12_hr_dashboard/presentation/ui/widgets/hr_message_button.dart';
 import 'package:knowticed_plus/features/time_tracker/tt13_vacation_balances/presentation/controller/vacation_balances_cubit.dart';
 import 'package:knowticed_plus/features/time_tracker/tt13_vacation_balances/presentation/controller/vacation_balances_state.dart';
 import 'package:knowticed_plus/features/time_tracker/tt13_vacation_balances/presentation/controller/vacation_history_cubit.dart';
@@ -107,7 +112,17 @@ class _History extends StatelessWidget {
             key: ValueKey<String>('vacationHistory_${row.employee.email}'),
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              SlideInContent(child: HrEmployeeHeaderCard(employee: row.employee)),
+              // 13/10/2026 (owner): the same employee card as the dashboard
+              // and Employees — with Message (hidden on one's own page).
+              SlideInContent(
+                child: HrEmployeeHeaderCard(
+                  employee: row.employee,
+                  onMessage: row.employee.email.trim().toLowerCase() ==
+                          GetIt.instance<TimeTrackerAccess>().currentUserEmail
+                      ? null
+                      : () => openTimeTrackerChat(context, row.employee.email),
+                ),
+              ),
               SizedBox(height: 15.h),
               SlideInContent(
                 delay: const Duration(milliseconds: 60),
@@ -165,11 +180,11 @@ class _History extends StatelessWidget {
       return (r.deductedVacationDays ?? 0) > 0;
     }
 
-    final List<TimeTrackerRequest> list = <TimeTrackerRequest>[
+    final List<TimeTrackerRequest> all = <TimeTrackerRequest>[
       for (final TimeTrackerRequest r in h.requests)
         if (vacation(r) && (r.startAt.year == year || r.endAt.year == year)) r,
     ]..sort((TimeTrackerRequest a, TimeTrackerRequest b) => b.startAt.compareTo(a.startAt));
-    if (list.isEmpty) {
+    if (all.isEmpty) {
       return TtFormCard(
         child: Text(s.timeTrackerNoVacationsInYear(LocalizedNumber.digits(context, '$year')),
             key: const ValueKey<String>('vacationHistoryEmpty'),
@@ -177,12 +192,33 @@ class _History extends StatelessWidget {
             style: StyleText.fontSize14Weight400.copyWith(color: AppColors.secondaryText)),
       );
     }
+    // 13/10/2026 (owner): the Requests status counters, so every request of
+    // the year can be found by its status.
+    const List<RequestBucket> buckets = RequestBucket.values;
+    final Map<RequestBucket, int> counts = <RequestBucket, int>{
+      for (final RequestBucket b in buckets) b: all.where((TimeTrackerRequest r) => b.matches(r.status)).length,
+    };
+    final List<TimeTrackerRequest> list = <TimeTrackerRequest>[
+      for (final TimeTrackerRequest r in all)
+        if (h.bucket.matches(r.status)) r,
+    ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
+        KeyedSubtree(
+          key: const ValueKey<String>('vacationHistoryCounters'),
+          child: RequestStatusCounters(
+            buckets: buckets,
+            counts: counts,
+            selected: h.bucket,
+            onSelected: context.read<VacationHistoryCubit>().setBucket,
+          ),
+        ),
+        SizedBox(height: 15.h),
         Text(s.timeTrackerVacationRequestsCount(LocalizedNumber.of(context, list.length)),
             style: StyleText.fontSize16Weight500.copyWith(color: AppColors.text)),
         SizedBox(height: 10.h),
+        if (list.isEmpty) const CustomEmptyState(key: ValueKey<String>('vacationHistoryBucketEmpty')),
         for (int i = 0; i < list.length; i++) ...<Widget>[
           SlideInContent(
             delay: Duration(milliseconds: 40 * (i < 6 ? i : 6)),

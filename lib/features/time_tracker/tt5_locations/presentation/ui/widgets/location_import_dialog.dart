@@ -16,6 +16,8 @@
 /// Discard / primary). The confirm flow runs after this dialog closes.
 /// Updated: 9/10/2026 - phase 5: the Import button uses the module's
 /// `timeTrackerImport` (the core `import` key reads "تصدير" in Arabic).
+/// Updated: 13/10/2026 - owner: after upload, the bulk-upload review
+/// (`LocationImportReview`) replaces the text preview; the dialog is wide.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,19 +28,18 @@ import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/tim
 import 'package:knowticed_plus/core/constants/app_assets.dart';
 import 'package:knowticed_plus/core/custom/57-custom_dialog_manager.dart';
 import 'package:knowticed_plus/core/custom/66-circle_progress.dart';
-import 'package:knowticed_plus/core/helper/main_helper/localized_number.dart';
 import 'package:knowticed_plus/core/theme/app_animations.dart';
 import 'package:knowticed_plus/core/theme/app_colors.dart';
 import 'package:knowticed_plus/core/theme/app_theme.dart';
 import 'package:knowticed_plus/features/time_tracker/data/data_source/local_data_source/time_tracker_sheet_reader.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/entities/work_location.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/enums/setup_status.dart';
-import 'package:knowticed_plus/features/time_tracker/domain/rules/location_form_rules.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/rules/location_import_rules.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/controller/time_tracker_action_failure.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_csv_export.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_setup_widgets.dart';
 import 'package:knowticed_plus/features/time_tracker/tt5_locations/presentation/controller/locations_cubit.dart';
+import 'package:knowticed_plus/features/time_tracker/tt5_locations/presentation/ui/widgets/location_import_review.dart';
 import 'package:knowticed_plus/generated/l10n.dart';
 
 /// Function Name: [showLocationImportDialog]
@@ -50,14 +51,18 @@ Future<void> showLocationImportDialog(BuildContext context) async {
   final LocationsCubit cubit = context.read<LocationsCubit>();
   final LocationImportPlan? plan = await CustomDialogManager.showContent<LocationImportPlan>(
     context: context,
-    width: TtDialogWidth.standard,
+    // 13/10/2026 (owner): wide — the review table shows every column.
+    width: TtDialogWidth.wide,
+    // The review can be taller than a phone screen: the dialog scrolls.
+    scrollable: true,
     child: BlocProvider<LocationsCubit>.value(value: cubit, child: const LocationImportDialog()),
   );
   if (plan == null || !context.mounted) return;
   final S s = S.of(context);
   await CustomDialogManager.showDialogFlow(
     context: context,
-    confirmWidth: 411,
+    confirmWidth: TtDialogWidth.status,
+    successWidth: TtDialogWidth.status,
     scaleIn: true,
     confirmLottie: AppAssets.lottieConfirmation,
     confirmTitle: s.timeTrackerImportLocations,
@@ -84,6 +89,7 @@ class LocationImportDialog extends StatefulWidget {
 
 class _LocationImportDialogState extends State<LocationImportDialog> {
   LocationImportPlan? _plan;
+  List<List<String>>? _grid;
   String? _error;
   bool _reading = false;
 
@@ -105,6 +111,19 @@ class _LocationImportDialogState extends State<LocationImportDialog> {
     );
   }
 
+  /// Bumped on every upload so the review starts over with the new file.
+  int _uploads = 0;
+
+  void _edited(List<List<String>> grid) {
+    final S s = S.of(context);
+    final LocationImportPlan plan = context.read<LocationsCubit>().planImport(grid);
+    setState(() {
+      _grid = grid;
+      _plan = plan;
+      _error = plan.writable.isEmpty ? s.timeTrackerImportNothing : null;
+    });
+  }
+
   Future<void> _upload() async {
     final S s = S.of(context);
     final TimeTrackerSheetReader reader = _reader;
@@ -124,6 +143,8 @@ class _LocationImportDialogState extends State<LocationImportDialog> {
         _error = s.timeTrackerImportFileError;
       } else if (plan != null) {
         _plan = plan;
+        _grid = read.grid;
+        _uploads++;
         _error = plan.missingNameColumn
             ? s.timeTrackerImportNoNameColumn
             : (plan.writable.isEmpty ? s.timeTrackerImportNothing : null);
@@ -158,9 +179,16 @@ class _LocationImportDialogState extends State<LocationImportDialog> {
             SizedBox(height: 12.h),
             Text(_error!, style: StyleText.fontSize12Weight400.copyWith(color: AppColors.red)),
           ],
-          if (plan != null && !plan.missingNameColumn) ...<Widget>[
+          if (plan != null && !plan.missingNameColumn && _grid != null) ...<Widget>[
             SizedBox(height: 15.h),
-            _Preview(plan: plan),
+            // 13/10/2026 (owner): the bulk-upload review — every column of
+            // the file, red cells with the reason, fixable in place.
+            LocationImportReview(
+              key: ValueKey<int>(_uploads),
+              grid: _grid!,
+              plan: plan,
+              onEdited: _edited,
+            ),
           ],
           SizedBox(height: 20.h),
           TimeTrackerFormActions(
@@ -173,93 +201,6 @@ class _LocationImportDialogState extends State<LocationImportDialog> {
           ),
         ],
       ),
-    );
-  }
-}
-
-/// Summary line + one row per file line (name · action · problems).
-class _Preview extends StatelessWidget {
-  const _Preview({required this.plan});
-
-  final LocationImportPlan plan;
-
-  String _action(S s, LocationImportAction a) {
-    switch (a) {
-      case LocationImportAction.create:
-        return s.timeTrackerImportActionCreate;
-      case LocationImportAction.update:
-        return s.timeTrackerImportActionUpdate;
-      case LocationImportAction.unchanged:
-        return s.timeTrackerImportActionUnchanged;
-      case LocationImportAction.skip:
-        return s.timeTrackerImportActionSkip;
-    }
-  }
-
-  String _problem(S s, LocationImportIssue issue) {
-    final String column = issue.column?.heading ?? '';
-    if (identical(issue, LocationImportIssue.duplicateName)) return s.timeTrackerImportDuplicate;
-    switch (issue.error) {
-      case null:
-      case LocationFormError.latitudeInvalid:
-      case LocationFormError.longitudeInvalid:
-        return s.timeTrackerImportUnreadable(column);
-      case LocationFormError.nameEnRequired:
-        return s.timeTrackerNameRequired;
-      case LocationFormError.nameArRequired:
-        return s.timeTrackerArabicNameRequired;
-      case LocationFormError.coordinatesRequired:
-        return s.timeTrackerCoordinatesRequired;
-      case LocationFormError.radiusRequired:
-        return s.timeTrackerRadiusRequired;
-      case LocationFormError.workTimesSame:
-        return s.timeTrackerWorkTimesSame;
-      case LocationFormError.workingDaysRequired:
-        return s.timeTrackerWorkingDaysRequired;
-      case LocationFormError.breakLengthRequired:
-        return s.timeTrackerBreakLengthRequired;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final S s = S.of(context);
-    String n(LocationImportAction a) => LocalizedNumber.of(context, plan.count(a));
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        Text(
-          s.timeTrackerImportSummary(
-            n(LocationImportAction.create),
-            n(LocationImportAction.update),
-            n(LocationImportAction.unchanged),
-            n(LocationImportAction.skip),
-          ),
-          key: const ValueKey<String>('locationImportSummary'),
-          style: StyleText.fontSize14Weight500.copyWith(color: AppColors.text),
-        ),
-        SizedBox(height: 8.h),
-        ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: 220.h),
-          child: ListView(
-            shrinkWrap: true,
-            children: <Widget>[
-              for (final LocationImportRow r in plan.rows)
-                Padding(
-                  padding: EdgeInsetsDirectional.only(bottom: 6.h),
-                  child: Text(
-                    '${s.timeTrackerImportLine(LocalizedNumber.of(context, r.line))} · '
-                    '${r.name.isEmpty ? '-' : r.name} · ${_action(s, r.action)}'
-                    '${r.issues.isEmpty ? '' : ' — ${r.issues.map((LocationImportIssue i) => _problem(s, i)).join('; ')}'}',
-                    style: StyleText.fontSize12Weight400.copyWith(
-                      color: r.action == LocationImportAction.skip ? AppColors.red : AppColors.text,
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ),
-      ],
     );
   }
 }

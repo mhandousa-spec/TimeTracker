@@ -104,6 +104,7 @@ class _Details extends StatelessWidget {
     if (assigned == 0) return false;
     final S s = S.of(context);
     await CustomDialogManager.showMessage(
+      width: TtDialogWidth.status,
       context: context,
       lottiePath: AppAssets.lottieWarning,
       title: s.timeTrackerLocationInUseTitle,
@@ -119,7 +120,8 @@ class _Details extends StatelessWidget {
     if (await _blockedByEmployees(context, cubit) || !context.mounted) return;
     await CustomDialogManager.showDialogFlow(
       context: context,
-      confirmWidth: 411,
+      confirmWidth: TtDialogWidth.status,
+      successWidth: TtDialogWidth.status,
       destructive: true,
       confirmLottie: AppAssets.lottieWarning,
       confirmTitle: s.timeTrackerDeletingLocation,

@@ -27,13 +27,19 @@ enum VacationBalancesStatus { initial, loading, loaded, failure }
 class VacationImportRead {
   const VacationImportRead.cancelled()
       : plan = null,
+        grid = null,
         unreadable = false;
-  const VacationImportRead.read(VacationImportPlan this.plan) : unreadable = false;
+  const VacationImportRead.read(VacationImportPlan this.plan, {this.grid}) : unreadable = false;
   const VacationImportRead.unreadable()
       : plan = null,
+        grid = null,
         unreadable = true;
 
   final VacationImportPlan? plan;
+
+  /// ADDED 13/10/2026 (owner): the file as read (first row = headings), for
+  /// the bulk-upload review where each cell can be fixed.
+  final List<List<String>>? grid;
   final bool unreadable;
 }
 
@@ -47,7 +53,7 @@ class VacationBalancesState {
     this.currentYear = 0,
     this.isArabic = false,
     this.query = '',
-    this.departmentId = '',
+    this.departmentIds = const <String>{},
     this.isGrid = true,
     this.failure = TimeTrackerActionFailure.none,
     this.errorMessage = '',
@@ -73,8 +79,8 @@ class VacationBalancesState {
   final bool isArabic;
   final String query;
 
-  /// '' = every department.
-  final String departmentId;
+  /// Empty = every department (13/10/2026, owner: multi-select).
+  final Set<String> departmentIds;
   final bool isGrid;
   final TimeTrackerActionFailure failure;
   final String errorMessage;
@@ -90,8 +96,7 @@ class VacationBalancesState {
       );
 
   /// [rows] narrowed by the search and the department filter.
-  List<VacationBalanceRow> get visible =>
-      VacationBalanceList.filter(rows, query: query, departmentId: departmentId);
+  List<VacationBalanceRow> get visible => VacationBalanceList.filter(rows, query: query, departmentIds: departmentIds);
 
   /// Departments that have employees (the filter's entries).
   Map<String, String> get usedDepartments {
@@ -116,7 +121,7 @@ class VacationBalancesState {
     int? currentYear,
     bool? isArabic,
     String? query,
-    String? departmentId,
+    Set<String>? departmentIds,
     bool? isGrid,
     TimeTrackerActionFailure? failure,
     String? errorMessage,
@@ -130,7 +135,7 @@ class VacationBalancesState {
         currentYear: currentYear ?? this.currentYear,
         isArabic: isArabic ?? this.isArabic,
         query: query ?? this.query,
-        departmentId: departmentId ?? this.departmentId,
+        departmentIds: departmentIds ?? this.departmentIds,
         isGrid: isGrid ?? this.isGrid,
         failure: failure ?? this.failure,
         errorMessage: errorMessage ?? this.errorMessage,

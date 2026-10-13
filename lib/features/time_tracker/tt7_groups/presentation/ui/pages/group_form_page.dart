@@ -65,6 +65,7 @@ import 'package:knowticed_plus/features/time_tracker/tt6_employees/presentation/
 import 'package:knowticed_plus/features/time_tracker/tt6_employees/presentation/ui/widgets/grant_access_dialog.dart';
 import 'package:knowticed_plus/features/time_tracker/tt7_groups/presentation/controller/group_form_cubit.dart';
 import 'package:knowticed_plus/features/time_tracker/tt7_groups/presentation/ui/widgets/group_member_picker.dart';
+import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_controls.dart';
 import 'package:knowticed_plus/generated/l10n.dart';
 
 class GroupFormPage extends StatelessWidget {
@@ -207,7 +208,8 @@ class _GroupFormViewState extends State<_GroupFormView> {
     final bool edit = form.state.isEdit;
     await CustomDialogManager.showDialogFlow(
       context: context,
-      confirmWidth: 411,
+      confirmWidth: TtDialogWidth.status,
+      successWidth: TtDialogWidth.status,
       scaleIn: true,
       confirmLottie: edit ? AppAssets.lottieEditDocument : AppAssets.lottieConfirmation,
       confirmTitle: edit ? s.timeTrackerEditingGroupDetails : s.timeTrackerCreatingNewGroup,

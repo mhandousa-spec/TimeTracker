@@ -44,6 +44,7 @@ import 'package:knowticed_plus/features/time_tracker/presentation/controller/tim
 import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_formatters.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_setup_widgets.dart';
 import 'package:knowticed_plus/features/time_tracker/tt9_requests/presentation/ui/widgets/request_text.dart';
+import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_controls.dart';
 import 'package:knowticed_plus/generated/l10n.dart';
 
 class RequestFlows {
@@ -64,7 +65,8 @@ class RequestFlows {
     if (request.status == RequestStatus.pending) {
       await CustomDialogManager.showDialogFlow(
         context: context,
-        confirmWidth: 411,
+        confirmWidth: TtDialogWidth.status,
+        successWidth: TtDialogWidth.status,
         destructive: true,
         confirmLottie: AppAssets.lottieWarning,
         confirmTitle: s.timeTrackerRequestToCancellation,
@@ -80,7 +82,8 @@ class RequestFlows {
       final TextEditingController reason = TextEditingController();
       await CustomDialogManager.showDialogFlow(
         context: context,
-        confirmWidth: 411,
+        confirmWidth: TtDialogWidth.status,
+        successWidth: TtDialogWidth.status,
         destructive: true,
         confirmLottie: AppAssets.lottieWarning,
         confirmTitle: s.timeTrackerRequestToCancellation,
@@ -121,6 +124,7 @@ class RequestFlows {
       return;
     }
     await CustomDialogManager.showMessage(
+      width: TtDialogWidth.status,
       context: context,
       lottiePath: sent ? AppAssets.successful : AppAssets.lottieWarning,
       title: s.timeTrackerReminderSentOn(TimeTrackerFormat.date(context, at ?? DateTime.now())),
@@ -147,7 +151,8 @@ class RequestFlows {
     final TextEditingController justification = TextEditingController();
     await CustomDialogManager.showDialogFlow(
       context: context,
-      confirmWidth: 411,
+      confirmWidth: TtDialogWidth.status,
+      successWidth: TtDialogWidth.status,
       scaleIn: true,
       // 13/10/2026 (owner I6): a green tick, not the "+" document.
       confirmLottie: AppAssets.lottieApproved,
@@ -192,7 +197,8 @@ class RequestFlows {
     final TextEditingController reason = TextEditingController();
     await CustomDialogManager.showDialogFlow(
       context: context,
-      confirmWidth: 411,
+      confirmWidth: TtDialogWidth.status,
+      successWidth: TtDialogWidth.status,
       destructive: true,
       confirmLottie: AppAssets.lottieWarning,
       confirmTitle: review ? s.timeTrackerRejectCancellation : s.timeTrackerRejectRequest,
@@ -234,7 +240,8 @@ class RequestFlows {
     final TextEditingController reason = TextEditingController();
     await CustomDialogManager.showDialogFlow(
       context: context,
-      confirmWidth: 411,
+      confirmWidth: TtDialogWidth.status,
+      successWidth: TtDialogWidth.status,
       destructive: true,
       confirmLottie: AppAssets.lottieWarning,
       confirmTitle: s.timeTrackerCancelRequest,
@@ -277,7 +284,8 @@ class RequestFlows {
     final RequestActionsCubit actions = context.read<RequestActionsCubit>();
     await CustomDialogManager.showDialogFlow(
       context: context,
-      confirmWidth: 411,
+      confirmWidth: TtDialogWidth.status,
+      successWidth: TtDialogWidth.status,
       destructive: true,
       confirmLottie: AppAssets.lottieWarning,
       confirmTitle: s.timeTrackerDeletingComment,

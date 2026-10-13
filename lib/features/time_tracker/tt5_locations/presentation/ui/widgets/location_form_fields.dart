@@ -59,7 +59,9 @@ class TtLabeledTimeField extends StatelessWidget {
   });
 
   final String label;
-  final int minutes;
+
+  /// Null = not picked yet (13/10/2026: a new location starts empty).
+  final int? minutes;
   final ValueChanged<int> onChanged;
   final String? error;
 
@@ -73,7 +75,7 @@ class TtLabeledTimeField extends StatelessWidget {
           child: Text(label, style: StyleText.fontSize14Weight500.copyWith(color: AppColors.text)),
         ),
         TimeTrackerTimeField(
-          value: TimeOfDay(hour: minutes ~/ 60, minute: minutes % 60),
+          value: minutes == null ? null : TimeOfDay(hour: minutes! ~/ 60, minute: minutes! % 60),
           hint: S.of(context).chooseTime,
           hasError: error != null,
           onPicked: (TimeOfDay t) => onChanged(t.hour * 60 + t.minute),
@@ -250,5 +252,50 @@ class _TtSearchPickerDialogState extends State<TtSearchPickerDialog> {
         ),
       ],
     );
+  }
+}
+
+/// ADDED 13/10/2026: the message of each location form / import problem —
+/// one place, so the form and the import review say the same thing.
+class LocationFormErrorText {
+  const LocationFormErrorText._();
+
+  static String of(S s, LocationFormError e) {
+    switch (e) {
+      case LocationFormError.nameEnRequired:
+        return s.timeTrackerNameRequired;
+      case LocationFormError.nameArRequired:
+        return s.timeTrackerArabicNameRequired;
+      case LocationFormError.latitudeInvalid:
+        return s.timeTrackerLatitudeInvalid;
+      case LocationFormError.longitudeInvalid:
+        return s.timeTrackerLongitudeInvalid;
+      case LocationFormError.coordinatesRequired:
+        return s.timeTrackerCoordinatesRequired;
+      case LocationFormError.radiusRequired:
+        return s.timeTrackerRadiusRequired;
+      case LocationFormError.workTimesSame:
+        return s.timeTrackerWorkTimesSame;
+      case LocationFormError.workingDaysRequired:
+        return s.timeTrackerWorkingDaysRequired;
+      case LocationFormError.breakLengthRequired:
+        return s.timeTrackerBreakLengthRequired;
+      case LocationFormError.mapsUrlInvalid:
+        return s.timeTrackerMapsUrlInvalid;
+      case LocationFormError.lateAfterTooLong:
+        return s.timeTrackerLateAfterTooLong;
+      case LocationFormError.pauseTooLong:
+        return s.timeTrackerPauseTooLong;
+      case LocationFormError.countryRequired:
+        return s.countryRequired;
+      case LocationFormError.stateRequired:
+        return s.stateRequired;
+      case LocationFormError.cityRequired:
+        return s.cityRequired;
+      case LocationFormError.workStartRequired:
+        return s.timeTrackerWorkStartRequired;
+      case LocationFormError.workEndRequired:
+        return s.timeTrackerWorkEndRequired;
+    }
   }
 }

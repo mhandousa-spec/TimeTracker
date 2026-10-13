@@ -41116,20 +41116,20 @@ class S {
     );
   }
 
-  /// `A spreadsheet (CSV) with one row per location, already filled with your current locations. Each column is one field: name, map link, address, work hours, rules.`
+  /// `A spreadsheet (CSV), one row per location. The rows already in it are your CURRENT locations — they show how to fill each column. Columns: name, map link, address, work hours, rules.`
   String get timeTrackerImportStep1Locations {
     return Intl.message(
-      'A spreadsheet (CSV) with one row per location, already filled with your current locations. Each column is one field: name, map link, address, work hours, rules.',
+      'A spreadsheet (CSV), one row per location. The rows already in it are your CURRENT locations — they show how to fill each column. Columns: name, map link, address, work hours, rules.',
       name: 'timeTrackerImportStep1Locations',
       desc: '',
       args: [],
     );
   }
 
-  /// `A spreadsheet (CSV) with one row per employee: Email, Year and Total Days, already filled with the current balances.`
+  /// `A spreadsheet (CSV), one row per employee, already filled with the current balances of the selected year. Only Total Days is imported; Employee Name, Department, Job Title, Used and Remaining Days help you find the employee and are not changed.`
   String get timeTrackerImportStep1Balances {
     return Intl.message(
-      'A spreadsheet (CSV) with one row per employee: Email, Year and Total Days, already filled with the current balances.',
+      'A spreadsheet (CSV), one row per employee, already filled with the current balances of the selected year. Only Total Days is imported; Employee Name, Department, Job Title, Used and Remaining Days help you find the employee and are not changed.',
       name: 'timeTrackerImportStep1Balances',
       desc: '',
       args: [],
@@ -41223,6 +41223,136 @@ class S {
       name: 'timeTrackerVacationRequestsCount',
       desc: '',
       args: [count],
+    );
+  }
+
+  /// `Here you set how many vacation days {name} gets in {year} (Total Days). Used Days are counted from approved vacation requests and cannot be edited here. Remaining = Total Days − Used Days.`
+  String timeTrackerEditVacationExplain(String name, String year) {
+    return Intl.message(
+      'Here you set how many vacation days $name gets in $year (Total Days). Used Days are counted from approved vacation requests and cannot be edited here. Remaining = Total Days − Used Days.',
+      name: 'timeTrackerEditVacationExplain',
+      desc: '',
+      args: [name, year],
+    );
+  }
+
+  /// `e.g. 21`
+  String get timeTrackerTotalDaysHint {
+    return Intl.message(
+      'e.g. 21',
+      name: 'timeTrackerTotalDaysHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter a map link that starts with https:// (Google Maps or Apple Maps).`
+  String get timeTrackerMapsUrlInvalid {
+    return Intl.message(
+      'Enter a map link that starts with https:// (Google Maps or Apple Maps).',
+      name: 'timeTrackerMapsUrlInvalid',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Late After must be shorter than the work day.`
+  String get timeTrackerLateAfterTooLong {
+    return Intl.message(
+      'Late After must be shorter than the work day.',
+      name: 'timeTrackerLateAfterTooLong',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `A pause can be at most 1440 minutes (one day).`
+  String get timeTrackerPauseTooLong {
+    return Intl.message(
+      'A pause can be at most 1440 minutes (one day).',
+      name: 'timeTrackerPauseTooLong',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose the work start time.`
+  String get timeTrackerWorkStartRequired {
+    return Intl.message(
+      'Choose the work start time.',
+      name: 'timeTrackerWorkStartRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose the work end time.`
+  String get timeTrackerWorkEndRequired {
+    return Intl.message(
+      'Choose the work end time.',
+      name: 'timeTrackerWorkEndRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Longest pause in minutes (empty = no limit)`
+  String get timeTrackerPauseLimitHint {
+    return Intl.message(
+      'Longest pause in minutes (empty = no limit)',
+      name: 'timeTrackerPauseLimitHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Minutes after start before it counts as late (e.g. 15)`
+  String get timeTrackerLateAfterGraceHint {
+    return Intl.message(
+      'Minutes after start before it counts as late (e.g. 15)',
+      name: 'timeTrackerLateAfterGraceHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Terrain`
+  String get timeTrackerTerrainView {
+    return Intl.message(
+      'Terrain',
+      name: 'timeTrackerTerrainView',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Country, State and City were filled in from the pin.`
+  String get timeTrackerAddressFromPin {
+    return Intl.message(
+      'Country, State and City were filled in from the pin.',
+      name: 'timeTrackerAddressFromPin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Group Rules`
+  String get timeTrackerGroupRulesTag {
+    return Intl.message(
+      'Group Rules',
+      name: 'timeTrackerGroupRulesTag',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Custom Rules`
+  String get timeTrackerCustomRulesTag {
+    return Intl.message(
+      'Custom Rules',
+      name: 'timeTrackerCustomRulesTag',
+      desc: '',
+      args: [],
     );
   }
 }

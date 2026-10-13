@@ -86,10 +86,8 @@ class VacationBalanceList {
     final List<VacationBalanceRow> out = <VacationBalanceRow>[
       for (final TimeTrackerEmployee e in employees)
         if (_norm(e.email).isNotEmpty) _row(e, byEmail[_norm(e.email)], year),
-    ]..sort((VacationBalanceRow a, VacationBalanceRow b) => a.employee
-        .name(isArabic: isArabic)
-        .toLowerCase()
-        .compareTo(b.employee.name(isArabic: isArabic).toLowerCase()));
+    ]..sort((VacationBalanceRow a, VacationBalanceRow b) =>
+        a.employee.name(isArabic: isArabic).toLowerCase().compareTo(b.employee.name(isArabic: isArabic).toLowerCase()));
     return List<VacationBalanceRow>.unmodifiable(out);
   }
 
@@ -106,20 +104,23 @@ class VacationBalanceList {
   /// Function Name: [filter]
   ///
   /// Purpose: [rows] matching [query] (names, title, department, e-mail) and
-  /// [departmentId] ('' = every department).
+  /// [departmentId] ('' = every department) and [departmentIds] (13/10/2026,
+  /// owner: multi-select; empty = every department).
   ///
   /// Return type: [List<VacationBalanceRow>]
   static List<VacationBalanceRow> filter(
     List<VacationBalanceRow> rows, {
     String query = '',
     String departmentId = '',
+    Set<String> departmentIds = const <String>{},
   }) {
     final String q = query.trim().toLowerCase();
     final String dep = departmentId.trim();
     return List<VacationBalanceRow>.unmodifiable(<VacationBalanceRow>[
       for (final VacationBalanceRow r in rows)
         if ((q.isEmpty || r.employee.searchText.contains(q)) &&
-            (dep.isEmpty || r.employee.departmentId.trim() == dep))
+            (dep.isEmpty || r.employee.departmentId.trim() == dep) &&
+            (departmentIds.isEmpty || departmentIds.contains(r.employee.departmentId.trim())))
           r,
     ]);
   }
@@ -130,8 +131,7 @@ class VacationBalanceList {
   /// one decimal ("21", "2.5").
   ///
   /// Return type: [String]
-  static String days(double value) =>
-      value == value.roundToDouble() ? '${value.round()}' : value.toStringAsFixed(1);
+  static String days(double value) => value == value.roundToDouble() ? '${value.round()}' : value.toStringAsFixed(1);
 }
 
 /// Why a Total Days value cannot be saved.

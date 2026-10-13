@@ -83,6 +83,7 @@ class _AttendanceTabState extends State<AttendanceTab> {
     final S s = S.of(context);
     if (rows.isEmpty) {
       await CustomDialogManager.showMessage(
+        width: TtDialogWidth.status,
         context: context,
         lottiePath: AppAssets.lottieWarning,
         title: s.export,

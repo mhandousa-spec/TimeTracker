@@ -22,6 +22,11 @@
 /// Allow Pause (`Allowed_Pause_Minutes`, empty = no limit).
 /// Updated: 9/10/2026 - code review: Material icons → the app's SVG line
 /// icons (`TtAssets` / `TtGlyph`) where an equivalent asset exists.
+/// Updated: 13/10/2026 - owner round 3: a new location starts EMPTY (no
+/// work times / days — picked by the user); Country (+ State / City when
+/// the country has them) required and filled from the pin; Maps link,
+/// Late After and pause limit validated; the pause field has no title (its
+/// meaning is the hint) so it lines up with the break length.
 /// Updated: 9/10/2026 - QA KP-TT-004 (State / City hints name their own
 /// field) and KP-TT-006 (searchable Country list).
 
@@ -142,11 +147,13 @@ class _LocationFormViewState extends State<_LocationFormView> {
       _c['lat']!.text = p.latitude.toStringAsFixed(6);
       _c['lng']!.text = p.longitude.toStringAsFixed(6);
       _coordinates();
+      _fillAddress(p.latitude, p.longitude);
       return;
     }
     final S s = S.of(context);
     final DeviceLocationIssue? issue = _cubit.state.locateIssue;
     await CustomDialogManager.showMessage(
+      width: TtDialogWidth.status,
       context: context,
       lottiePath: AppAssets.lottieWarning,
       title: s.timeTrackerLocationNeededTitle,
@@ -156,6 +163,41 @@ class _LocationFormViewState extends State<_LocationFormView> {
               ? s.timeTrackerLocationDeniedSetup
               : s.timeTrackerLocationUnavailable,
     );
+  }
+
+  /// 13/10/2026 (owner): Country · State · City (and the postal code) follow
+  /// the pin — looked up with the device geocoder and matched to the
+  /// address lists. Nothing changes when the lookup finds nothing.
+  Future<void> _fillAddress(double lat, double lng) async {
+    final GeofenceAddress? a = await GeofenceMapPicker.addressOf(lat, lng);
+    if (!mounted || a == null) return;
+    final LocationDataService data = LocationDataService.instance;
+    await data.load();
+    if (!mounted) return;
+    final String iso = a.countryCode.trim().toUpperCase();
+    if (iso.isEmpty || !data.countries(context).any((LocationOption o) => o.code.toUpperCase() == iso)) return;
+    String state = '';
+    for (final LocationOption o in data.statesOf(iso)) {
+      if (o.matchesLoose(a.state)) {
+        state = o.code;
+        break;
+      }
+    }
+    String city = '';
+    for (final LocationOption o in data.citiesOf(iso, state)) {
+      if (o.matchesLoose(a.city)) {
+        city = o.name;
+        break;
+      }
+    }
+    final String postal = a.postalCode.trim();
+    if (postal.isNotEmpty) _c['postal']!.text = postal;
+    _cubit.update(_draft.copyWith(
+      country: iso,
+      state: state,
+      city: city,
+      postalCode: postal.isNotEmpty ? postal : _draft.postalCode,
+    ));
   }
 
   /// The user may switch Active / Inactive (Edit form only).
@@ -175,6 +217,7 @@ class _LocationFormViewState extends State<_LocationFormView> {
       final int assigned = list.assignedCount(before);
       if (assigned > 0) {
         await CustomDialogManager.showMessage(
+          width: TtDialogWidth.status,
           context: context,
           lottiePath: AppAssets.lottieWarning,
           title: s.timeTrackerLocationInUseTitle,
@@ -185,7 +228,8 @@ class _LocationFormViewState extends State<_LocationFormView> {
     }
     await CustomDialogManager.showDialogFlow(
       context: context,
-      confirmWidth: 411,
+      confirmWidth: TtDialogWidth.status,
+      successWidth: TtDialogWidth.status,
       scaleIn: true,
       confirmLottie: edit ? AppAssets.lottieEditDocument : AppAssets.lottieConfirmation,
       confirmTitle: edit ? s.timeTrackerEditingLocation : s.timeTrackerCreatingNewLocation,
@@ -326,6 +370,7 @@ class _LocationFormViewState extends State<_LocationFormView> {
     required List<LocationOption> options,
     required bool byLabel,
     required ValueChanged<String> onChanged,
+    String? error,
   }) {
     final bool ar = _isArabic;
     final List<DropdownItem<String>> items = <DropdownItem<String>>[
@@ -342,6 +387,7 @@ class _LocationFormViewState extends State<_LocationFormView> {
       hint: hint,
       value: known ? value : null,
       enabled: options.isNotEmpty,
+      errorText: error,
       items: items,
       onChanged: onChanged,
     );
@@ -387,6 +433,17 @@ class _LocationFormViewState extends State<_LocationFormView> {
     final String country = d.country.trim().toUpperCase();
     final List<LocationOption> states = data.statesOf(country);
     final List<LocationOption> cities = data.citiesOf(country, d.state);
+    // 13/10/2026 (owner): State / City are required when there is a list to
+    // pick from (told to the cubit after this frame).
+    final bool needState = country.isNotEmpty && states.isNotEmpty;
+    final bool needCity = country.isNotEmpty && cities.isNotEmpty;
+    final LocationFormState st = _cubit.state;
+    if (st.needsState != needState || st.needsCity != needCity) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _cubit.setAddressNeeds(state: needState, city: needCity);
+      });
+    }
+    String? err(LocationFormError e) => st.shows(e) ? LocationFormErrorText.of(S.of(context), e) : null;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -400,6 +457,7 @@ class _LocationFormViewState extends State<_LocationFormView> {
               value: country.isEmpty ? null : country,
               options: data.countries(context),
               byLabel: false,
+              error: err(LocationFormError.countryRequired),
               onChanged: (String iso) =>
                   _cubit.update(_draft.copyWith(country: iso, state: '', city: '')),
             ),
@@ -419,6 +477,7 @@ class _LocationFormViewState extends State<_LocationFormView> {
             value: d.state.isEmpty ? null : d.state,
             options: states,
             byLabel: false,
+            error: err(LocationFormError.stateRequired),
             onChanged: (String code) =>
                 _cubit.update(_draft.copyWith(state: code, city: '')),
           ),
@@ -432,9 +491,15 @@ class _LocationFormViewState extends State<_LocationFormView> {
             value: d.city.isEmpty ? null : d.city,
             options: cities,
             byLabel: true,
+            error: err(LocationFormError.cityRequired),
             onChanged: (String name) => _cubit.update(_draft.copyWith(city: name)),
           ),
           end: _text('postal', label: s.timeTrackerPostalCode,
+              keyboard: TextInputType.number,
+              formatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.allow(RegExp(r'[0-9A-Za-z \-٠-٩]')),
+                LengthLimitingTextInputFormatter(10),
+              ],
               onChanged: (String v) => _cubit.update(_draft.copyWith(postalCode: v))),
         ),
       ],
@@ -454,15 +519,18 @@ class _LocationFormViewState extends State<_LocationFormView> {
         // an Arabic UI); each label in its own language.
         TtBilingualPair(
           english: _text('nameEn', label: s.timeTrackerEnLocationName, hint: s.timeTrackerTextHereEn,
+              formatters: <TextInputFormatter>[LengthLimitingTextInputFormatter(60)],
               error: state.shows(LocationFormError.nameEnRequired) ? s.timeTrackerNameRequired : null,
               onChanged: (String v) => _cubit.update(_draft.copyWith(nameEn: v))),
           arabic: _text('nameAr', label: s.timeTrackerLocationNameAr, arabic: true,
+              formatters: <TextInputFormatter>[LengthLimitingTextInputFormatter(60)],
               error: state.shows(LocationFormError.nameArRequired) ? s.timeTrackerArabicNameRequired : null,
               onChanged: (String v) => _cubit.update(_draft.copyWith(nameAr: v))),
         ),
         SizedBox(height: 15.h),
         _text('maps', label: s.timeTrackerLocationAtGoogleMaps, hint: s.timeTrackerGoogleMapsHint,
             keyboard: TextInputType.url,
+            error: state.shows(LocationFormError.mapsUrlInvalid) ? s.timeTrackerMapsUrlInvalid : null,
             onChanged: (String v) => _cubit.update(_draft.copyWith(googleMapsUrl: v))),
         SizedBox(height: 15.h),
         TtPair(
@@ -509,6 +577,7 @@ class _LocationFormViewState extends State<_LocationFormView> {
             _c['lat']!.text = p.latitude.toStringAsFixed(6);
             _c['lng']!.text = p.longitude.toStringAsFixed(6);
             _coordinates();
+            _fillAddress(p.latitude, p.longitude);
           },
           onRadius: (int m) {
             _c['radius']!.text = '$m';
@@ -531,15 +600,18 @@ class _LocationFormViewState extends State<_LocationFormView> {
           start: TtLabeledTimeField(
             key: const ValueKey<String>('locationWorkStart'),
             label: s.timeTrackerWorkStartTime,
-            minutes: d.workStartMinutes,
-            onChanged: (int m) => _cubit.update(_draft.copyWith(workStartMinutes: m)),
+            minutes: state.startChosen ? d.workStartMinutes : null,
+            error: state.shows(LocationFormError.workStartRequired) ? s.timeTrackerWorkStartRequired : null,
+            onChanged: _cubit.setWorkStart,
           ),
           end: TtLabeledTimeField(
             key: const ValueKey<String>('locationWorkEnd'),
             label: s.timeTrackerWorkEndTime,
-            minutes: d.workEndMinutes,
-            error: state.shows(LocationFormError.workTimesSame) ? s.timeTrackerWorkTimesSame : null,
-            onChanged: (int m) => _cubit.update(_draft.copyWith(workEndMinutes: m)),
+            minutes: state.endChosen ? d.workEndMinutes : null,
+            error: state.shows(LocationFormError.workEndRequired)
+                ? s.timeTrackerWorkEndRequired
+                : (state.shows(LocationFormError.workTimesSame) ? s.timeTrackerWorkTimesSame : null),
+            onChanged: _cubit.setWorkEnd,
           ),
         ),
         SizedBox(height: 15.h),
@@ -550,7 +622,9 @@ class _LocationFormViewState extends State<_LocationFormView> {
         ),
         SizedBox(height: 15.h),
         TtPair(
-          start: _text('late', label: s.timeTrackerLateAfter, hint: s.timeTrackerLateAfterHint,
+          // 13/10/2026 (owner): the hint says what the number means.
+          start: _text('late', label: s.timeTrackerLateAfter, hint: s.timeTrackerLateAfterGraceHint,
+              error: state.shows(LocationFormError.lateAfterTooLong) ? s.timeTrackerLateAfterTooLong : null,
               keyboard: TextInputType.number,
               formatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(3)],
               onChanged: (String v) => _cubit.update(_draft.copyWith(lateAfterMinutes: int.tryParse(v) ?? 0))),
@@ -598,11 +672,16 @@ class _LocationFormViewState extends State<_LocationFormView> {
           ),
           // Approved schema (9/10/2026): `Allowed_Pause_Minutes`, the
           // location's default longest pause (empty = no limit).
+          // 13/10/2026 (owner): no title over the field, so it lines up with
+          // the break length under Allow Breaks; what it means is the hint.
           if (d.isPauseAllowed) ...<Widget>[
             SizedBox(height: 10.h),
             TtPauseLimitField(
               key: const ValueKey<String>('locationPauseMinutes'),
               controller: _ctl('pause', d.pauseMinutes <= 0 ? '' : '${d.pauseMinutes}'),
+              showLabel: false,
+              hint: s.timeTrackerPauseLimitHint,
+              error: state.shows(LocationFormError.pauseTooLong) ? s.timeTrackerPauseTooLong : null,
               onChanged: (String v) =>
                   _cubit.update(_draft.copyWith(pauseMinutes: TtPauseLimitField.minutesOf(v))),
             ),

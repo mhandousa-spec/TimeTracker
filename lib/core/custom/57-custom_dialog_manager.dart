@@ -124,6 +124,9 @@ class CustomDialogManager {
     /// (20 / 14). When true the success step uses 18 / 14 instead. Defaults
     /// to false so every existing caller is unchanged.
     bool compactSuccess = false,
+    /// ADDED 13/10/2026 (Time Tracker owner): the SUCCESS step's width,
+    /// unscaled (`.sp` applied). Null keeps 500.
+    double? successWidth,
     /// ADDED 7/10/2026 (animation + haptic standard). Opt-in; defaults keep
     /// every existing caller unchanged.
     ///  * [destructive]: delete / remove / log-out confirmations — the confirm
@@ -281,6 +284,7 @@ class CustomDialogManager {
                               title: successTitle,
                               subtitle: successSubtitle,
                               compact: compactSuccess,
+                              width: successWidth,
                             );
 
                             onSuccessDismissed?.call();
@@ -337,6 +341,9 @@ class CustomDialogManager {
     // ADDED 21/9/2026 — when set, the dialog has no OK button and closes
     // itself after this long (it can still be dismissed by tapping outside).
     Duration? closeAfter,
+    // ADDED 13/10/2026 (Time Tracker owner) — the dialog's width, unscaled
+    // (`.sp` applied). Null keeps 500.
+    double? width,
   }) {
     BuildContext? dialogContext;
     if (closeAfter != null) {
@@ -364,7 +371,7 @@ class CustomDialogManager {
         child: Padding(
           padding: EdgeInsets.all(24.r),
           child: SizedBox(
-            width: 500.sp,
+            width: (width ?? 500).sp,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -1100,6 +1107,7 @@ class CustomDialogManager {
     required String subtitle,
     Duration closeAfter = const Duration(milliseconds: 1500),
     bool compact = false,
+    double? width,
   }) async {
 
     BuildContext? dialogCtx; // capture the dialog's own context
@@ -1119,7 +1127,7 @@ class CustomDialogManager {
           child: Padding(
             padding: EdgeInsets.all(24.r),
             child: SizedBox(
-              width: 500.sp,
+              width: (width ?? 500).sp,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [

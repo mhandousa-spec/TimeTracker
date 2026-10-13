@@ -30,6 +30,7 @@ import 'package:knowticed_plus/features/time_tracker/domain/entities/vacation_ba
 import 'package:knowticed_plus/features/time_tracker/domain/entities/work_location.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/ui/pages/time_tracker_home_page.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_controls.dart';
+import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_filter_frame.dart';
 import 'package:knowticed_plus/generated/l10n.dart';
 
 import '../_support/time_tracker_phase4_fakes.dart';
@@ -138,9 +139,9 @@ void main() {
     final TimeTrackerHarness h = TimeTrackerHarness(people: _people);
     await h.pump(tester, const TimeTrackerHomePage(), size: _ipadV);
     await _open(tester, h, S.current.timeTrackerTabVacationBalances);
-    final CustomDropdown<String> dept = tester.widget<CustomDropdown<String>>(_key('vacationDepartmentFilter'));
-    expect(dept.height, TtToolbar.height);
-    expect(dept.borderRadius, TtToolbar.radius);
+    // 13/10/2026 (owner): Department is multi-select.
+    final TtToolbarMultiFilter dept = tester.widget<TtToolbarMultiFilter>(_key('vacationDepartmentFilter'));
+    expect(dept.hint, S.current.timeTrackerDepartment);
     final double searchH = tester.getSize(find.byType(TextField).first).height;
     final double deptH = tester.getSize(_key('vacationDepartmentFilter')).height;
     final double exportH = tester.getSize(_key('vacationExportButton')).height;

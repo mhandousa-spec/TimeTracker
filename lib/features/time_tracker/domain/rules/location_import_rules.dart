@@ -271,6 +271,22 @@ class LocationImportRules {
         return LocationImportColumn.workingDays;
       case LocationFormError.breakLengthRequired:
         return LocationImportColumn.breakMinutes;
+      case LocationFormError.mapsUrlInvalid:
+        return LocationImportColumn.googleMapsUrl;
+      case LocationFormError.lateAfterTooLong:
+        return LocationImportColumn.lateAfter;
+      case LocationFormError.countryRequired:
+        return LocationImportColumn.country;
+      case LocationFormError.stateRequired:
+        return LocationImportColumn.state;
+      case LocationFormError.cityRequired:
+        return LocationImportColumn.city;
+      case LocationFormError.workStartRequired:
+        return LocationImportColumn.workStart;
+      case LocationFormError.workEndRequired:
+        return LocationImportColumn.workEnd;
+      case LocationFormError.pauseTooLong:
+        return null;
     }
   }
 

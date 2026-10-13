@@ -36,6 +36,7 @@ import 'package:get_it/get_it.dart';
 
 import 'package:knowticed_plus/core/constants/app_assets.dart';
 import 'package:knowticed_plus/core/custom/1-custom_dropdown.dart';
+import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_filter_frame.dart';
 import 'package:knowticed_plus/core/custom/16-custom_card_styles.dart';
 import 'package:knowticed_plus/core/custom/39-custom_grid_button.dart';
 import 'package:knowticed_plus/core/custom/40-custom_table_button.dart';
@@ -54,6 +55,7 @@ import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/tim
 import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_controls.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_csv_export.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_setup_widgets.dart';
+import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_formatters.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_table.dart';
 import 'package:knowticed_plus/features/time_tracker/tt13_vacation_balances/presentation/controller/vacation_balances_cubit.dart';
 import 'package:knowticed_plus/features/time_tracker/tt13_vacation_balances/presentation/ui/widgets/vacation_balance_edit_dialog.dart';
@@ -84,6 +86,7 @@ class _VacationBalancesTabState extends State<VacationBalancesTab> {
     final S s = S.of(context);
     if (rows.isEmpty) {
       await CustomDialogManager.showMessage(
+        width: TtDialogWidth.status,
         context: context,
         lottiePath: AppAssets.lottieWarning,
         title: s.export,
@@ -94,9 +97,13 @@ class _VacationBalancesTabState extends State<VacationBalancesTab> {
     await exportTimeTrackerCsv(
       context: context,
       defaultFileName: s.timeTrackerVacationBalancesExportName,
+      // 13/10/2026 (owner): "Vacation_Balances_Report_2026_2026-10-13" —
+      // the balances' year, then the export date.
+      subject: '${context.read<VacationBalancesCubit>().state.year}',
       header: <String>[s.timeTrackerColumnNo, ...VacationBalanceText.headers(context)],
       rows: <List<String>>[
-        for (int i = 0; i < rows.length; i++) <String>['${i + 1}', ...VacationBalanceText.exportCells(context, rows[i])],
+        for (int i = 0; i < rows.length; i++)
+          <String>['${i + 1}', ...VacationBalanceText.exportCells(context, rows[i])],
       ],
     );
   }
@@ -175,27 +182,14 @@ class _VacationBalancesTabState extends State<VacationBalancesTab> {
     );
   }
 
+  /// 13/10/2026 (owner): Department is multi-select (nothing = all).
   Widget _departmentFilter(VacationBalancesState state) {
-    final S s = S.of(context);
-    final VacationBalancesCubit cubit = context.read<VacationBalancesCubit>();
-    final Map<String, String> departments = state.usedDepartments;
-    return CustomDropdown<String>(
+    return TtToolbarMultiFilter(
       key: const ValueKey<String>('vacationDepartmentFilter'),
-      hint: s.timeTrackerDepartment,
-      height: TtToolbar.height,
-      borderRadius: TtToolbar.radius,
-      fillColor: AppColors.card,
-      itemStyle: StyleText.fontSize12Weight400,
-      value: state.departmentId.isEmpty || !departments.containsKey(state.departmentId) ? null : state.departmentId,
-      items: <DropdownItem<String>>[
-        DropdownItem<String>(value: '', label: s.timeTrackerAll),
-        for (final MapEntry<String, String> d in departments.entries)
-          DropdownItem<String>(value: d.key, label: d.value),
-      ],
-      onChanged: (String v) {
-        HapticController.low();
-        cubit.setDepartment(v);
-      },
+      hint: S.of(context).timeTrackerDepartment,
+      values: state.departmentIds,
+      items: state.usedDepartments,
+      onChanged: context.read<VacationBalancesCubit>().setDepartments,
     );
   }
 
@@ -215,8 +209,7 @@ class _VacationBalancesTabState extends State<VacationBalancesTab> {
         itemStyle: StyleText.fontSize12Weight400,
         value: state.year == 0 ? null : state.year,
         items: <DropdownItem<int>>[
-          for (final int y in state.years)
-            DropdownItem<int>(value: y, label: LocalizedNumber.digits(context, '$y')),
+          for (final int y in state.years) DropdownItem<int>(value: y, label: LocalizedNumber.digits(context, '$y')),
         ],
         onChanged: (int y) {
           HapticController.low();
@@ -311,13 +304,12 @@ class _VacationCard extends StatelessWidget {
     final VoidCallback? edit = onEdit;
     final double left = row.balance.remainingDays;
     final String department = row.employee.department(isArabic: ar).trim();
+    final String title = TtJobTitle.short(row.employee.jobTitle(isArabic: ar).trim());
     Widget figure(String label, String value, {Color? color}) => Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text(label,
-                  maxLines: 2,
-                  style: StyleText.fontSize12Weight400.copyWith(color: AppColors.secondaryText)),
+              Text(label, maxLines: 2, style: StyleText.fontSize12Weight400.copyWith(color: AppColors.secondaryText)),
               Text(value, style: StyleText.fontSize16Weight500.copyWith(color: color ?? AppColors.text)),
             ],
           ),
@@ -332,7 +324,7 @@ class _VacationCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              TimeTrackerAvatar(photo: row.employee.photo, size: 40.r),
+              TimeTrackerAvatar(photo: row.employee.photo, size: 44.r),
               SizedBox(width: 8.w),
               Expanded(
                 child: Column(
@@ -345,10 +337,14 @@ class _VacationCard extends StatelessWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: StyleText.fontSize14Weight500.copyWith(color: AppColors.text)),
-                    // UI quality pass: no "-" line when there is no
-                    // department; a long one wraps (never "…").
+                    // 13/10/2026 (owner): name · department · job title, as
+                    // the Employees cards (Figma `661:93542`); no "-" line
+                    // when one is missing; long ones wrap (never "…").
                     if (department.isNotEmpty)
-                      Text(department,
+                      Text(department, style: StyleText.fontSize12Weight400.copyWith(color: AppColors.secondaryText)),
+                    if (title.isNotEmpty)
+                      Text(title,
+                          key: ValueKey<String>('vacationTitle_${row.employee.email}'),
                           style: StyleText.fontSize12Weight400.copyWith(color: AppColors.secondaryText)),
                   ],
                 ),

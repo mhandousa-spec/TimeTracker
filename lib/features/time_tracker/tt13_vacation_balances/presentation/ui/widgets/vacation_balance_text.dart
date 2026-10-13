@@ -20,6 +20,7 @@ import 'package:knowticed_plus/core/helper/main_helper/localized_number.dart';
 import 'package:knowticed_plus/core/theme/app_colors.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/rules/vacation_balance_list_rules.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_formatters.dart';
+import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_setup_widgets.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_table.dart';
 import 'package:knowticed_plus/generated/l10n.dart';
 
@@ -52,7 +53,7 @@ class VacationBalanceText {
     final List<String> h = headers(context);
     return <TtColumn>[
       TtColumn(S.of(context).timeTrackerColumnNo, 50),
-      TtColumn(h[0], 200),
+      TtColumn(h[0], 230),
       TtColumn(h[1], 150),
       TtColumn(h[2], 80),
       TtColumn(h[3], 100),
@@ -69,7 +70,9 @@ class VacationBalanceText {
     final double left = r.balance.remainingDays;
     return <TtCell>[
       TtCell(LocalizedNumber.of(context, index + 1)),
-      TtCell(r.employee.name(isArabic: ar)),
+      // 13/10/2026 (owner): the employee's photo beside the name, as on the
+      // cards.
+      TtCell.widget(TtPersonCell(photo: r.employee.photo, name: r.employee.name(isArabic: ar))),
       TtCell(TimeTrackerFormat.orDash(r.employee.department(isArabic: ar))),
       TtCell(LocalizedNumber.digits(context, '${r.balance.year}')),
       TtCell(days(context, r.balance.totalDays)),

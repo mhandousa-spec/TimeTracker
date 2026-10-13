@@ -126,7 +126,7 @@ class VacationBalancesCubit extends Cubit<VacationBalancesState> {
   }
 
   void search(String query) => emit(state.copyWith(query: query));
-  void setDepartment(String departmentId) => emit(state.copyWith(departmentId: departmentId));
+  void setDepartments(Set<String> ids) => emit(state.copyWith(departmentIds: ids));
   void setGrid(bool isGrid) => emit(state.copyWith(isGrid: isGrid));
 
   /// Function Name: [editTotal]
@@ -150,7 +150,7 @@ class VacationBalancesCubit extends Cubit<VacationBalancesState> {
     try {
       final List<List<String>>? grid = await pick();
       if (grid == null) return const VacationImportRead.cancelled();
-      return VacationImportRead.read(planImport(grid));
+      return VacationImportRead.read(planImport(grid), grid: grid);
     } catch (_) {
       return const VacationImportRead.unreadable();
     }

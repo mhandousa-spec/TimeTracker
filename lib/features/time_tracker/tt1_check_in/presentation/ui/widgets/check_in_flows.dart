@@ -79,6 +79,7 @@ class CheckInFlows {
       if (!context.mounted) return;
     }
     await CustomDialogManager.showMessage(
+      width: TtDialogWidth.status,
       context: context,
       lottiePath: AppAssets.successful,
       title: s.timeTrackerConfirmedTitle,
@@ -98,7 +99,8 @@ class CheckInFlows {
     CheckInResult? result;
     await CustomDialogManager.showDialogFlow(
       context: context,
-      confirmWidth: 411,
+      confirmWidth: TtDialogWidth.status,
+      successWidth: TtDialogWidth.status,
       scaleIn: true,
       confirmLottie: AppAssets.lottieConfirmation,
       confirmTitle: s.timeTrackerCheckOutConfirmTitle,
@@ -206,6 +208,7 @@ class CheckInFlows {
     String? title,
   }) =>
       CustomDialogManager.showMessage(
+        width: TtDialogWidth.status,
         context: context,
         lottiePath: AppAssets.lottieWarning,
         title: title ?? S.of(context).errorOccurred,

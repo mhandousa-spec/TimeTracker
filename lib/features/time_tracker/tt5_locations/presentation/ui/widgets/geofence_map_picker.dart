@@ -17,6 +17,10 @@
 /// `CustomSegmentedTabs` 9), the pin `CustomSvgImage` 32, the spinner
 /// `CircleProgressMaster` 66. "Satellite" shows the real buildings and
 /// places from above (Esri World Imagery + place labels — free, no key).
+/// Updated: 13/10/2026 - owner ("3D / satellite / map"): a third style,
+/// Terrain (Esri World Topo — relief shading). True 3D needs the Google /
+/// Apple map SDKs with a paid key, which the project does not have.
+/// [GeofenceMapPicker.addressOf] reverse-geocodes the pin for the form.
 ///
 /// The map is the app's existing `flutter_map` (as the chat "share location"
 /// map) — no Google Maps API key is configured in the project, so a Google
@@ -44,6 +48,20 @@ import 'package:knowticed_plus/core/theme/app_theme.dart';
 import 'package:knowticed_plus/core/theme/haptic_controller.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_controls.dart';
 import 'package:knowticed_plus/generated/l10n.dart';
+
+/// ADDED 13/10/2026: what the device geocoder knows about a point (English
+/// names, matched to the form's address lists).
+class GeofenceAddress {
+  const GeofenceAddress({this.countryCode = '', this.state = '', this.city = '', this.postalCode = ''});
+
+  final String countryCode;
+  final String state;
+  final String city;
+  final String postalCode;
+}
+
+/// The map's look: street map, satellite photo, or terrain (relief).
+enum GeofenceMapStyle { map, satellite, terrain }
 
 /// Where the map opens when the location has no coordinates yet (Cairo).
 const LatLng _fallbackCenter = LatLng(30.0444, 31.2357);
@@ -75,6 +93,31 @@ class GeofenceMapPicker extends StatefulWidget {
         onLocate = _noLocate,
         onRadius = null,
         readOnly = true;
+
+  /// Function Name: [addressOf]
+  ///
+  /// Purpose: ADDED 13/10/2026 (owner: "fill Country / State / City from the
+  /// pin") — the address at [lat] / [lng] from the device geocoder (Apple /
+  /// Google, no key). Null when nothing is found or offline.
+  ///
+  /// Return type: [Future<GeofenceAddress?>]
+  static Future<GeofenceAddress?> addressOf(double lat, double lng) async {
+    if (Platform.environment.containsKey('FLUTTER_TEST')) return null; // no geocoder in tests
+    try {
+      final List<Placemark> found =
+          await Geocoding().placemarkFromCoordinates(lat, lng, locale: const Locale('en'));
+      if (found.isEmpty) return null;
+      final Placemark p = found.first;
+      return GeofenceAddress(
+        countryCode: p.isoCountryCode ?? '',
+        state: p.administrativeArea ?? '',
+        city: (p.locality ?? '').isNotEmpty ? p.locality! : (p.subAdministrativeArea ?? ''),
+        postalCode: p.postalCode ?? '',
+      );
+    } catch (_) {
+      return null;
+    }
+  }
 
   static void _noPoint(LatLng _) {}
   static void _noLocate() {}
@@ -112,8 +155,9 @@ class _GeofenceMapPickerState extends State<GeofenceMapPicker> {
   bool _searching = false;
   bool _notFound = false;
 
-  /// 13/10/2026 (owner): the satellite view shows the real buildings.
-  bool _satellite = true;
+  /// 13/10/2026 (owner): the satellite view shows the real buildings;
+  /// Terrain adds the relief (the closest to "3D" a free map offers).
+  GeofenceMapStyle _style = GeofenceMapStyle.satellite;
 
   /// Real tiles only on a device (a widget test has no network).
   static final bool _tiles = !Platform.environment.containsKey('FLUTTER_TEST');
@@ -190,7 +234,16 @@ class _GeofenceMapPickerState extends State<GeofenceMapPicker> {
 
   List<Widget> _tileLayers() {
     if (!_tiles) return const <Widget>[];
-    if (!_satellite) {
+    if (_style == GeofenceMapStyle.terrain) {
+      return <Widget>[
+        TileLayer(
+          urlTemplate: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+          userAgentPackageName: 'com.ensightvision',
+          maxNativeZoom: 19,
+        ),
+      ];
+    }
+    if (_style == GeofenceMapStyle.map) {
       return <Widget>[
         TileLayer(
           urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -282,15 +335,30 @@ class _GeofenceMapPickerState extends State<GeofenceMapPicker> {
         ],
         SizedBox(height: 10.h),
         ],
-        Align(
+        // Three styles: on a narrow phone the toggle shrinks a little
+        // instead of running off the card.
+        FittedBox(
+          fit: BoxFit.scaleDown,
           alignment: AlignmentDirectional.centerStart,
           child: TtSegmentedToggle(
             key: const ValueKey<String>('geofenceMapStyle'),
-            tabs: <String>[s.timeTrackerSatelliteView, s.timeTrackerMapView],
-            tabKeys: const <Key>[ValueKey<String>('geofenceSatellite'), ValueKey<String>('geofenceStreetMap')],
+            tabs: <String>[s.timeTrackerSatelliteView, s.timeTrackerMapView, s.timeTrackerTerrainView],
+            tabKeys: const <Key>[
+              ValueKey<String>('geofenceSatellite'),
+              ValueKey<String>('geofenceStreetMap'),
+              ValueKey<String>('geofenceTerrain'),
+            ],
             compact: true,
-            selectedIndex: _satellite ? 0 : 1,
-            onChanged: (int i) => setState(() => _satellite = i == 0),
+            selectedIndex: const <GeofenceMapStyle>[
+              GeofenceMapStyle.satellite,
+              GeofenceMapStyle.map,
+              GeofenceMapStyle.terrain,
+            ].indexOf(_style),
+            onChanged: (int i) => setState(() => _style = const <GeofenceMapStyle>[
+                  GeofenceMapStyle.satellite,
+                  GeofenceMapStyle.map,
+                  GeofenceMapStyle.terrain,
+                ][i]),
           ),
         ),
         SizedBox(height: 10.h),

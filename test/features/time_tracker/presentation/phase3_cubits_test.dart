@@ -14,6 +14,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:knowticed_plus/features/notification/domain/enums/time_tracker_module/time_tracker_events.dart';
 
+import 'package:knowticed_plus/features/time_tracker/domain/rules/location_form_rules.dart';
 import 'package:knowticed_plus/features/time_tracker/data/models/location_assignment_model.dart';
 import 'package:knowticed_plus/features/time_tracker/data/models/work_location_model.dart';
 import 'package:knowticed_plus/features/time_tracker/data/repository/group_repository_impl.dart';
@@ -190,7 +191,16 @@ void main() {
           geofenceRadiusMeters: 150));
       expect(f.state.canSubmit, isFalse); // geofence without coordinates
       expect(await f.useCurrentLocation(), isNotNull);
+      // 13/10/2026 (owner): a new location starts empty — days and work
+      // times are picked.
+      for (final int d in <int>[7, 1, 2, 3, 4]) {
+        f.toggleDay(d);
+      }
       f.toggleDay(5); // Friday on
+      expect(f.state.canSubmit, isFalse); // no work times yet
+      expect(f.state.errors, contains(LocationFormError.workStartRequired));
+      f.setWorkStart(9 * 60);
+      f.setWorkEnd(17 * 60);
       expect(f.state.canSubmit, isTrue);
       expect(await f.submit(), isTrue);
       final WorkLocation saved = _storedLocation(e.remote, 'LOC-0001');
@@ -208,7 +218,8 @@ void main() {
       final LocationFormCubit f = e.form(original: _hq);
       expect(f.state.isEdit, isTrue);
       expect(f.state.canSubmit, isFalse);
-      f.update(f.state.draft.copyWith(lateAfterMinutes: 5));
+      // 13/10/2026 (owner): the form needs a country.
+      f.update(f.state.draft.copyWith(lateAfterMinutes: 5, country: 'EG'));
       expect(f.state.canSubmit, isTrue);
       expect(await f.submit(), isFalse);
       expect(f.state.failure, TimeTrackerActionFailure.denied);

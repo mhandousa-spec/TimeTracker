@@ -16,6 +16,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:knowticed_plus/features/time_tracker/domain/base_repository/request_base_repository.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/entities/time_tracker_request.dart';
+import 'package:knowticed_plus/features/time_tracker/domain/rules/request_list_rules.dart';
 
 enum VacationHistoryStatus { loading, loaded, failure }
 
@@ -23,10 +24,26 @@ class VacationHistoryState {
   const VacationHistoryState({
     this.status = VacationHistoryStatus.loading,
     this.requests = const <TimeTrackerRequest>[],
+    this.bucket = RequestBucket.all,
   });
 
   final VacationHistoryStatus status;
   final List<TimeTrackerRequest> requests;
+
+  /// 13/10/2026 (owner): the status counter picked (All · Pending · Under
+  /// Review · Approved · Rejected · Canceled, as on Requests).
+  final RequestBucket bucket;
+
+  VacationHistoryState copyWith({
+    VacationHistoryStatus? status,
+    List<TimeTrackerRequest>? requests,
+    RequestBucket? bucket,
+  }) =>
+      VacationHistoryState(
+        status: status ?? this.status,
+        requests: requests ?? this.requests,
+        bucket: bucket ?? this.bucket,
+      );
 }
 
 class VacationHistoryCubit extends Cubit<VacationHistoryState> {
@@ -46,13 +63,16 @@ class VacationHistoryCubit extends Cubit<VacationHistoryState> {
     unawaited(_sub?.cancel());
     _sub = _requests.watchRequestsOf(email: email).listen(
       (List<TimeTrackerRequest> list) {
-        if (!isClosed) emit(VacationHistoryState(status: VacationHistoryStatus.loaded, requests: list));
+        if (!isClosed) emit(state.copyWith(status: VacationHistoryStatus.loaded, requests: list));
       },
       onError: (Object _) {
-        if (!isClosed) emit(const VacationHistoryState(status: VacationHistoryStatus.failure));
+        if (!isClosed) emit(state.copyWith(status: VacationHistoryStatus.failure));
       },
     );
   }
+
+  /// 13/10/2026 (owner): pick a status counter.
+  void setBucket(RequestBucket bucket) => emit(state.copyWith(bucket: bucket));
 
   @override
   Future<void> close() async {

@@ -4,10 +4,10 @@
 /// File Name: vacation_balance_import_dialog.dart
 /// Purpose: Declares `showVacationBalanceImport` and
 ///          `VacationBalanceImportDialog` — Import Vacation Balances:
-///          Download Template (CSV: Email · Year · Total Days, pre-filled with
-///          every employee) · Upload File (CSV / Excel) · validation preview
-///          (new / updated / unchanged / skipped + each problem by line) ·
-///          Discard / Import → confirm → success.
+///          Download Template (CSV, pre-filled with every employee: Employee
+///          Name · Email · Department · Job Title · Year · Total Days · Used ·
+///          Remaining) · Upload File (CSV / Excel) · bulk-upload review
+///          (`VacationImportReview`) · Discard / Import → confirm → success.
 /// Author: Knowticed Plus team
 /// Created at: 9/10/2026 (phase 5)
 ///
@@ -35,6 +35,7 @@ import 'package:knowticed_plus/features/time_tracker/domain/rules/vacation_balan
 import 'package:knowticed_plus/features/time_tracker/domain/rules/vacation_balance_list_rules.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/controller/time_tracker_action_failure.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_csv_export.dart';
+import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_import_review.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_setup_widgets.dart';
 import 'package:knowticed_plus/features/time_tracker/tt13_vacation_balances/presentation/controller/vacation_balances_cubit.dart';
 import 'package:knowticed_plus/generated/l10n.dart';
@@ -48,14 +49,18 @@ Future<void> showVacationBalanceImport(BuildContext context) async {
   final VacationBalancesCubit cubit = context.read<VacationBalancesCubit>();
   final VacationImportPlan? plan = await CustomDialogManager.showContent<VacationImportPlan>(
     context: context,
-    width: TtDialogWidth.standard,
+    // 13/10/2026 (owner): wide — the review table shows every column.
+    width: TtDialogWidth.wide,
+    // The review can be taller than a phone screen: the dialog scrolls.
+    scrollable: true,
     child: BlocProvider<VacationBalancesCubit>.value(value: cubit, child: const VacationBalanceImportDialog()),
   );
   if (plan == null || !context.mounted) return;
   final S s = S.of(context);
   await CustomDialogManager.showDialogFlow(
     context: context,
-    confirmWidth: 411,
+    confirmWidth: TtDialogWidth.status,
+    successWidth: TtDialogWidth.status,
     scaleIn: true,
     confirmLottie: AppAssets.lottieConfirmation,
     confirmTitle: s.timeTrackerImportVacationBalances,
@@ -82,7 +87,21 @@ class VacationBalanceImportDialog extends StatefulWidget {
 
 class _VacationBalanceImportDialogState extends State<VacationBalanceImportDialog> {
   VacationImportPlan? _plan;
+  List<List<String>>? _grid;
   String? _error;
+
+  /// Bumped on every upload so the review starts over with the new file.
+  int _uploads = 0;
+
+  void _edited(List<List<String>> grid) {
+    final S s = S.of(context);
+    final VacationImportPlan plan = context.read<VacationBalancesCubit>().planImport(grid);
+    setState(() {
+      _grid = grid;
+      _plan = plan;
+      _error = plan.writable.isEmpty ? s.timeTrackerImportNothing : null;
+    });
+  }
   bool _reading = false;
 
   TimeTrackerSheetReader get _reader => GetIt.instance.isRegistered<TimeTrackerSheetReader>()
@@ -96,7 +115,10 @@ class _VacationBalanceImportDialogState extends State<VacationBalanceImportDialo
       defaultFileName: S.of(context).timeTrackerVacationTemplateName,
       dated: false,
       header: VacationBalanceImportRules.headings,
-      rows: <List<String>>[for (final VacationBalanceRow r in rows) VacationBalanceImportRules.templateRow(r)],
+      rows: <List<String>>[
+        for (final VacationBalanceRow r in rows)
+          VacationBalanceImportRules.templateRow(r, isArabic: Localizations.localeOf(context).languageCode == 'ar'),
+      ],
     );
   }
 
@@ -119,6 +141,8 @@ class _VacationBalanceImportDialogState extends State<VacationBalanceImportDialo
         _error = s.timeTrackerImportFileError;
       } else if (plan != null) {
         _plan = plan;
+        _grid = read.grid;
+        _uploads++;
         _error = plan.missingColumns
             ? s.timeTrackerVacationImportNoColumns
             : (plan.writable.isEmpty ? s.timeTrackerImportNothing : null);
@@ -154,9 +178,9 @@ class _VacationBalanceImportDialogState extends State<VacationBalanceImportDialo
             SizedBox(height: 12.h),
             Text(_error!, style: StyleText.fontSize12Weight400.copyWith(color: AppColors.red)),
           ],
-          if (plan != null && !plan.missingColumns) ...<Widget>[
+          if (plan != null && !plan.missingColumns && _grid != null) ...<Widget>[
             SizedBox(height: 15.h),
-            VacationImportPreview(plan: plan),
+            VacationImportReview(key: ValueKey<int>(_uploads), grid: _grid!, plan: plan, onEdited: _edited),
           ],
           SizedBox(height: 20.h),
           TimeTrackerFormActions(
@@ -173,13 +197,17 @@ class _VacationBalanceImportDialogState extends State<VacationBalanceImportDialo
   }
 }
 
-/// Summary line + one line per file row (e-mail · action · problems).
-class VacationImportPreview extends StatelessWidget {
-  const VacationImportPreview({super.key, required this.plan});
+/// 13/10/2026 (owner): the bulk-upload review (shared `TtImportReview`) —
+/// every column of the file; Email · Year · Total Days editable, the
+/// information columns read-only; red cells with the reason.
+class VacationImportReview extends StatelessWidget {
+  const VacationImportReview({super.key, required this.grid, required this.plan, required this.onEdited});
 
+  final List<List<String>> grid;
   final VacationImportPlan plan;
+  final ValueChanged<List<List<String>>> onEdited;
 
-  String _action(S s, VacationImportAction a) {
+  static String actionText(S s, VacationImportAction a) {
     switch (a) {
       case VacationImportAction.create:
         return s.timeTrackerImportActionCreate;
@@ -189,6 +217,19 @@ class VacationImportPreview extends StatelessWidget {
         return s.timeTrackerImportActionUnchanged;
       case VacationImportAction.skip:
         return s.timeTrackerImportActionSkip;
+    }
+  }
+
+  static Color actionColor(VacationImportAction a) {
+    switch (a) {
+      case VacationImportAction.create:
+        return AppColors.lightGreen;
+      case VacationImportAction.update:
+        return AppColors.blue;
+      case VacationImportAction.unchanged:
+        return AppColors.secondaryText;
+      case VacationImportAction.skip:
+        return AppColors.red;
     }
   }
 
@@ -212,42 +253,56 @@ class VacationImportPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final S s = S.of(context);
-    String n(VacationImportAction a) => LocalizedNumber.of(context, plan.count(a));
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        Text(
-          s.timeTrackerImportSummary(
-            n(VacationImportAction.create),
-            n(VacationImportAction.update),
-            n(VacationImportAction.unchanged),
-            n(VacationImportAction.skip),
-          ),
-          key: const ValueKey<String>('vacationImportSummary'),
-          style: StyleText.fontSize14Weight500.copyWith(color: AppColors.text),
-        ),
-        SizedBox(height: 8.h),
-        ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: 220.h),
-          child: ListView(
-            shrinkWrap: true,
-            children: <Widget>[
-              for (final VacationImportRow r in plan.rows)
-                Padding(
-                  padding: EdgeInsetsDirectional.only(bottom: 6.h),
-                  child: Text(
-                    '${s.timeTrackerImportLine(LocalizedNumber.of(context, r.line))} · '
-                    '${r.email.isEmpty ? '-' : r.email} · ${_action(s, r.action)}'
-                    '${r.issues.isEmpty ? '' : ' — ${r.issues.map((VacationImportIssue i) => _problem(context, s, i)).join('; ')}'}',
-                    style: StyleText.fontSize12Weight400.copyWith(
-                      color: r.action == VacationImportAction.skip ? AppColors.red : AppColors.text,
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ),
+    final List<VacationImportColumn?> columns = <VacationImportColumn?>[
+      for (final String h in grid.first) VacationBalanceImportRules.columnOf(h),
+    ];
+    final Map<int, TtImportReviewRow> rows = <int, TtImportReviewRow>{};
+    for (final VacationImportRow r in plan.rows) {
+      final Map<int, List<String>> byCell = <int, List<String>>{};
+      final List<String> general = <String>[];
+      for (final VacationImportIssue issue in r.issues) {
+        final int at = columns.indexOf(issue.column);
+        final String text = _problem(context, s, issue);
+        if (at >= 0) {
+          (byCell[at] ??= <String>[]).add(text);
+        } else {
+          general.add(text);
+        }
+      }
+      rows[r.line] = TtImportReviewRow(
+        status: actionText(s, r.action),
+        color: actionColor(r.action),
+        cellProblems: byCell,
+        rowProblems: general,
+      );
+    }
+    return TtImportReview(
+      keyPrefix: 'vacationImport',
+      grid: grid,
+      rows: rows,
+      totals: <(String, Color)>[
+        for (final VacationImportAction a in VacationImportAction.values)
+          ('${actionText(s, a)}: ${LocalizedNumber.of(context, plan.count(a))}', actionColor(a)),
       ],
+      columnWidth: (int i) {
+        switch (columns[i]) {
+          case VacationImportColumn.employeeName:
+            return 220;
+          case VacationImportColumn.email:
+            return 300;
+          case VacationImportColumn.department:
+          case VacationImportColumn.jobTitle:
+            return 180;
+          default:
+            return 120;
+        }
+      },
+      // Information columns (and unknown ones) are not imported: plain text.
+      readOnly: <int>{
+        for (int i = 0; i < columns.length; i++)
+          if (columns[i] == null || columns[i]!.info) i,
+      },
+      onEdited: onEdited,
     );
   }
 }

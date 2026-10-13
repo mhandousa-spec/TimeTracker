@@ -76,7 +76,8 @@ class _GroupDetailsPageState extends State<GroupDetailsPage> {
     final NavigatorState nav = Navigator.of(context);
     await CustomDialogManager.showDialogFlow(
       context: context,
-      confirmWidth: 411,
+      confirmWidth: TtDialogWidth.status,
+      successWidth: TtDialogWidth.status,
       destructive: true,
       confirmLottie: AppAssets.lottieWarning,
       confirmTitle: s.timeTrackerDeletingGroups,

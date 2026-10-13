@@ -33,8 +33,7 @@ class TimeTrackerFormat {
   static String orDash(String value) => value.trim().isEmpty ? dash : value.trim();
 
   /// "23 Feb 2023" (localized).
-  static String date(BuildContext context, DateTime? value) =>
-      value == null ? dash : LocalizedDate.of(context, value);
+  static String date(BuildContext context, DateTime? value) => value == null ? dash : LocalizedDate.of(context, value);
 
   /// "09:00 AM" (localized).
   static String time(BuildContext context, DateTime? value) =>
@@ -43,15 +42,13 @@ class TimeTrackerFormat {
   /// "7:30 Hrs" — worked time of a day; [dash] when nothing was worked.
   static String hours(BuildContext context, int minutes) {
     if (minutes <= 0) return dash;
-    final String hm =
-        '${minutes ~/ 60}:${(minutes % 60).toString().padLeft(2, '0')}';
+    final String hm = '${minutes ~/ 60}:${(minutes % 60).toString().padLeft(2, '0')}';
     return S.of(context).timeTrackerHrsValue(LocalizedNumber.digits(context, hm));
   }
 
   /// "30 Mins"; [dash] for 0.
-  static String mins(BuildContext context, int minutes) => minutes <= 0
-      ? dash
-      : S.of(context).timeTrackerMinsValue(LocalizedNumber.of(context, minutes));
+  static String mins(BuildContext context, int minutes) =>
+      minutes <= 0 ? dash : S.of(context).timeTrackerMinsValue(LocalizedNumber.of(context, minutes));
 
   /// "00 : 01" — the live timer (hours : minutes).
   static String clock(BuildContext context, int minutes) {
@@ -62,8 +59,7 @@ class TimeTrackerFormat {
   }
 
   /// A count with localized digits ("11" / "١١").
-  static String count(BuildContext context, num value) =>
-      LocalizedNumber.of(context, value);
+  static String count(BuildContext context, num value) => LocalizedNumber.of(context, value);
 
   /// Function Name: [days] / [absences]
   ///
@@ -193,5 +189,48 @@ class TimeTrackerFormat {
       return '${LocalizedNumber.digits(context, (bytes / (1024 * 1024)).toStringAsFixed(1))} MB';
     }
     return '${LocalizedNumber.of(context, (bytes / 1024).ceil())} KB';
+  }
+}
+
+/// 13/10/2026 (owner): the usual business abbreviations for a job title, so
+/// it fits one line in compact cards ("Director of Administrative Affairs" →
+/// "Dir. of Admin. Affairs", "Human Resources Officer" → "HR Officer").
+/// Arabic titles are returned unchanged.
+class TtJobTitle {
+  const TtJobTitle._();
+
+  static const List<(String, String)> _rules = <(String, String)>[
+    ('Human Resources', 'HR'),
+    ('Information Technology', 'IT'),
+    ('Public Relations', 'PR'),
+    ('Customer Service', 'CS'),
+    ('Vice President', 'VP'),
+    ('Chief Executive Officer', 'CEO'),
+    ('Chief Operating Officer', 'COO'),
+    ('Chief Financial Officer', 'CFO'),
+    ('Director', 'Dir.'),
+    ('Administrative', 'Admin.'),
+    ('Administration', 'Admin.'),
+    ('Assistant', 'Asst.'),
+    ('Senior', 'Sr.'),
+    ('Junior', 'Jr.'),
+    ('Department', 'Dept.'),
+    ('Coordinator', 'Coord.'),
+    ('Representative', 'Rep.'),
+    ('Management', 'Mgmt.'),
+    ('Manager', 'Mgr.'),
+    ('Specialist', 'Spec.'),
+    ('Supervisor', 'Supv.'),
+    ('Engineer', 'Eng.'),
+    ('Executive', 'Exec.'),
+    ('Operations', 'Ops.'),
+  ];
+
+  static String short(String title) {
+    String out = title.trim();
+    for (final (String long, String abbr) in _rules) {
+      out = out.replaceAll(RegExp('\\b$long\\b', caseSensitive: false), abbr);
+    }
+    return out;
   }
 }

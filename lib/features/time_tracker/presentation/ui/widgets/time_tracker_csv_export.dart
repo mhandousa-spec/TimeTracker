@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:knowticed_plus/core/constants/app_assets.dart';
 import 'package:knowticed_plus/core/custom/57-custom_dialog_manager.dart';
 import 'package:knowticed_plus/core/helper/main_helper/csv_helper.dart';
+import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_controls.dart';
 import 'package:knowticed_plus/generated/l10n.dart';
 
 /// Function Name: [exportTimeTrackerCsv]
@@ -71,6 +72,7 @@ Future<void> exportTimeTrackerCsv({
       final S s = S.of(context);
       result.fold(
         (String error) => CustomDialogManager.showMessage(
+          width: TtDialogWidth.status,
           context: context,
           lottiePath: AppAssets.lottieWarning,
           title: s.exportFailed,
@@ -79,6 +81,7 @@ Future<void> exportTimeTrackerCsv({
         (String path) {
           if (path == CSVHelper.exportCancelled) return;
           CustomDialogManager.showMessage(
+            width: TtDialogWidth.status,
             context: context,
             lottiePath: AppAssets.successful,
             title: s.exportSuccessful,

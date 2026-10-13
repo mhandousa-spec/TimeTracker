@@ -96,6 +96,7 @@ abstract class TtAssets {
   static const String location = '$_form/location_pin.svg';
   static const String status = '$_main/status_pulse_line.svg';
   static const String logout = '$_main/logout_door_arrow.svg';
+
   /// 13/10/2026 (owner O1): the attendance day-card icons, exported from
   /// Figma (mobile attendance card `661:11059`).
   static const String dayCalendar = '$_dir/tt_day_calendar.svg';
@@ -464,6 +465,15 @@ class TtDialogWidth {
 
   static const double standard = 600;
   static const double compact = 450;
+
+  /// 13/10/2026 (owner): pickers that list people as cards (HR Employees) —
+  /// wide enough that a name and job title each stay on one line.
+  static const double wide = 820;
+
+  /// 13/10/2026 (owner): every small status dialog — "Are you sure?",
+  /// success, export done, warnings — has this ONE width (unscaled; the
+  /// core dialog manager applies `.sp`), so none looks bigger than another.
+  static const double status = 411;
 }
 
 /// A two-option toggle in its own rounded container (owner finding 1).

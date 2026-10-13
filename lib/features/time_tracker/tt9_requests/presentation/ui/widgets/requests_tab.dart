@@ -86,6 +86,7 @@ class _RequestsTabState extends State<RequestsTab> {
     final S s = S.of(context);
     if (rows.isEmpty) {
       await CustomDialogManager.showMessage(
+        width: TtDialogWidth.status,
         context: context,
         lottiePath: AppAssets.lottieWarning,
         title: s.export,

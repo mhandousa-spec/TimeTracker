@@ -26,6 +26,9 @@ import 'package:knowticed_plus/features/time_tracker/domain/entities/request_typ
 import 'package:knowticed_plus/features/time_tracker/tt10_request_form/presentation/controller/request_form_cubit.dart';
 import 'package:knowticed_plus/features/time_tracker/tt4_transaction_form/presentation/controller/transaction_form_cubit.dart';
 import 'package:get_it/get_it.dart';
+import 'package:knowticed_plus/features/time_tracker/data/data_source/local_data_source/time_tracker_sheet_reader.dart';
+import 'package:knowticed_plus/features/time_tracker/domain/rules/location_import_rules.dart';
+import 'package:knowticed_plus/features/time_tracker/domain/rules/vacation_balance_import_rules.dart';
 
 import 'package:knowticed_plus/features/time_tracker/domain/constants/time_tracker_firestore_paths.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/entities/attendance_day.dart';
@@ -374,6 +377,19 @@ void main() {
           // 13/10/2026 (owner S3): the self-explaining Import.
           await c.tap('locationsImportButton');
           await c.shot('50b_location_import');
+          // 13/10/2026 (owner): the bulk-upload review after a file is read
+          // (one new row, one with mistakes).
+          await _withSheet(<List<String>>[
+            LocationImportRules.headings,
+            <String>['Ministry Headquarters', '', '', '', '', '', '', '', '', '', '', '', '', '', '20'],
+            <String>['Giza Branch', 'فرع الجيزة', 'not a link', '30.01', '31.2', 'Yes', '', 'EG', '', 'Giza', '',
+                '09:00', '09:00', 'Sun, Mon', '', 'Maybe'],
+            <String>['Alex Branch', 'فرع الإسكندرية', '', '31.2', '29.9', 'No', '', 'EG', '', 'Alexandria', '',
+                '08:00', '16:00', 'Sun, Mon, Tue, Wed, Thu'],
+          ], () async {
+            await c.tap('locationImportUpload');
+            await c.shot('50c_location_import_review');
+          });
           await c.closeDialog();
           await c.push(const LocationFormPage());
           await c.shot('51_location_form');
@@ -451,6 +467,15 @@ void main() {
           await c.closeDialog();
           await c.tap('vacationImportButton');
           await c.shot('73_vacation_import');
+          await _withSheet(<List<String>>[
+            VacationBalanceImportRules.headings,
+            <String>[kTtPeople.first.name(isArabic: false), kTtPeople.first.email, '', '', '2026', '25'],
+            <String>['Someone', 'nobody@company.com', '', '', '2026', '21'],
+            <String>[kTtPeople[1].name(isArabic: false), kTtPeople[1].email, '', '', '2025', 'abc'],
+          ], () async {
+            await c.tap('vacationImportUpload');
+            await c.shot('73b_vacation_import_review');
+          });
           await c.closeDialog();
           // 13/10/2026 (owner V1): an employee's vacation history.
           await c.push(VacationHistoryPage(employeeEmail: kTtPeople.first.email));
@@ -480,5 +505,28 @@ void main() {
         });
       });
     });
+  }
+}
+
+/// A file reader that "picks" [grid] (the import review screenshots).
+class _SheetReader extends TimeTrackerSheetReader {
+  const _SheetReader(this.grid);
+
+  final List<List<String>> grid;
+
+  @override
+  Future<TimeTrackerSheet?> pickAndRead() async => TimeTrackerSheet(fileName: 'upload.csv', grid: grid);
+}
+
+/// Run [body] with [_SheetReader] ([grid]) in place of the real reader.
+Future<void> _withSheet(List<List<String>> grid, Future<void> Function() body) async {
+  final GetIt getIt = GetIt.instance;
+  if (getIt.isRegistered<TimeTrackerSheetReader>()) getIt.unregister<TimeTrackerSheetReader>();
+  getIt.registerSingleton<TimeTrackerSheetReader>(_SheetReader(grid));
+  try {
+    await body();
+  } finally {
+    getIt.unregister<TimeTrackerSheetReader>();
+    getIt.registerLazySingleton<TimeTrackerSheetReader>(() => const TimeTrackerSheetReader());
   }
 }

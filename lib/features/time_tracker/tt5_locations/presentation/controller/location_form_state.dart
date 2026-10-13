@@ -30,6 +30,10 @@ class LocationFormState {
     this.isLocating = false,
     this.locateIssue,
     this.failure = TimeTrackerActionFailure.none,
+    this.startChosen = true,
+    this.endChosen = true,
+    this.needsState = false,
+    this.needsCity = false,
   });
 
   final WorkLocation draft;
@@ -44,9 +48,32 @@ class LocationFormState {
   final DeviceLocationIssue? locateIssue;
   final TimeTrackerActionFailure failure;
 
+  /// 13/10/2026 (owner: "why default values?"): a NEW location starts with
+  /// no work times — the user picks them (false until picked).
+  final bool startChosen;
+  final bool endChosen;
+
+  /// The chosen country / state has a State / City list, so one must be
+  /// picked (set by the page once the address lists are loaded).
+  final bool needsState;
+  final bool needsCity;
+
   bool get isEdit => original != null;
 
-  Set<LocationFormError> get errors => LocationFormRules.validate(draft);
+  Set<LocationFormError> get errors => <LocationFormError>{
+        ...LocationFormRules.validate(
+          draft,
+          requireCountry: true,
+          requireState: needsState,
+          requireCity: needsCity,
+        ),
+        if (!startChosen) LocationFormError.workStartRequired,
+        if (!endChosen) LocationFormError.workEndRequired,
+      }..removeAll(<LocationFormError>[
+          // "Start = End" only once both were picked.
+          if (!startChosen || !endChosen) LocationFormError.workTimesSame,
+          if (!startChosen || !endChosen) LocationFormError.lateAfterTooLong,
+        ]);
 
   /// Something differs from the stored location (always true when creating).
   bool get isDirty {
@@ -80,6 +107,10 @@ class LocationFormState {
     DeviceLocationIssue? locateIssue,
     bool clearLocateIssue = false,
     TimeTrackerActionFailure? failure,
+    bool? startChosen,
+    bool? endChosen,
+    bool? needsState,
+    bool? needsCity,
   }) =>
       LocationFormState(
         draft: draft ?? this.draft,
@@ -89,5 +120,9 @@ class LocationFormState {
         isLocating: isLocating ?? this.isLocating,
         locateIssue: clearLocateIssue ? null : (locateIssue ?? this.locateIssue),
         failure: failure ?? this.failure,
+        startChosen: startChosen ?? this.startChosen,
+        endChosen: endChosen ?? this.endChosen,
+        needsState: needsState ?? this.needsState,
+        needsCity: needsCity ?? this.needsCity,
       );
 }

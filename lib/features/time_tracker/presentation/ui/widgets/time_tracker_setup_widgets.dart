@@ -309,10 +309,24 @@ class TtBreakLengthField extends StatelessWidget {
 /// pause in minutes — empty / 0 = no limit (passing it is reported by the
 /// Cloud Functions; the pause keeps running).
 class TtPauseLimitField extends StatelessWidget {
-  const TtPauseLimitField({super.key, required this.controller, required this.onChanged});
+  const TtPauseLimitField({
+    super.key,
+    required this.controller,
+    required this.onChanged,
+    this.showLabel = true,
+    this.hint,
+    this.error,
+  });
 
   final TextEditingController controller;
   final ValueChanged<String> onChanged;
+
+  /// ADDED 13/10/2026 (owner): false = no "Maximum Pause (Minutes)" title,
+  /// so the field lines up with the break length beside it; say what it
+  /// means in [hint] instead.
+  final bool showLabel;
+  final String? hint;
+  final String? error;
 
   /// Function Name: [minutesOf]
   ///
@@ -329,9 +343,10 @@ class TtPauseLimitField extends StatelessWidget {
     final S s = S.of(context);
     return CustomTextField(
       controller: controller,
-      label: s.timeTrackerMaxPauseMinutes,
+      label: showLabel ? s.timeTrackerMaxPauseMinutes : null,
       labelStyle: StyleText.fontSize12Weight500.copyWith(color: AppColors.text),
-      hint: s.timeTrackerNoLimit,
+      hint: hint ?? s.timeTrackerNoLimit,
+      errorText: error,
       height: 36,
       keyboardType: TextInputType.number,
       inputFormatters: <TextInputFormatter>[
@@ -645,6 +660,7 @@ Future<void> showTimeTrackerFailure(
         _ => denied ? s.timeTrackerNoPermission : s.timeTrackerActionFailed,
       };
   return CustomDialogManager.showMessage(
+    width: TtDialogWidth.status,
     context: context,
     lottiePath: AppAssets.lottieWarning,
     title: s.errorOccurred,

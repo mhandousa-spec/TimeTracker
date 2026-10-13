@@ -44,13 +44,12 @@ class LocationFormCubit extends Cubit<LocationFormState> {
         _access = access,
         _log = log,
         super(LocationFormState(
-          draft: original ??
-              const WorkLocation(
-                id: '',
-                nameEn: '',
-                workingDays: LocationImportRules.defaultWorkingDays,
-              ),
+          // 13/10/2026 (owner: "why default values?"): a new location starts
+          // EMPTY — no working days, no work times; the user picks them.
+          draft: original ?? const WorkLocation(id: '', nameEn: '', workingDays: <int>[]),
           original: original,
+          startChosen: original != null,
+          endChosen: original != null,
         ));
 
   final LocationBaseRepository _locations;
@@ -72,6 +71,20 @@ class LocationFormCubit extends Cubit<LocationFormState> {
   ///
   /// Return type: [void]
   void update(WorkLocation next) => emit(state.copyWith(draft: next));
+
+  /// 13/10/2026 (owner): the work start / end picked (a new location has
+  /// none until then).
+  void setWorkStart(int minutes) =>
+      emit(state.copyWith(draft: state.draft.copyWith(workStartMinutes: minutes), startChosen: true));
+  void setWorkEnd(int minutes) =>
+      emit(state.copyWith(draft: state.draft.copyWith(workEndMinutes: minutes), endChosen: true));
+
+  /// 13/10/2026 (owner): State / City are required when the chosen country /
+  /// state has a list to pick from (the page knows the lists).
+  void setAddressNeeds({required bool state, required bool city}) {
+    if (this.state.needsState == state && this.state.needsCity == city) return;
+    emit(this.state.copyWith(needsState: state, needsCity: city));
+  }
 
   /// Function Name: [toggleDay]
   ///

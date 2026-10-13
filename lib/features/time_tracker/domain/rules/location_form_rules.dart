@@ -32,6 +32,15 @@ enum LocationFormError {
   workTimesSame,
   workingDaysRequired,
   breakLengthRequired,
+  // 13/10/2026 (owner: "validations on everything").
+  mapsUrlInvalid,
+  lateAfterTooLong,
+  pauseTooLong,
+  countryRequired,
+  stateRequired,
+  cityRequired,
+  workStartRequired,
+  workEndRequired,
 }
 
 class LocationFormRules {
@@ -49,9 +58,18 @@ class LocationFormRules {
   /// Function Name: [validate]
   ///
   /// Purpose: Every problem of [location]; empty = can be saved.
+  /// 13/10/2026 (owner): the FORM also asks for the address
+  /// ([requireCountry]; [requireState] / [requireCity] when the chosen
+  /// country / state has a list to pick from). The import keeps a blank
+  /// address (a blank cell = keep the stored value).
   ///
   /// Return type: [Set<LocationFormError>]
-  static Set<LocationFormError> validate(WorkLocation location) {
+  static Set<LocationFormError> validate(
+    WorkLocation location, {
+    bool requireCountry = false,
+    bool requireState = false,
+    bool requireCity = false,
+  }) {
     final Set<LocationFormError> errors = <LocationFormError>{};
     if (location.nameEn.trim().isEmpty) errors.add(LocationFormError.nameEnRequired);
     if (location.nameAr.trim().isEmpty) errors.add(LocationFormError.nameArRequired);
@@ -78,7 +96,38 @@ class LocationFormRules {
         (location.breakMinutes <= 0 || location.breakMinutes > maxMinutes)) {
       errors.add(LocationFormError.breakLengthRequired);
     }
+    // 13/10/2026 (owner): a Maps link must be a real web link to a map.
+    if (!isMapsUrl(location.googleMapsUrl)) errors.add(LocationFormError.mapsUrlInvalid);
+    // The grace period must end before the work day does.
+    final int shift = shiftMinutes(location.workStartMinutes, location.workEndMinutes);
+    if (location.lateAfterMinutes < 0 || (shift > 0 && location.lateAfterMinutes >= shift)) {
+      errors.add(LocationFormError.lateAfterTooLong);
+    }
+    if (location.isPauseAllowed && location.pauseMinutes > maxMinutes) {
+      errors.add(LocationFormError.pauseTooLong);
+    }
+    if (requireCountry && location.country.trim().isEmpty) errors.add(LocationFormError.countryRequired);
+    if (requireState && location.state.trim().isEmpty) errors.add(LocationFormError.stateRequired);
+    if (requireCity && location.city.trim().isEmpty) errors.add(LocationFormError.cityRequired);
     return errors;
+  }
+
+  /// Minutes from [start] to [end] (an overnight shift wraps midnight).
+  static int shiftMinutes(int start, int end) => (end - start) % (24 * 60);
+
+  /// Function Name: [isMapsUrl]
+  ///
+  /// Purpose: ADDED 13/10/2026 — [raw] is empty or an http(s) link to a map
+  /// (Google Maps, maps.app.goo.gl, goo.gl, Apple Maps).
+  ///
+  /// Return type: [bool]
+  static bool isMapsUrl(String raw) {
+    final String text = raw.trim();
+    if (text.isEmpty) return true;
+    final Uri? uri = Uri.tryParse(text);
+    if (uri == null || (uri.scheme != 'http' && uri.scheme != 'https') || uri.host.isEmpty) return false;
+    final String host = uri.host.toLowerCase();
+    return host.contains('google.') || host.endsWith('goo.gl') || host == 'maps.apple.com' || host.contains('maps.');
   }
 
   /// Function Name: [assignedEmployees]

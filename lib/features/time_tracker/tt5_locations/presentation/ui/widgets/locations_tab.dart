@@ -28,6 +28,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
 
+import 'package:knowticed_plus/features/time_tracker/domain/enums/setup_status.dart';
+import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_card_grid.dart';
+import 'package:knowticed_plus/core/custom/40-custom_table_button.dart';
+import 'package:knowticed_plus/core/custom/39-custom_grid_button.dart';
+import 'package:knowticed_plus/core/custom/8-custom_filter_app.dart';
 import 'package:knowticed_plus/core/constants/app_assets.dart';
 import 'package:knowticed_plus/core/custom/16-custom_card_styles.dart';
 import 'package:knowticed_plus/core/custom/57-custom_dialog_manager.dart';
@@ -85,6 +90,7 @@ class _LocationsTabState extends State<LocationsTab> {
     final S s = S.of(context);
     if (rows.isEmpty) {
       await CustomDialogManager.showMessage(
+        width: TtDialogWidth.status,
         context: context,
         lottiePath: AppAssets.lottieWarning,
         title: s.export,
@@ -100,8 +106,7 @@ class _LocationsTabState extends State<LocationsTab> {
     );
   }
 
-  void _open(Widget page) =>
-      Navigator.of(context).push<void>(MaterialPageRoute<void>(builder: (_) => page));
+  void _open(Widget page) => Navigator.of(context).push<void>(MaterialPageRoute<void>(builder: (_) => page));
 
   @override
   Widget build(BuildContext context) {
@@ -111,16 +116,71 @@ class _LocationsTabState extends State<LocationsTab> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            SlideInContent(child: _toolbar(context, state, rows)),
+            // 13/10/2026 (owner): All · Active · Inactive counters (like
+            // Approvals / Request Types), then the toolbar, then List / Grid.
+            SlideInContent(child: _counters(context, state)),
             SizedBox(height: 15.h),
+            SlideInContent(child: _toolbar(context, state, rows)),
+            if (!context.isPhone) ...<Widget>[
+              SizedBox(height: 10.h),
+              SlideInContent(delay: const Duration(milliseconds: 60), child: _viewToggle(context, state)),
+            ],
+            SizedBox(height: 10.h),
             SlideInContent(
               delay: const Duration(milliseconds: 80),
-              child: _body(context, state, rows),
+              child: BounceSwitcher(triggerValue: state.isGrid, child: _body(context, state, rows)),
             ),
             SizedBox(height: 15.h),
           ],
         );
       },
+    );
+  }
+
+  Widget _counters(BuildContext context, LocationsState state) {
+    final S s = S.of(context);
+    final LocationsCubit cubit = context.read<LocationsCubit>();
+    final List<WorkLocation> all = state.listed;
+    const List<LocationStatus> shown = <LocationStatus>[LocationStatus.active, LocationStatus.inactive];
+    return StatusChipFilter(
+      key: const ValueKey<String>('locationCounters'),
+      items: <StatusChipItem>[
+        StatusChipItem(key: 'all', label: s.timeTrackerAll, count: all.length),
+        for (final LocationStatus st in shown)
+          StatusChipItem(
+            key: st.storageKey,
+            label: LocationText.status(context, st),
+            count: all.where((WorkLocation l) => l.status == st).length,
+            labelColor: LocationStatusText.colorOf(st),
+          ),
+      ],
+      selectedKey: state.filter.status?.storageKey ?? 'all',
+      onSelected: (String key) {
+        HapticController.low();
+        cubit.filterStatus(key == 'all' ? null : shown.firstWhere((LocationStatus st) => st.storageKey == key));
+      },
+    );
+  }
+
+  Widget _viewToggle(BuildContext context, LocationsState state) {
+    final LocationsCubit cubit = context.read<LocationsCubit>();
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: <Widget>[
+        KeyedSubtree(
+          key: const ValueKey<String>('locationsTableToggle'),
+          child: customTableButton(
+            function: () => cubit.setGrid(false),
+            isSelected: !state.isGrid,
+            color: AppColors.card,
+          ),
+        ),
+        SizedBox(width: 10.w),
+        KeyedSubtree(
+          key: const ValueKey<String>('locationsGridToggle'),
+          child: customGridButton(function: () => cubit.setGrid(true), isSelected: state.isGrid),
+        ),
+      ],
     );
   }
 
@@ -181,13 +241,19 @@ class _LocationsTabState extends State<LocationsTab> {
       return Padding(
         padding: EdgeInsetsDirectional.symmetric(vertical: 60.h),
         child: Text(S.of(context).timeTrackerLoadError,
-            textAlign: TextAlign.center,
-            style: StyleText.fontSize14Weight400.copyWith(color: AppColors.red)),
+            textAlign: TextAlign.center, style: StyleText.fontSize14Weight400.copyWith(color: AppColors.red)),
       );
     }
     if (rows.isEmpty) return const CustomEmptyState();
     void open(WorkLocation l) => _open(LocationDetailsPage(locationId: l.id));
     if (context.isPhone) return _cards(context, rows, open);
+    // 13/10/2026 (owner): tablet Grid = the phone card in the house grid.
+    if (state.isGrid) {
+      return TtCardGrid(
+        key: const ValueKey<String>('locationsGrid'),
+        children: <Widget>[for (final WorkLocation l in rows) LocationCard(location: l, inGrid: true, onTap: () => open(l))],
+      );
+    }
     return TimeTrackerTable(
       key: const ValueKey<String>('locationsTable'),
       columns: LocationText.columns(context),
@@ -217,10 +283,14 @@ class _LocationsTabState extends State<LocationsTab> {
 /// Country, City, Allow Breaks, Allow Pause with their Figma icons, and
 /// Created Date at the end of the last line.
 class LocationCard extends StatelessWidget {
-  const LocationCard({super.key, required this.location, required this.onTap});
+  const LocationCard({super.key, required this.location, required this.onTap, this.inGrid = false});
 
   final WorkLocation location;
   final VoidCallback onTap;
+
+  /// In the tablet grid (equal-height rows): the last line sits at the
+  /// bottom. On a phone list the card hugs its content.
+  final bool inGrid;
 
   @override
   Widget build(BuildContext context) {
@@ -257,7 +327,8 @@ class LocationCard extends StatelessWidget {
           children: <Widget>[
             Align(
               alignment: AlignmentDirectional.centerEnd,
-              child: Text(s.timeTrackerLastUpdateValue(TimeTrackerFormat.date(context, l.audit.updatedAt)), style: small),
+              child:
+                  Text(s.timeTrackerLastUpdateValue(TimeTrackerFormat.date(context, l.audit.updatedAt)), style: small),
             ),
             SizedBox(height: 2.h),
             Row(
@@ -275,7 +346,9 @@ class LocationCard extends StatelessWidget {
                 SizedBox(width: 8.w),
                 Expanded(
                   child: Text(LocationText.name(context, l),
-                      maxLines: 2, overflow: TextOverflow.ellipsis, style: StyleText.fontSize14Weight500.copyWith(color: AppColors.text)),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: StyleText.fontSize14Weight500.copyWith(color: AppColors.text)),
                 ),
               ],
             ),
@@ -283,11 +356,23 @@ class LocationCard extends StatelessWidget {
             line(TtAssets.locCountry, s.timeTrackerCountry, text(LocationText.country(context, l))),
             line(TtAssets.locCity, s.timeTrackerCity, text(LocationText.city(context, l))),
             line(TtAssets.dayBreak, s.timeTrackerAllowBreaks, text(onOff(l.isBreakAllowed))),
-            // Figma: Created Date shares the last line (no Status line).
+            line(TtAssets.locPause, s.timeTrackerAllowPause, text(onOff(l.isPauseAllowed))),
+            // Fills only when a neighbour in the grid row is taller.
+            if (inGrid) const Spacer() else SizedBox(height: 6.h),
+            // 13/10/2026 (owner): the Status line (Active green / Inactive
+            // red), with Created Date at the end edge.
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
-                Expanded(child: line(TtAssets.locPause, s.timeTrackerAllowPause, text(onOff(l.isPauseAllowed)))),
+                Expanded(
+                  child: line(
+                    TtAssets.rtStatus,
+                    s.timeTrackerStatus,
+                    Text(LocationText.status(context, l.status),
+                        style: StyleText.fontSize12Weight500.copyWith(color: LocationStatusText.colorOf(l.status))),
+                  ),
+                ),
+                SizedBox(width: 8.w),
                 Text(s.timeTrackerCreatedDateValue(TimeTrackerFormat.date(context, l.audit.createdAt)), style: small),
               ],
             ),

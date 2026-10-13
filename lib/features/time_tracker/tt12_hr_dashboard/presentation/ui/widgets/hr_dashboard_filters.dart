@@ -45,6 +45,7 @@ import 'package:knowticed_plus/features/time_tracker/tt12_hr_dashboard/presentat
 import 'package:knowticed_plus/features/time_tracker/tt12_hr_dashboard/presentation/ui/widgets/hr_dashboard_export.dart';
 import 'package:knowticed_plus/features/time_tracker/tt12_hr_dashboard/presentation/ui/widgets/hr_employee_picker.dart';
 import 'package:knowticed_plus/features/time_tracker/tt2_personal_dashboard/presentation/ui/widgets/dashboard_range_menu.dart';
+import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_filter_frame.dart';
 import 'package:knowticed_plus/generated/l10n.dart';
 
 class HrDashboardFilterBar extends StatelessWidget {
@@ -58,7 +59,8 @@ class HrDashboardFilterBar extends StatelessWidget {
     final Set<String> deps = <String>{for (final TimeTrackerEmployee e in people) e.departmentId};
     await CustomDialogManager.showContent<void>(
       context: context,
-      width: TtDialogWidth.standard,
+      // 13/10/2026 (owner): wider, so names and job titles stay on one line.
+      width: TtDialogWidth.wide,
       child: HrEmployeePicker(
         people: people,
         departments: <String, String>{
@@ -84,7 +86,7 @@ class HrDashboardFilterBar extends StatelessWidget {
           )
         : null;
     final Widget? department = state.allDepartments
-        ? _MultiFilter(
+        ? TtToolbarMultiFilter(
             key: const ValueKey<String>('hrDepartmentFilter'),
             hint: s.timeTrackerDepartment,
             values: state.filters.departmentIds,
@@ -92,7 +94,7 @@ class HrDashboardFilterBar extends StatelessWidget {
             onChanged: cubit.setDepartments,
           )
         : null;
-    final Widget location = _MultiFilter(
+    final Widget location = TtToolbarMultiFilter(
       key: const ValueKey<String>('hrLocationFilter'),
       hint: s.timeTrackerLocation,
       values: state.filters.locationIds,
@@ -179,50 +181,6 @@ class _EmployeeButton extends StatelessWidget {
           onChanged: (_) {},
         ),
       ),
-    );
-  }
-}
-
-/// A white filter dropdown: placeholder [hint] until chosen, "All" clears.
-/// 13/10/2026 (owner): Department / Location are multi-select (core
-/// `CustomMultiSelectDropdown`). The trigger reads the one picked name, or
-/// "Department (3)" for several — never a cut-off list.
-class _MultiFilter extends StatelessWidget {
-  const _MultiFilter({
-    super.key,
-    required this.hint,
-    required this.values,
-    required this.items,
-    required this.onChanged,
-  });
-
-  final String hint;
-  final Set<String> values;
-
-  /// Id → name.
-  final Map<String, String> items;
-  final ValueChanged<Set<String>> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomMultiSelectDropdown<String>(
-      hint: hint,
-      height: TtToolbar.height,
-      heightSizesWholeTrigger: true,
-      borderRadius: TtToolbar.radius,
-      fillColor: AppColors.card,
-      itemStyle: StyleText.fontSize12Weight400,
-      values: <String>[for (final String v in values) if (items.containsKey(v)) v],
-      items: <MultiSelectDropdownItem<String>>[
-        for (final MapEntry<String, String> e in items.entries)
-          MultiSelectDropdownItem<String>(value: e.key, label: e.value),
-      ],
-      selectedTextBuilder: (List<MultiSelectDropdownItem<String>> picked) =>
-          picked.length == 1 ? picked.single.label : '$hint (${picked.length})',
-      onChanged: (List<String> v) {
-        HapticController.low();
-        onChanged(v.toSet());
-      },
     );
   }
 }

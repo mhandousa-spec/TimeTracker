@@ -112,6 +112,14 @@ class LocationsCubit extends Cubit<LocationsState> {
   void searchChanged(String query) => emit(state.copyWith(query: query));
   void applyFilter(LocationsFilter filter) => emit(state.copyWith(filter: filter));
 
+  /// 13/10/2026 (owner): the status counters (All / Active / Inactive) —
+  /// null = All; the geofence choice of the Filter stays.
+  void filterStatus(LocationStatus? status) =>
+      emit(state.copyWith(filter: LocationsFilter(status: status, geofence: state.filter.geofence)));
+
+  /// 13/10/2026 (owner): List / Grid on a tablet.
+  void setGrid(bool isGrid) => emit(state.copyWith(isGrid: isGrid));
+
   /// Function Name: [toggleStatus]
   ///
   /// Purpose: Active ↔ Inactive (`Change_Location_Status`).
@@ -186,7 +194,7 @@ class LocationsCubit extends Cubit<LocationsState> {
     try {
       final List<List<String>>? grid = await pick();
       if (grid == null) return const LocationImportRead.cancelled();
-      return LocationImportRead.read(planImport(grid));
+      return LocationImportRead.read(planImport(grid), grid: grid);
     } catch (_) {
       return const LocationImportRead.unreadable();
     }

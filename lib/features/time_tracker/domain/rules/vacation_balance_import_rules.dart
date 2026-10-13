@@ -9,8 +9,9 @@
 /// Created at: 9/10/2026 (phase 5)
 ///
 /// Import Vacation Balances (`Import_Vacation_Balances`, brief §B). Template
-/// = Email · Year · Total Days (English headings, matched case-insensitively;
-/// other columns ignored). Rules — same spirit as the locations import:
+/// = Employee Name · Email · Department · Job Title · Year · Total Days ·
+/// Used Days · Remaining Days; only Email · Year · Total Days are read
+/// (English headings, matched case-insensitively; other columns ignored). Rules — same spirit as the locations import:
 ///   * a row whose e-mail is a company employee SETS their Total Days for
 ///     the year (creates the balance when none exists); used days are kept;
 ///   * the import writes ONE year — the year selected on the tab: a blank
@@ -29,20 +30,45 @@ import 'package:knowticed_plus/features/time_tracker/domain/rules/vacation_balan
 
 /// The template columns, in file order (English: machine-read in both
 /// languages).
+///
+/// 13/10/2026 (owner: "make the template more professional"): the template
+/// also carries who the row is — Employee Name, Department, Job Title — and
+/// the Used / Remaining days, so the file reads like the tab. Those columns
+/// are INFORMATION only ([info]): the import reads Email · Year · Total Days.
 enum VacationImportColumn {
+  employeeName('Employee Name', info: true),
   email('Email'),
+  department('Department', info: true),
+  jobTitle('Job Title', info: true),
   year('Year'),
-  totalDays('Total Days');
+  totalDays('Total Days'),
+  usedDays('Used Days', info: true),
+  remainingDays('Remaining Days', info: true);
 
-  const VacationImportColumn(this.heading);
+  const VacationImportColumn(this.heading, {this.info = false});
 
   final String heading;
+
+  /// Shown for reference; never imported.
+  final bool info;
 }
 
 enum VacationImportAction { create, update, unchanged, skip }
 
 /// Why a row is skipped.
-enum VacationImportIssue { unknownEmployee, duplicateEmail, wrongYear, totalRequired, totalInvalid, totalTooLarge }
+enum VacationImportIssue {
+  unknownEmployee(VacationImportColumn.email),
+  duplicateEmail(VacationImportColumn.email),
+  wrongYear(VacationImportColumn.year),
+  totalRequired(VacationImportColumn.totalDays),
+  totalInvalid(VacationImportColumn.totalDays),
+  totalTooLarge(VacationImportColumn.totalDays);
+
+  const VacationImportIssue(this.column);
+
+  /// The cell the problem is in (the review marks it red).
+  final VacationImportColumn column;
+}
 
 class VacationImportRow {
   const VacationImportRow({
@@ -98,11 +124,30 @@ class VacationBalanceImportRules {
   /// Purpose: One employee's line of the downloadable template.
   ///
   /// Return type: [List<String>]
-  static List<String> templateRow(VacationBalanceRow row) => <String>[
+  static List<String> templateRow(VacationBalanceRow row, {bool isArabic = false}) => <String>[
+        row.employee.name(isArabic: isArabic),
         row.employee.email,
+        row.employee.department(isArabic: isArabic),
+        row.employee.jobTitle(isArabic: isArabic),
         '${row.balance.year}',
         VacationBalanceList.days(row.balance.totalDays),
+        VacationBalanceList.days(row.balance.usedDays),
+        VacationBalanceList.days(row.balance.remainingDays),
       ];
+
+  /// Function Name: [columnOf]
+  ///
+  /// Purpose: The template column whose heading is [heading] (any case),
+  /// or null for a column the import does not know.
+  ///
+  /// Return type: [VacationImportColumn?]
+  static VacationImportColumn? columnOf(String heading) {
+    final String h = _norm(heading);
+    for (final VacationImportColumn c in VacationImportColumn.values) {
+      if (_norm(c.heading) == h) return c;
+    }
+    return null;
+  }
 
   /// Function Name: [plan]
   ///

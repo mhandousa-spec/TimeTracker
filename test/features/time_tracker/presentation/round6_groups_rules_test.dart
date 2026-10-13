@@ -310,7 +310,9 @@ void main() {
     expect(_key('employeeCustomRibbon_khaled@co.com'), findsNothing);
     await tester.ensureVisible(_key('employeeRules_me@co.com'));
     expect(_key('employeeCustomRibbon_me@co.com'), findsOneWidget);
-    expect(find.descendant(of: _key('employeeCustomRibbon_me@co.com'), matching: find.byType(Banner)), findsOneWidget);
+    // 13/10/2026 (owner): a readable corner tag naming the source.
+    expect(find.descendant(of: _key('employeeCustomRibbon_me@co.com'), matching: find.text(S.current.timeTrackerCustomRulesTag)),
+        findsOneWidget);
     expect(tester.takeException(), isNull);
     await h.dispose(tester);
   });

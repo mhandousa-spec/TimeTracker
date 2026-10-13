@@ -43,6 +43,7 @@ import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/tim
 import 'package:knowticed_plus/features/time_tracker/tt5_locations/presentation/ui/widgets/location_form_fields.dart';
 import 'package:knowticed_plus/features/time_tracker/tt8_request_types/presentation/controller/request_type_form_cubit.dart';
 import 'package:knowticed_plus/features/time_tracker/tt8_request_types/presentation/controller/request_types_cubit.dart';
+import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_controls.dart';
 import 'package:knowticed_plus/generated/l10n.dart';
 
 class RequestTypeFormPage extends StatelessWidget {
@@ -102,7 +103,8 @@ class _RequestTypeFormViewState extends State<_RequestTypeFormView> {
     final bool edit = cubit.state.isEdit;
     await CustomDialogManager.showDialogFlow(
       context: context,
-      confirmWidth: 411,
+      confirmWidth: TtDialogWidth.status,
+      successWidth: TtDialogWidth.status,
       scaleIn: true,
       confirmLottie: edit ? AppAssets.lottieEditDocument : AppAssets.lottieConfirmation,
       confirmTitle: edit ? s.timeTrackerEditingRequestType : s.timeTrackerCreatingRequestType,

@@ -38,6 +38,7 @@ import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/tim
 import 'package:knowticed_plus/features/time_tracker/domain/rules/transaction_rules.dart';
 import 'package:knowticed_plus/features/time_tracker/tt4_transaction_form/presentation/controller/transaction_form_cubit.dart';
 import 'package:knowticed_plus/features/time_tracker/tt4_transaction_form/presentation/ui/widgets/transaction_form_fields.dart';
+import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_controls.dart';
 import 'package:knowticed_plus/generated/l10n.dart';
 
 class TransactionFormPage extends StatelessWidget {
@@ -96,7 +97,8 @@ class _TransactionFormViewState extends State<_TransactionFormView> {
     final S s = S.of(context);
     await CustomDialogManager.showDialogFlow(
       context: context,
-      confirmWidth: 411,
+      confirmWidth: TtDialogWidth.status,
+      successWidth: TtDialogWidth.status,
       scaleIn: true,
       confirmLottie: AppAssets.lottieConfirmation,
       confirmTitle: s.timeTrackerCreatingTransaction,
@@ -115,6 +117,7 @@ class _TransactionFormViewState extends State<_TransactionFormView> {
     final bool denied = cubit.state.permissionDenied;
     cubit.acknowledgeFailure();
     await CustomDialogManager.showMessage(
+      width: TtDialogWidth.status,
       context: context,
       lottiePath: AppAssets.lottieWarning,
       title: s.errorOccurred,

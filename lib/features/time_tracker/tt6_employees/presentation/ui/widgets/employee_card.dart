@@ -106,11 +106,11 @@ class EmployeeCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
+          // 13/10/2026 (owner): room for the rules tag in the top corner.
+          if (custom) SizedBox(height: 18.h),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              // 12/10/2026 (owner T3): room for the "Custom" corner ribbon.
-              if (custom) SizedBox(width: 18.w),
               TimeTrackerAvatar(photo: employee.photo, size: 40.r),
               SizedBox(width: 10.w),
               Expanded(
@@ -198,6 +198,9 @@ class EmployeeCard extends StatelessWidget {
     final Widget card = TtCustomRibbon(
       key: custom ? ValueKey<String>('employeeCustomRibbon_${employee.email}') : null,
       show: custom,
+      // 13/10/2026 (owner: "why are all of them Custom?"): say WHERE the
+      // rules come from — the employee's group, or the employee's own.
+      label: effective?.source == RulesSource.group ? s.timeTrackerGroupRulesTag : s.timeTrackerCustomRulesTag,
       child: body,
     );
     final VoidCallback? tap = onTap;

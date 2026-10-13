@@ -78,6 +78,7 @@ class StatusChipFilter extends StatelessWidget {
         children: items.map((item) {
           final isSelected = item.key == selectedKey;
           return _StatusChip(
+            key: item.widgetKey,
             item: item,
             isSelected: isSelected,
             isLight: isLight,
@@ -112,6 +113,7 @@ class _StatusChip extends StatelessWidget {
   final VoidCallback onTap;
 
   const _StatusChip({
+    super.key,
     required this.item,
     required this.isSelected,
     required this.isLight,
@@ -215,11 +217,16 @@ class StatusChipItem {
   /// If null → selected uses AppColors.text, unselected uses AppColors.secondaryText.
   final Color? labelColor;
 
+  /// ADDED 13/10/2026 (Time Tracker) — optional widget key of this chip
+  /// (tests tap one chip by it). Null = no key.
+  final Key? widgetKey;
+
   const StatusChipItem({
     required this.key,
     required this.label,
     required this.count,
     this.labelColor,
+    this.widgetKey,
   });
 }
 

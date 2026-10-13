@@ -183,7 +183,8 @@ class _HrEmployeePickerState extends State<HrEmployeePicker> {
         width: width,
         name: e.name(isArabic: ar),
         subtitle1: TimeTrackerFormat.orDash(e.department(isArabic: ar)),
-        subtitle2: e.jobTitle(isArabic: ar),
+        // 13/10/2026 (owner): long job titles abbreviated (one line).
+        subtitle2: TtJobTitle.short(e.jobTitle(isArabic: ar)),
         avatar: e.photo.startsWith('http') ? NetworkImage(e.photo) : null,
         avatarRadius: 24,
         // 13/10/2026 (owner): names wrap and keep clear of the tick box.

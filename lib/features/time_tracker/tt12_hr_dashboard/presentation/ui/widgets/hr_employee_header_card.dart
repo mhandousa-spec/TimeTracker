@@ -10,6 +10,8 @@
 ///            "salma.fathy@dm003.t…" was cut; Message in the TOP-RIGHT
 ///            corner; the info rows get the full width)
 ///
+/// Updated: 13/10/2026 - owner: name, job title and department stacked and
+/// centred with the photo; Email · Phone Number in the rows below.
 /// Layout: photo · name on the first row with the
 /// yellow "Message" in the top end corner; under it, across the FULL card
 /// width, Title · Department · Email · Phone Number — two columns on a
@@ -51,9 +53,10 @@ class HrEmployeeHeaderCard extends StatelessWidget {
     final bool phone = context.isPhone;
     final VoidCallback? message = onMessage;
     final String title = employee.jobTitle(isArabic: ar);
+    final String department = employee.department(isArabic: ar).trim();
+    // 13/10/2026 (owner): job title and department sit under the name (next
+    // to the photo); the rows below keep the contact details.
     final List<Widget> info = <Widget>[
-      _Info(icon: const TtGlyph.icon(Icons.work_outline), label: s.timeTrackerTitleLabel, value: title),
-      _Info(icon: const TtGlyph.svg(TtAssets.department), label: s.timeTrackerDepartment, value: employee.department(isArabic: ar)),
       _Info(icon: const TtGlyph.svg(TtAssets.email), label: s.timeTrackerEmail, value: employee.email),
       _Info(icon: const TtGlyph.svg(TtAssets.phone), label: s.timeTrackerPhoneNumber, value: employee.phone),
     ];
@@ -63,21 +66,27 @@ class HrEmployeeHeaderCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
+          // 13/10/2026 (owner): name · department · job title centred with
+          // the photo.
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               TimeTrackerAvatar(photo: employee.photo, size: phone ? 52.r : 64.r),
               SizedBox(width: 12.w),
               Expanded(
-                child: Padding(
-                  padding: EdgeInsetsDirectional.only(top: 4.h),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(employee.name(isArabic: ar),
-                          style: StyleText.fontSize18Weight500.copyWith(color: AppColors.text)),
-                    ],
-                  ),
+                child: Column(
+                  key: ValueKey<String>('hrHeaderIdentity_${employee.email}'),
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(employee.name(isArabic: ar),
+                        style: StyleText.fontSize18Weight500.copyWith(color: AppColors.text)),
+                    // Same order as the Employees cards (Figma `661:93542`).
+                    if (department.isNotEmpty)
+                      Text(department, style: StyleText.fontSize14Weight400.copyWith(color: AppColors.secondaryText)),
+                    if (title.trim().isNotEmpty)
+                      Text(title.trim(), style: StyleText.fontSize14Weight400.copyWith(color: AppColors.secondaryText)),
+                  ],
                 ),
               ),
               if (message != null) ...<Widget>[

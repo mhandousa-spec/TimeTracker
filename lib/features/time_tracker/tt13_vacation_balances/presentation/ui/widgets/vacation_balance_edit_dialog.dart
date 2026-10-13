@@ -16,6 +16,9 @@
 /// border + message, the number is typeable (Arabic digits too, one
 /// decimal), Remaining previews as you type. Then the house confirm →
 /// success flow (`CustomDialogManager.showDialogFlow`, scale-in).
+/// Updated: 13/10/2026 - owner ("what is this editing?"): the employee's job
+/// title too, and one sentence saying what is edited (the year's Total
+/// Days; Used comes from approved vacations; Remaining = Total − Used).
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -56,7 +59,8 @@ Future<void> showVacationBalanceEdit(BuildContext context, VacationBalanceRow ro
   final S s = S.of(context);
   await CustomDialogManager.showDialogFlow(
     context: context,
-    confirmWidth: 411,
+    confirmWidth: TtDialogWidth.status,
+    successWidth: TtDialogWidth.status,
     scaleIn: true,
     confirmLottie: AppAssets.lottieConfirmation,
     confirmTitle: s.timeTrackerEditVacationBalance,
@@ -142,26 +146,41 @@ class _VacationBalanceEditDialogState extends State<VacationBalanceEditDialog> {
         children: <Widget>[
           TtDialogHeader(title: s.timeTrackerEditVacationBalance, icon: AppAssets.edit),
           SizedBox(height: 15.h),
+          // 13/10/2026 (owner): who this is (photo · name · job title ·
+          // department, never cut) and, in words, what the edit changes.
           Row(
             children: <Widget>[
-              TimeTrackerAvatar(photo: row.employee.photo, size: 40.r),
+              TimeTrackerAvatar(photo: row.employee.photo, size: 44.r),
               SizedBox(width: 10.w),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(row.employee.name(isArabic: ar),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                         style: StyleText.fontSize14Weight500.copyWith(color: AppColors.text)),
-                    Text(TimeTrackerFormat.orDash(row.employee.department(isArabic: ar)),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: StyleText.fontSize12Weight400.copyWith(color: AppColors.secondaryText)),
+                    for (final String line in <String>[
+                      row.employee.department(isArabic: ar).trim(),
+                      TtJobTitle.short(row.employee.jobTitle(isArabic: ar).trim()),
+                    ])
+                      if (line.isNotEmpty)
+                        Text(line, style: StyleText.fontSize12Weight400.copyWith(color: AppColors.secondaryText)),
                   ],
                 ),
               ),
             ],
+          ),
+          SizedBox(height: 12.h),
+          Container(
+            key: const ValueKey<String>('vacationEditExplain'),
+            padding: EdgeInsetsDirectional.all(10.r),
+            decoration: BoxDecoration(color: AppColors.background, borderRadius: BorderRadius.circular(8.r)),
+            child: Text(
+              s.timeTrackerEditVacationExplain(
+                row.employee.name(isArabic: ar),
+                LocalizedNumber.digits(context, '${row.balance.year}'),
+              ),
+              style: StyleText.fontSize12Weight400.copyWith(color: AppColors.secondaryText),
+            ),
           ),
           SizedBox(height: 15.h),
           TtPair(
@@ -170,7 +189,7 @@ class _VacationBalanceEditDialogState extends State<VacationBalanceEditDialog> {
               key: const ValueKey<String>('vacationTotalField'),
               controller: _total,
               label: s.timeTrackerTotalDays,
-              hint: s.timeTrackerLateAfterHint,
+              hint: s.timeTrackerTotalDaysHint,
               height: 36,
               errorText: _showErrors ? _errorText(s, error) : null,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),

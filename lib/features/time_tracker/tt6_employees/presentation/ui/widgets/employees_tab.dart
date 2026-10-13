@@ -23,6 +23,9 @@
 /// search (`time_tracker_controls`).
 /// Updated: 9/10/2026 - owner review: toolbar dropdowns take the toolbar's
 /// one height + corner radius (`TtToolbar` — same as Search / Export / Import).
+/// Updated: 13/10/2026 - owner round 3 (Figma `661:93542`): Employees |
+/// Locations toggle on top; Assigned · Unassigned · Groups as number-box
+/// counters (core `StatusChipFilter`, like Approvals).
 /// Updated: 9/10/2026 - UI quality pass (owner 13:45 #5): the redesigned
 /// `EmployeeCard` — one primary action, Remove as the red trash icon.
 
@@ -32,6 +35,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
 
 import 'package:knowticed_plus/core/constants/app_assets.dart';
+import 'package:knowticed_plus/core/custom/8-custom_filter_app.dart';
+import 'package:knowticed_plus/core/theme/haptic_controller.dart';
 import 'package:knowticed_plus/core/custom/57-custom_dialog_manager.dart';
 import 'package:knowticed_plus/core/custom/66-circle_progress.dart';
 import 'package:knowticed_plus/core/custom/89-custom_empty_state.dart';
@@ -97,9 +102,6 @@ class _EmployeesTabState extends State<EmployeesTab> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            // 12/10/2026 (owner T1): ONE segmented filter row — Assigned ·
-            // Unassigned · Groups · Locations, each with its count (was a
-            // toggle + three counter boxes on two rows).
             SlideInContent(child: _segments(context, state)),
             if (state.view == EmployeesSubView.locations && _access.canViewEmployees)
               const EmployeesLocationsView()
@@ -119,71 +121,74 @@ class _EmployeesTabState extends State<EmployeesTab> {
     );
   }
 
-  /// ADDED 12/10/2026 (owner T1): the one segmented filter (core
-  /// `CustomSegmentedTabs` through `TtSegmentedToggle`). Hidden when the
-  /// viewer may see only one of the four lists.
+  /// 13/10/2026 (owner, Figma `661:93542`): on top the Employees |
+  /// Locations toggle; inside Employees the counters Assigned · Unassigned
+  /// · Groups as number boxes — the same control as Approvals / Request
+  /// Types (core `StatusChipFilter`), not a segmented filter.
   Widget _segments(BuildContext context, EmployeesState state) {
     final S s = S.of(context);
     final EmployeesCubit cubit = context.read<EmployeesCubit>();
-    String counted(String label, int n) => '$label (${LocalizedNumber.of(context, n)})';
-    final List<(String, String, VoidCallback, bool)> tabs = <(String, String, VoidCallback, bool)>[
-      if (_access.canViewEmployees) ...<(String, String, VoidCallback, bool)>[
-        (
-          'assigned',
-          counted(s.timeTrackerAssigned, state.assignedCount),
-          () => cubit
-            ..setView(EmployeesSubView.employees)
-            ..setSegment(EmployeesSegment.assigned),
-          state.view == EmployeesSubView.employees && state.segment == EmployeesSegment.assigned,
+    final bool both = _access.canViewEmployees;
+    final bool onEmployees = state.view == EmployeesSubView.employees || !both;
+    final List<StatusChipItem> counters = <StatusChipItem>[
+      if (_access.canViewEmployees) ...<StatusChipItem>[
+        StatusChipItem(
+          key: EmployeesSegment.assigned.name,
+          widgetKey: const ValueKey<String>('employeesCounter_assigned'),
+          label: s.timeTrackerAssigned,
+          count: state.assignedCount,
         ),
-        (
-          'unassigned',
-          counted(s.timeTrackerUnassigned, state.unassignedCount),
-          () => cubit
-            ..setView(EmployeesSubView.employees)
-            ..setSegment(EmployeesSegment.unassigned),
-          state.view == EmployeesSubView.employees && state.segment == EmployeesSegment.unassigned,
+        StatusChipItem(
+          key: EmployeesSegment.unassigned.name,
+          widgetKey: const ValueKey<String>('employeesCounter_unassigned'),
+          label: s.timeTrackerUnassigned,
+          count: state.unassignedCount,
         ),
       ],
       if (_access.canViewGroups)
-        (
-          'groups',
-          counted(s.timeTrackerGroupPermissions, state.liveGroups.length),
-          () => cubit
-            ..setView(EmployeesSubView.employees)
-            ..setSegment(EmployeesSegment.groups),
-          (state.view == EmployeesSubView.employees || !_access.canViewEmployees) &&
-              state.segment == EmployeesSegment.groups,
-        ),
-      if (_access.canViewEmployees)
-        (
-          'locations',
-          s.timeTrackerTabLocations,
-          () => cubit.setView(EmployeesSubView.locations),
-          state.view == EmployeesSubView.locations,
+        StatusChipItem(
+          key: EmployeesSegment.groups.name,
+          widgetKey: const ValueKey<String>('employeesCounter_groups'),
+          label: s.timeTrackerGroupPermissions,
+          count: state.liveGroups.length,
         ),
     ];
-    if (tabs.length < 2) return const SizedBox.shrink();
-    final int selected = tabs.indexWhere(((String, String, VoidCallback, bool) t) => t.$4);
-    final bool phone = context.isPhone;
-    final Widget toggle = TtSegmentedToggle(
-      key: const ValueKey<String>('employeesSubToggle'),
-      tabs: <String>[for (final (String, String, VoidCallback, bool) t in tabs) t.$2],
-      tabKeys: <Key>[
-        for (final (String, String, VoidCallback, bool) t in tabs) ValueKey<String>('employeesCounter_${t.$1}'),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        if (both) ...<Widget>[
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: TtSegmentedToggle(
+              key: const ValueKey<String>('employeesSubToggle'),
+              tabs: <String>[s.timeTrackerTabEmployees, s.timeTrackerTabLocations],
+              tabKeys: const <Key>[
+                ValueKey<String>('employeesView_employees'),
+                ValueKey<String>('employeesCounter_locations'),
+              ],
+              compact: context.isPhone,
+              selectedIndex: onEmployees ? 0 : 1,
+              onChanged: (int i) =>
+                  cubit.setView(i == 0 ? EmployeesSubView.employees : EmployeesSubView.locations),
+            ),
+          ),
+          SizedBox(height: 15.h),
+        ],
+        if (onEmployees && counters.length > 1) ...<Widget>[
+          KeyedSubtree(
+            key: const ValueKey<String>('employeesCounters'),
+            child: StatusChipFilter(
+              items: counters,
+              selectedKey: state.segment.name,
+              onSelected: (String key) {
+                HapticController.low();
+                cubit.setSegment(EmployeesSegment.values.firstWhere((EmployeesSegment v) => v.name == key));
+              },
+            ),
+          ),
+          SizedBox(height: 15.h),
+        ],
       ],
-      // Phone: the compact metrics (12 Medium).
-      compact: phone,
-      selectedIndex: selected < 0 ? 0 : selected,
-      onChanged: (int i) => tabs[i].$3(),
-    );
-    return Padding(
-      padding: EdgeInsetsDirectional.only(bottom: 15.h),
-      // Phone: the whole control scales down evenly if it is wider than the
-      // screen (Arabic), so every tab keeps the same text size.
-      child: phone
-          ? FittedBox(fit: BoxFit.scaleDown, alignment: AlignmentDirectional.centerStart, child: toggle)
-          : Align(alignment: AlignmentDirectional.centerStart, child: toggle),
     );
   }
 
@@ -253,6 +258,7 @@ class _EmployeesTabState extends State<EmployeesTab> {
     final List<EmployeeAssignmentRow> rows = <EmployeeAssignmentRow>[...state.assigned, ...state.unassigned];
     if (rows.isEmpty) {
       await CustomDialogManager.showMessage(
+        width: TtDialogWidth.status,
         context: context,
         lottiePath: AppAssets.lottieWarning,
         title: s.export,
@@ -287,7 +293,8 @@ class _EmployeesTabState extends State<EmployeesTab> {
     final EmployeesCubit cubit = context.read<EmployeesCubit>();
     await CustomDialogManager.showDialogFlow(
       context: context,
-      confirmWidth: 411,
+      confirmWidth: TtDialogWidth.status,
+      successWidth: TtDialogWidth.status,
       destructive: true,
       confirmLottie: AppAssets.lottieWarning,
       confirmTitle: s.timeTrackerRemovingAssignment,

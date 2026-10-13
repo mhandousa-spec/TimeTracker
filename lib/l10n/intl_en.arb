@@ -4841,8 +4841,8 @@
   "timeTrackerOpenInGoogleMaps": "Open In Google Maps",
   "timeTrackerSectionAttendanceRules": "Attendance Rules",
   "timeTrackerImportStep1Title": "Download The Template",
-  "timeTrackerImportStep1Locations": "A spreadsheet (CSV) with one row per location, already filled with your current locations. Each column is one field: name, map link, address, work hours, rules.",
-  "timeTrackerImportStep1Balances": "A spreadsheet (CSV) with one row per employee: Email, Year and Total Days, already filled with the current balances.",
+  "timeTrackerImportStep1Locations": "A spreadsheet (CSV), one row per location. The rows already in it are your CURRENT locations — they show how to fill each column. Columns: name, map link, address, work hours, rules.",
+  "timeTrackerImportStep1Balances": "A spreadsheet (CSV), one row per employee, already filled with the current balances of the selected year. Only Total Days is imported; Employee Name, Department, Job Title, Used and Remaining Days help you find the employee and are not changed.",
   "timeTrackerImportStep2Title": "Fill It In",
   "timeTrackerImportStep2Locations": "Add a row for each new location, or change values in an existing row (same name = update). An empty cell keeps the saved value. Nothing is ever deleted.",
   "timeTrackerImportStep2Balances": "Change Total Days for each employee for {year}. A blank Year means {year}; other years are skipped. Nothing is ever deleted.",
@@ -4851,5 +4851,28 @@
   "timeTrackerVacationHistory": "Vacation History",
   "timeTrackerNoVacationsInYear": "No vacation requests in {year}.",
   "timeTrackerDeductedFromBalance": "Deducted From Balance",
-  "timeTrackerVacationRequestsCount": "Requests: {count}"
+  "timeTrackerVacationRequestsCount": "Requests: {count}",
+  "timeTrackerEditVacationExplain": "Here you set how many vacation days {name} gets in {year} (Total Days). Used Days are counted from approved vacation requests and cannot be edited here. Remaining = Total Days − Used Days.",
+  "@timeTrackerEditVacationExplain": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "year": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackerTotalDaysHint": "e.g. 21",
+  "timeTrackerMapsUrlInvalid": "Enter a map link that starts with https:// (Google Maps or Apple Maps).",
+  "timeTrackerLateAfterTooLong": "Late After must be shorter than the work day.",
+  "timeTrackerPauseTooLong": "A pause can be at most 1440 minutes (one day).",
+  "timeTrackerWorkStartRequired": "Choose the work start time.",
+  "timeTrackerWorkEndRequired": "Choose the work end time.",
+  "timeTrackerPauseLimitHint": "Longest pause in minutes (empty = no limit)",
+  "timeTrackerLateAfterGraceHint": "Minutes after start before it counts as late (e.g. 15)",
+  "timeTrackerTerrainView": "Terrain",
+  "timeTrackerAddressFromPin": "Country, State and City were filled in from the pin.",
+  "timeTrackerGroupRulesTag": "Group Rules",
+  "timeTrackerCustomRulesTag": "Custom Rules"
 }

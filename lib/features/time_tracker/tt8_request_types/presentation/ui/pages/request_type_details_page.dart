@@ -81,7 +81,8 @@ class _Details extends StatelessWidget {
     final RequestTypesCubit cubit = context.read<RequestTypesCubit>();
     await CustomDialogManager.showDialogFlow(
       context: context,
-      confirmWidth: 411,
+      confirmWidth: TtDialogWidth.status,
+      successWidth: TtDialogWidth.status,
       destructive: true,
       confirmLottie: AppAssets.lottieWarning,
       confirmTitle: s.timeTrackerRemovingRequestType,
@@ -101,7 +102,8 @@ class _Details extends StatelessWidget {
     final RequestTypesCubit cubit = context.read<RequestTypesCubit>();
     await CustomDialogManager.showDialogFlow(
       context: context,
-      confirmWidth: 411,
+      confirmWidth: TtDialogWidth.status,
+      successWidth: TtDialogWidth.status,
       confirmLottie: AppAssets.lottieWarning,
       confirmTitle: s.timeTrackerRestoringRequestType,
       confirmSubtitle: s.timeTrackerRestoreRequestTypeConfirm,

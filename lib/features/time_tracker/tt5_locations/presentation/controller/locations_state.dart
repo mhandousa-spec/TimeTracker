@@ -25,13 +25,19 @@ enum LocationsLoadStatus { initial, loading, loaded, failure }
 class LocationImportRead {
   const LocationImportRead.cancelled()
       : plan = null,
+        grid = null,
         unreadable = false;
-  const LocationImportRead.read(LocationImportPlan this.plan) : unreadable = false;
+  const LocationImportRead.read(LocationImportPlan this.plan, {this.grid}) : unreadable = false;
   const LocationImportRead.unreadable()
       : plan = null,
+        grid = null,
         unreadable = true;
 
   final LocationImportPlan? plan;
+
+  /// ADDED 13/10/2026 (owner): the file as read (first row = headings), for
+  /// the bulk-upload review where each cell can be fixed.
+  final List<List<String>>? grid;
   final bool unreadable;
 }
 
@@ -55,6 +61,7 @@ class LocationsState {
     this.companyHasHr = false,
     this.query = '',
     this.filter = LocationsFilter.none,
+    this.isGrid = true,
     this.failure = TimeTrackerActionFailure.none,
     this.errorMessage = '',
   });
@@ -69,6 +76,9 @@ class LocationsState {
   final bool companyHasHr;
   final String query;
   final LocationsFilter filter;
+
+  /// 13/10/2026 (owner): tablet List / Grid toggle (true = cards).
+  final bool isGrid;
   final TimeTrackerActionFailure failure;
   final String errorMessage;
 
@@ -76,8 +86,7 @@ class LocationsState {
   List<WorkLocation> get listed => <WorkLocation>[
         for (final WorkLocation l in locations)
           if (l.status != LocationStatus.deleted) l,
-      ]..sort((WorkLocation a, WorkLocation b) =>
-          a.nameEn.toLowerCase().compareTo(b.nameEn.toLowerCase()));
+      ]..sort((WorkLocation a, WorkLocation b) => a.nameEn.toLowerCase().compareTo(b.nameEn.toLowerCase()));
 
   /// [listed] narrowed by the search box and the filter.
   List<WorkLocation> get visible {
@@ -86,10 +95,7 @@ class LocationsState {
       for (final WorkLocation l in listed)
         if ((filter.status == null || l.status == filter.status) &&
             (filter.geofence == null || l.isGeofenceEnabled == filter.geofence) &&
-            (q.isEmpty ||
-                '${l.nameEn} ${l.nameAr} ${l.city} ${l.country} ${l.state}'
-                    .toLowerCase()
-                    .contains(q)))
+            (q.isEmpty || '${l.nameEn} ${l.nameAr} ${l.city} ${l.country} ${l.state}'.toLowerCase().contains(q)))
           l,
     ];
   }
@@ -108,8 +114,7 @@ class LocationsState {
           if (a.locationId == id) a.employeeEmail,
       ];
 
-  bool get isLoading =>
-      status == LocationsLoadStatus.initial || status == LocationsLoadStatus.loading;
+  bool get isLoading => status == LocationsLoadStatus.initial || status == LocationsLoadStatus.loading;
 
   /// Function Name: [copyWith]
   ///
@@ -123,6 +128,7 @@ class LocationsState {
     bool? companyHasHr,
     String? query,
     LocationsFilter? filter,
+    bool? isGrid,
     TimeTrackerActionFailure? failure,
     String? errorMessage,
   }) =>
@@ -133,6 +139,7 @@ class LocationsState {
         companyHasHr: companyHasHr ?? this.companyHasHr,
         query: query ?? this.query,
         filter: filter ?? this.filter,
+        isGrid: isGrid ?? this.isGrid,
         failure: failure ?? this.failure,
         errorMessage: errorMessage ?? this.errorMessage,
       );

@@ -81,6 +81,10 @@ void main() {
       seedLocations(h.remote, <WorkLocation>[_hq, _b2]);
       await h.pump(tester, const TimeTrackerHomePage());
       await _open(tester, h, S.current.timeTrackerTabLocations);
+      // 13/10/2026 (owner): cards first; the List toggle shows the table.
+      expect(_key('locationsGrid'), findsOneWidget);
+      await tester.tap(_key('locationsTableToggle'));
+      await h.settle(tester);
       expect(_key('locationsTable'), findsOneWidget);
       expect(_key('locationRow_hq'), findsOneWidget);
       expect(_key('locationRow_b2'), findsOneWidget);
@@ -327,6 +331,9 @@ void main() {
     await tester.tap(_key('employeesCounter_unassigned'));
     await h.settle(tester);
     expect(_key('employeeCard_me@co.com'), findsOneWidget);
+    // 13/10/2026: the counters scroll sideways on a phone (as Approvals).
+    await tester.ensureVisible(_key('employeesCounter_groups'));
+    await tester.pump();
     await tester.tap(_key('employeesCounter_groups'));
     await h.settle(tester);
     expect(_key('groupCard_g1'), findsOneWidget);

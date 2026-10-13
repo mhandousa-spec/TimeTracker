@@ -52,6 +52,7 @@ import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/tim
 import 'package:knowticed_plus/features/time_tracker/tt10_request_form/presentation/controller/request_form_cubit.dart';
 import 'package:knowticed_plus/features/time_tracker/tt10_request_form/presentation/ui/widgets/request_form_fields.dart';
 import 'package:knowticed_plus/features/time_tracker/tt5_locations/presentation/ui/widgets/location_form_fields.dart';
+import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_controls.dart';
 import 'package:knowticed_plus/generated/l10n.dart';
 
 class RequestFormPage extends StatelessWidget {
@@ -91,7 +92,8 @@ class _RequestFormViewState extends State<_RequestFormView> {
     final bool ar = Localizations.localeOf(context).languageCode == 'ar';
     await CustomDialogManager.showDialogFlow(
       context: context,
-      confirmWidth: 411,
+      confirmWidth: TtDialogWidth.status,
+      successWidth: TtDialogWidth.status,
       scaleIn: true,
       confirmLottie: AppAssets.lottieConfirmation,
       confirmTitle: s.timeTrackerCreatingRequest,

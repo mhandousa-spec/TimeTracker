@@ -85,6 +85,7 @@ Future<void> showGrantAccessFlow(BuildContext context, List<TimeTrackerEmployee>
   final S s = S.of(context);
   if (ok) {
     await CustomDialogManager.showMessage(
+      width: TtDialogWidth.status,
       context: context,
       lottiePath: AppAssets.successful,
       title: s.timeTrackerAccessGrantedTitle,

@@ -192,27 +192,44 @@ class RulesSourceTag extends StatelessWidget {
 /// looks like a button. Wrap the card: the ribbon is clipped to the card's
 /// rounded corner. Only for custom rules; "From location" shows nothing.
 class TtCustomRibbon extends StatelessWidget {
-  const TtCustomRibbon({super.key, required this.child, this.show = true});
+  const TtCustomRibbon({super.key, required this.child, this.show = true, this.label});
 
   final Widget child;
 
   /// False = the plain [child].
   final bool show;
 
+  /// 13/10/2026 (owner: "the Custom label is bad — bigger"): the tag's
+  /// text, e.g. "Group Rules" / "Custom Rules" (null = "Custom").
+  final String? label;
+
   @override
   Widget build(BuildContext context) {
     if (!show) return child;
-    return ClipRRect(
-      borderRadius: CardStyles.radius(),
-      child: Banner(
-        message: S.of(context).timeTrackerRangeCustom,
-        location: BannerLocation.topStart,
-        layoutDirection: Directionality.of(context),
-        textDirection: Directionality.of(context),
-        color: AppColors.primary,
-        textStyle: StyleText.fontSize10Weight500.copyWith(color: AppColors.textButton, height: 1.1),
-        child: child,
-      ),
+    // 13/10/2026 (owner): a readable corner tag (12 Medium) instead of the
+    // tiny diagonal banner; the card leaves room for it at the top.
+    return Stack(
+      children: <Widget>[
+        child,
+        PositionedDirectional(
+          top: 0,
+          start: 0,
+          child: Container(
+            padding: EdgeInsetsDirectional.symmetric(horizontal: 10.w, vertical: 3.h),
+            decoration: BoxDecoration(
+              color: AppColors.primary,
+              borderRadius: BorderRadiusDirectional.only(
+                topStart: CardStyles.radius().topLeft,
+                bottomEnd: Radius.circular(8.r),
+              ),
+            ),
+            child: Text(
+              label ?? S.of(context).timeTrackerRangeCustom,
+              style: StyleText.fontSize12Weight500.copyWith(color: AppColors.textButton),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
