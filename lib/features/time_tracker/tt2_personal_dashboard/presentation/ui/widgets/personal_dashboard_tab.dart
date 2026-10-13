@@ -39,6 +39,8 @@
 /// (legend names get the room, "Citizen Services" on one line); Late History
 /// bars animate between Counts and Minutes.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -261,14 +263,47 @@ class _WorkLocationsDonut extends StatelessWidget {
   }
 }
 
-class _LateHistoryCard extends StatelessWidget {
+class _LateHistoryCard extends StatefulWidget {
   const _LateHistoryCard({required this.state});
 
   final PersonalDashboardState state;
 
   @override
+  State<_LateHistoryCard> createState() => _LateHistoryCardState();
+}
+
+/// 13/10/2026 (owner: "I can't see the animation"): on Counts ↔ Minutes the
+/// bars first drop to zero, then grow to the new values — clearly visible
+/// (a plain morph between two scales was too subtle).
+class _LateHistoryCardState extends State<_LateHistoryCard> {
+  static const Duration _drop = Duration(milliseconds: 220);
+  static const Duration _grow = Duration(milliseconds: 650);
+
+  bool _dropped = false;
+  Timer? _timer;
+
+  @override
+  void didUpdateWidget(_LateHistoryCard old) {
+    super.didUpdateWidget(old);
+    if (old.state.lateMode != widget.state.lateMode) {
+      _timer?.cancel();
+      setState(() => _dropped = true);
+      _timer = Timer(_drop, () {
+        if (mounted) setState(() => _dropped = false);
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final S s = S.of(context);
+    final PersonalDashboardState state = widget.state;
     final bool minutes = state.lateMode == LateHistoryMode.minutes;
     final String locale = Localizations.localeOf(context).languageCode;
     return BarChartCard(
@@ -277,9 +312,8 @@ class _LateHistoryCard extends StatelessWidget {
       dotIcon: _historyIcon,
       barColor: AppColors.primary,
       barWidth: 40,
-      // 13/10/2026 (owner): Counts ↔ Minutes morphs the bars smoothly.
-      animationDuration: const Duration(milliseconds: 450),
-      animationCurve: Curves.easeInOutCubic,
+      animationDuration: _dropped ? _drop : _grow,
+      animationCurve: _dropped ? Curves.easeIn : Curves.easeOutCubic,
       trailing: TtSegmentedToggle(
         key: const ValueKey<String>('timeTrackerLateModeToggle'),
         onCard: true,
@@ -293,7 +327,7 @@ class _LateHistoryCard extends StatelessWidget {
         for (final MonthLate m in state.stats.lateByMonth)
           ChartData(
             label: DateFormat('MMM', locale).format(m.month),
-            value: (minutes ? m.minutes : m.count).toDouble(),
+            value: _dropped ? 0 : (minutes ? m.minutes : m.count).toDouble(),
           ),
       ],
     );

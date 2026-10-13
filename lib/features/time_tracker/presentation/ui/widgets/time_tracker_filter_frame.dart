@@ -181,6 +181,8 @@ class TtFilterMultiDropdown<T> extends StatelessWidget {
       fillColor: kDropdownFillColor,
       height: 36,
       heightSizesWholeTrigger: true,
+      // Same hint colour as the single-choice dropdowns beside it.
+      hintStyle: StyleText.fontSize12Weight400.copyWith(color: kDropdownHintColor),
       itemStyle: StyleText.fontSize12Weight400,
       values: <T>[
         for (final (T v, String _) in items)
@@ -271,6 +273,10 @@ class TtToolbarMultiFilter extends StatelessWidget {
       height: TtToolbar.height,
       heightSizesWholeTrigger: true,
       borderRadius: TtToolbar.radius,
+      // 13/10/2026 (owner): the same corners and hint colour as the other
+      // toolbar dropdowns (Employee, Year).
+      triggerBorderRadius: TtToolbar.radius,
+      hintStyle: StyleText.fontSize12Weight400.copyWith(color: kDropdownHintColor),
       fillColor: AppColors.card,
       itemStyle: StyleText.fontSize12Weight400,
       values: <String>[

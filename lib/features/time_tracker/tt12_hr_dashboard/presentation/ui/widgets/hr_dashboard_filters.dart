@@ -34,6 +34,9 @@ import 'package:knowticed_plus/core/custom/1-custom_dropdown.dart';
 import 'package:knowticed_plus/core/custom/31-custom_multi_select_dropdown.dart';
 import 'package:knowticed_plus/core/custom/57-custom_dialog_manager.dart';
 import 'package:knowticed_plus/core/extensions/context_extensions.dart';
+import 'package:knowticed_plus/core/helper/main_helper/localized_number.dart';
+import 'package:knowticed_plus/core/theme/app_animations.dart';
+import 'package:knowticed_plus/core/custom/41-custom_button_sizing.dart';
 import 'package:knowticed_plus/core/theme/app_colors.dart';
 import 'package:knowticed_plus/core/theme/app_theme.dart';
 import 'package:knowticed_plus/core/theme/haptic_controller.dart';
@@ -150,6 +153,10 @@ class HrDashboardFilterBar extends StatelessWidget {
 /// Location / Time) instead of a yellow-when-active box; a selection shows
 /// as "Employee (3)". The dropdown itself never opens — the tap goes to the
 /// picker.
+/// 13/10/2026 (owner): "Employee" is a BUTTON, not a dropdown — the text
+/// centred, no arrow; it opens the Employees popup. With employees picked
+/// it turns yellow ("Employee (2)"). Toolbar height + radius; LOW haptic,
+/// shrinks on press.
 class _EmployeeButton extends StatelessWidget {
   const _EmployeeButton({required this.selectedCount, required this.onTap});
 
@@ -159,26 +166,34 @@ class _EmployeeButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String title = S.of(context).employee;
-    final String text = selectedCount == 0 ? title : '$title ($selectedCount)';
-    return GestureDetector(
-      key: const ValueKey<String>('hrEmployeeButton'),
-      behavior: HitTestBehavior.opaque,
-      onTap: () {
-        HapticController.low();
-        onTap();
-      },
-      child: IgnorePointer(
-        child: CustomDropdown<String>(
-          hint: text,
-          height: TtToolbar.height,
-          borderRadius: TtToolbar.radius,
-          fillColor: AppColors.card,
-          itemStyle: StyleText.fontSize12Weight400,
-          value: selectedCount == 0 ? null : text,
-          items: <DropdownItem<String>>[
-            if (selectedCount > 0) DropdownItem<String>(value: text, label: text),
-          ],
-          onChanged: (_) {},
+    final bool picked = selectedCount > 0;
+    final String text = picked ? '$title (${LocalizedNumber.of(context, selectedCount)})' : title;
+    return ShrinkOnTap(
+      child: GestureDetector(
+        key: const ValueKey<String>('hrEmployeeButton'),
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          HapticController.low();
+          onTap();
+        },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          // Same scaled height as the dropdowns and Export (`ButtonSizing`).
+          height: ButtonSizing.height,
+          alignment: Alignment.center,
+          padding: EdgeInsetsDirectional.symmetric(horizontal: 10.w),
+          decoration: BoxDecoration(
+            color: picked ? AppColors.primary : AppColors.card,
+            borderRadius: TtToolbar.radius,
+          ),
+          child: Text(
+            text,
+            textAlign: TextAlign.center,
+            // Unpicked: the same grey as the other filters' placeholders.
+            style: picked
+                ? StyleText.fontSize12Weight500.copyWith(color: AppColors.textButton)
+                : StyleText.fontSize12Weight400.copyWith(color: kDropdownHintColor),
+          ),
         ),
       ),
     );

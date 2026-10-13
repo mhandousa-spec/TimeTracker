@@ -92,6 +92,11 @@ class CustomMultiSelectDropdown<T> extends StatefulWidget {
   /// Defaults to false, so every existing caller is pixel-unchanged.
   final bool heightSizesWholeTrigger;
   final BorderRadius? borderRadius;
+
+  /// ADDED 13/10/2026 (Time Tracker owner) — the trigger's corner radius.
+  /// [borderRadius] has never reached the trigger (it stays 4), and callers
+  /// rely on that look, so this is a separate opt-in. Null = 4.
+  final BorderRadius? triggerBorderRadius;
   final TextStyle? valueStyle;
   /// Hint style. Its font SIZE is ignored — the hint is always 12.sp.
   final TextStyle? hintStyle;
@@ -147,6 +152,7 @@ class CustomMultiSelectDropdown<T> extends StatefulWidget {
     this.height,
     this.heightSizesWholeTrigger = false,
     this.borderRadius,
+    this.triggerBorderRadius,
     this.valueStyle,
     this.hintStyle,
     this.itemStyle,
@@ -329,7 +335,7 @@ class _CustomMultiSelectDropdownState<T>
   @override
   Widget build(BuildContext context) {
     final hasError = widget.errorText != null && widget.errorText!.isNotEmpty;
-    final radius =  BorderRadius.circular(4.r);
+    final radius = widget.triggerBorderRadius ?? BorderRadius.circular(4.r);
 
     // With [alwaysShowHint] the trigger renders as if nothing were selected —
     // InputDecorator only draws `hintText` while it believes it is empty, so

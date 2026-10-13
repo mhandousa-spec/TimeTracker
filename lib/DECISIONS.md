@@ -105,3 +105,4 @@ Facts found in code (8/10):
 70. Employee header card: name, department and job title stacked and centred with the photo; Email · Phone below; Message on every employee page except one's own (also Vacation History).
 71. Long job titles are abbreviated in compact places (HR → "Human Resources", Mgr., Dir., Coord., Admin. …, `TtJobTitle.short`).
 72. Vacation History: the request status counters (All · Pending · Under Review · Approved · Rejected · Canceled) above the list. The Edit balance dialog says in one sentence what it changes (the year's Total Days; Used comes from approved vacations; Remaining = Total − Used).
+73. HR dashboard filter row: every control has the same corners and placeholder grey. "Employee" is a centred button (no arrow) that turns yellow with the count once employees are picked. Late History Counts ↔ Minutes: the bars drop to zero and grow to the new values (clearly visible).
