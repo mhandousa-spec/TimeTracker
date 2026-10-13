@@ -42,7 +42,13 @@ class CustomSegmentedTabs extends StatelessWidget {
     this.textStyle,
     this.equalWidth = false,
     this.tabBorderRadius,
+    this.tabKeys,
   });
+
+  /// ADDED 12/10/2026 (Time Tracker owner review T1): an optional key per
+  /// tab (same order as [tabs]) so a screen / test can find one segment.
+  /// Null keeps every existing caller unchanged.
+  final List<Key>? tabKeys;
 
   /// ADDED 9/10/2026 (Time Tracker UI fix round 1): corner radius of each
   /// tab. Null keeps the historical 4, so every existing caller is
@@ -117,12 +123,14 @@ class CustomSegmentedTabs extends StatelessWidget {
           return equalWidth
               ? Expanded(
             child: _buildTab(
+              key: tabKeys?[tabIndex],
               title: tabs[tabIndex],
               isSelected: isSelected,
               onTap: () => onTabSelected(tabIndex),
             ),
           )
               : _buildTab(
+            key: tabKeys?[tabIndex],
             title: tabs[tabIndex],
             isSelected: isSelected,
             onTap: () => onTabSelected(tabIndex),
@@ -133,11 +141,14 @@ class CustomSegmentedTabs extends StatelessWidget {
   }
 
   Widget _buildTab({
+    Key? key,
     required String title,
     required bool isSelected,
     required VoidCallback onTap,
   }) {
     return GestureDetector(
+      key: key,
+      behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(

@@ -22,6 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 
+import 'package:knowticed_plus/core/custom/16-custom_card_styles.dart';
 import 'package:knowticed_plus/core/helper/main_helper/localized_number.dart';
 import 'package:knowticed_plus/core/theme/app_colors.dart';
 import 'package:knowticed_plus/core/theme/app_theme.dart';
@@ -181,6 +182,36 @@ class RulesSourceTag extends StatelessWidget {
         style: StyleText.fontSize10Weight400.copyWith(
           color: custom ? AppColors.textButton : AppColors.secondaryText,
         ),
+      ),
+    );
+  }
+}
+
+/// ADDED 12/10/2026 (owner T3): "Custom" as a diagonal corner RIBBON on the
+/// card's start corner (left in English, right in Arabic) — not a chip that
+/// looks like a button. Wrap the card: the ribbon is clipped to the card's
+/// rounded corner. Only for custom rules; "From location" shows nothing.
+class TtCustomRibbon extends StatelessWidget {
+  const TtCustomRibbon({super.key, required this.child, this.show = true});
+
+  final Widget child;
+
+  /// False = the plain [child].
+  final bool show;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!show) return child;
+    return ClipRRect(
+      borderRadius: CardStyles.radius(),
+      child: Banner(
+        message: S.of(context).timeTrackerRangeCustom,
+        location: BannerLocation.topStart,
+        layoutDirection: Directionality.of(context),
+        textDirection: Directionality.of(context),
+        color: AppColors.primary,
+        textStyle: StyleText.fontSize10Weight500.copyWith(color: AppColors.textButton, height: 1.1),
+        child: child,
       ),
     );
   }

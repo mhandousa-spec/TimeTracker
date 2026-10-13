@@ -204,7 +204,13 @@ void main() {
       await h.settle(tester);
       expect(_key('employeeCard_me@co.com'), findsOneWidget);
       expect(_key('employeeAssign_me@co.com'), findsOneWidget);
+      // 12/10/2026 (owner T2): Department sits inside the Filter popup.
+      expect(_key('employeesDepartmentFilter'), findsNothing);
+      await tester.tap(_key('employeesFilterButton'));
+      await h.settle(tester);
       expect(_key('employeesDepartmentFilter'), findsOneWidget);
+      await tester.tap(_key('employeesFilterApply'));
+      await h.settle(tester);
       await tester.tap(_key('employeeAssign_me@co.com'));
       await h.settle(tester);
       expect(find.text(S.current.timeTrackerGrantAccess), findsOneWidget);

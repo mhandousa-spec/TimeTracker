@@ -95,7 +95,8 @@ class EmployeeCard extends StatelessWidget {
     final String title = employee.jobTitle(isArabic: ar);
     final DateTime? assigned = a != null && a.isAssigned ? a.startDate : null;
     final bool hasFooter = assigned != null || locationName.isNotEmpty || effective != null || primary != null;
-    final Widget card = Container(
+    final bool custom = effective != null && !effective.isFromLocation;
+    final Widget body = Container(
       padding: EdgeInsetsDirectional.all(10.r),
       decoration: BoxDecoration(color: AppColors.card, borderRadius: CardStyles.radius()),
       child: Column(
@@ -104,6 +105,8 @@ class EmployeeCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+              // 12/10/2026 (owner T3): room for the "Custom" corner ribbon.
+              if (custom) SizedBox(width: 18.w),
               TimeTrackerAvatar(photo: employee.photo, size: 40.r),
               SizedBox(width: 10.w),
               Expanded(
@@ -150,23 +153,30 @@ class EmployeeCard extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
+                      // 12/10/2026 (owner T4 / R12): every line has its icon.
                       if (assigned != null)
-                        _Pair(label: s.timeTrackerAssignDateLabel, value: TimeTrackerFormat.date(context, assigned)),
-                      if (locationName.isNotEmpty) _Pair(label: s.timeTrackerLocation, value: locationName),
-                      if (effective != null) ...<Widget>[
-                        SizedBox(height: 4.h),
-                        Wrap(
-                          key: ValueKey<String>('employeeRules_${employee.email}'),
-                          spacing: 6.w,
-                          runSpacing: 4.h,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: <Widget>[
-                            Text(LocationRulesText.rules(context, effective.rules),
-                                style: StyleText.fontSize10Weight400.copyWith(color: AppColors.secondaryText)),
-                            RulesSourceTag(source: effective.source),
-                          ],
+                        _Pair(
+                          icon: TtAssets.calendar,
+                          label: s.timeTrackerAssignDateLabel,
+                          value: TimeTrackerFormat.date(context, assigned),
                         ),
-                      ],
+                      if (locationName.isNotEmpty)
+                        _Pair(icon: TtAssets.location, label: s.timeTrackerLocation, value: locationName),
+                      if (effective != null)
+                        Padding(
+                          key: ValueKey<String>('employeeRules_${employee.email}'),
+                          padding: EdgeInsetsDirectional.only(top: 4.h),
+                          child: Row(
+                            children: <Widget>[
+                              TtIcon(const TtGlyph.svg(TtAssets.clock), size: 14.r, color: AppColors.secondaryText),
+                              SizedBox(width: 6.w),
+                              Expanded(
+                                child: Text(LocationRulesText.rules(context, effective.rules),
+                                    style: StyleText.fontSize10Weight400.copyWith(color: AppColors.secondaryText)),
+                              ),
+                            ],
+                          ),
+                        ),
                     ],
                   ),
                 ),
@@ -176,6 +186,11 @@ class EmployeeCard extends StatelessWidget {
           ],
         ],
       ),
+    );
+    final Widget card = TtCustomRibbon(
+      key: custom ? ValueKey<String>('employeeCustomRibbon_${employee.email}') : null,
+      show: custom,
+      child: body,
     );
     final VoidCallback? tap = onTap;
     if (tap == null) return card;
@@ -190,10 +205,11 @@ class EmployeeCard extends StatelessWidget {
   }
 }
 
-/// "Label: value" — the value wraps (never "…").
+/// [icon] "Label: value" — the value wraps (never "…").
 class _Pair extends StatelessWidget {
-  const _Pair({required this.label, required this.value});
+  const _Pair({required this.icon, required this.label, required this.value});
 
+  final String icon;
   final String label;
   final String value;
 
@@ -201,14 +217,28 @@ class _Pair extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsetsDirectional.only(top: 2.h),
-      child: Text.rich(
-        TextSpan(
-          text: '$label: ',
-          style: StyleText.fontSize12Weight400.copyWith(color: AppColors.secondaryText),
-          children: <InlineSpan>[
-            TextSpan(text: value, style: StyleText.fontSize12Weight500.copyWith(color: AppColors.text)),
-          ],
-        ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsetsDirectional.only(top: 1.h),
+            child: TtIcon(TtGlyph.svg(icon), size: 14.r, color: AppColors.secondaryText),
+          ),
+          SizedBox(width: 6.w),
+          Expanded(child: _text()),
+        ],
+      ),
+    );
+  }
+
+  Widget _text() {
+    return Text.rich(
+      TextSpan(
+        text: '$label: ',
+        style: StyleText.fontSize12Weight400.copyWith(color: AppColors.secondaryText),
+        children: <InlineSpan>[
+          TextSpan(text: value, style: StyleText.fontSize12Weight500.copyWith(color: AppColors.text)),
+        ],
       ),
     );
   }

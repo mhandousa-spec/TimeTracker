@@ -32,7 +32,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
 
 import 'package:knowticed_plus/core/constants/app_assets.dart';
-import 'package:knowticed_plus/core/custom/1-custom_dropdown.dart';
 import 'package:knowticed_plus/core/custom/57-custom_dialog_manager.dart';
 import 'package:knowticed_plus/core/custom/66-circle_progress.dart';
 import 'package:knowticed_plus/core/custom/89-custom_empty_state.dart';
@@ -41,7 +40,6 @@ import 'package:knowticed_plus/core/helper/main_helper/localized_number.dart';
 import 'package:knowticed_plus/core/theme/app_animations.dart';
 import 'package:knowticed_plus/core/theme/app_colors.dart';
 import 'package:knowticed_plus/core/theme/app_theme.dart';
-import 'package:knowticed_plus/core/theme/haptic_controller.dart';
 import 'package:knowticed_plus/features/time_tracker/data/services/time_tracker_access.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/entities/time_tracker_employee.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/rules/employee_assignment_rules.dart';
@@ -95,28 +93,16 @@ class _EmployeesTabState extends State<EmployeesTab> {
                 style: StyleText.fontSize14Weight400.copyWith(color: AppColors.red)),
           );
         }
-        final EmployeesCubit cubit = context.read<EmployeesCubit>();
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            if (_access.canViewEmployees)
-              SlideInContent(
-                child: Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: TtSegmentedToggle(
-                    key: const ValueKey<String>('employeesSubToggle'),
-                    tabs: <String>[s.timeTrackerTabEmployees, s.timeTrackerTabLocations],
-                    selectedIndex: state.view.index,
-                    onChanged: (int i) => cubit.setView(EmployeesSubView.values[i]),
-                  ),
-                ),
-              ),
-            SizedBox(height: 15.h),
+            // 12/10/2026 (owner T1): ONE segmented filter row — Assigned ·
+            // Unassigned · Groups · Locations, each with its count (was a
+            // toggle + three counter boxes on two rows).
+            SlideInContent(child: _segments(context, state)),
             if (state.view == EmployeesSubView.locations && _access.canViewEmployees)
               const EmployeesLocationsView()
             else ...<Widget>[
-              SlideInContent(delay: const Duration(milliseconds: 60), child: _counters(context, state)),
-              SizedBox(height: 15.h),
               if (state.segment == EmployeesSegment.groups)
                 const GroupsView()
               else ...<Widget>[
@@ -132,61 +118,77 @@ class _EmployeesTabState extends State<EmployeesTab> {
     );
   }
 
-  Widget _counters(BuildContext context, EmployeesState state) {
+  /// ADDED 12/10/2026 (owner T1): the one segmented filter (core
+  /// `CustomSegmentedTabs` through `TtSegmentedToggle`). Hidden when the
+  /// viewer may see only one of the four lists.
+  Widget _segments(BuildContext context, EmployeesState state) {
     final S s = S.of(context);
     final EmployeesCubit cubit = context.read<EmployeesCubit>();
-    Widget counter(EmployeesSegment seg, int count, String label) {
-      final bool on = state.segment == seg;
-      return GestureDetector(
-        key: ValueKey<String>('employeesCounter_${seg.name}'),
-        // 9/10/2026: the gap between the number and the label taps too.
-        behavior: HitTestBehavior.opaque,
-        onTap: () {
-          HapticController.low();
-          cubit.setSegment(seg);
-        },
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Container(
-              width: 44.r,
-              height: 44.r,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: on ? AppColors.primary : AppColors.card,
-                borderRadius: BorderRadiusDirectional.circular(8.r),
-              ),
-              child: Text(LocalizedNumber.of(context, count),
-                  style: StyleText.fontSize18Weight500
-                      .copyWith(color: on ? AppColors.textButton : AppColors.secondaryText)),
-            ),
-            SizedBox(width: 12.w),
-            Text(label,
-                style: StyleText.fontSize16Weight500
-                    .copyWith(color: on ? AppColors.text : AppColors.secondaryText)),
-          ],
+    String counted(String label, int n) => '$label (${LocalizedNumber.of(context, n)})';
+    final List<(String, String, VoidCallback, bool)> tabs = <(String, String, VoidCallback, bool)>[
+      if (_access.canViewEmployees) ...<(String, String, VoidCallback, bool)>[
+        (
+          'assigned',
+          counted(s.timeTrackerAssigned, state.assignedCount),
+          () => cubit
+            ..setView(EmployeesSubView.employees)
+            ..setSegment(EmployeesSegment.assigned),
+          state.view == EmployeesSubView.employees && state.segment == EmployeesSegment.assigned,
         ),
-      );
-    }
-
-    return Wrap(
-      spacing: 30.w,
-      runSpacing: 10.h,
-      children: <Widget>[
-        if (_access.canViewEmployees) ...<Widget>[
-          counter(EmployeesSegment.assigned, state.assignedCount, s.timeTrackerAssigned),
-          counter(EmployeesSegment.unassigned, state.unassignedCount, s.timeTrackerUnassigned),
-        ],
-        if (_access.canViewGroups)
-          counter(EmployeesSegment.groups, state.liveGroups.length, s.timeTrackerGroupPermissions),
+        (
+          'unassigned',
+          counted(s.timeTrackerUnassigned, state.unassignedCount),
+          () => cubit
+            ..setView(EmployeesSubView.employees)
+            ..setSegment(EmployeesSegment.unassigned),
+          state.view == EmployeesSubView.employees && state.segment == EmployeesSegment.unassigned,
+        ),
       ],
+      if (_access.canViewGroups)
+        (
+          'groups',
+          counted(s.timeTrackerGroupPermissions, state.liveGroups.length),
+          () => cubit
+            ..setView(EmployeesSubView.employees)
+            ..setSegment(EmployeesSegment.groups),
+          (state.view == EmployeesSubView.employees || !_access.canViewEmployees) &&
+              state.segment == EmployeesSegment.groups,
+        ),
+      if (_access.canViewEmployees)
+        (
+          'locations',
+          s.timeTrackerTabLocations,
+          () => cubit.setView(EmployeesSubView.locations),
+          state.view == EmployeesSubView.locations,
+        ),
+    ];
+    if (tabs.length < 2) return const SizedBox.shrink();
+    final int selected = tabs.indexWhere(((String, String, VoidCallback, bool) t) => t.$4);
+    final bool phone = context.isPhone;
+    final Widget toggle = TtSegmentedToggle(
+      key: const ValueKey<String>('employeesSubToggle'),
+      tabs: <String>[for (final (String, String, VoidCallback, bool) t in tabs) t.$2],
+      tabKeys: <Key>[
+        for (final (String, String, VoidCallback, bool) t in tabs) ValueKey<String>('employeesCounter_${t.$1}'),
+      ],
+      // Phone: the compact metrics (12 Medium).
+      compact: phone,
+      selectedIndex: selected < 0 ? 0 : selected,
+      onChanged: (int i) => tabs[i].$3(),
+    );
+    return Padding(
+      padding: EdgeInsetsDirectional.only(bottom: 15.h),
+      // Phone: the whole control scales down evenly if it is wider than the
+      // screen (Arabic), so every tab keeps the same text size.
+      child: phone
+          ? FittedBox(fit: BoxFit.scaleDown, alignment: AlignmentDirectional.centerStart, child: toggle)
+          : Align(alignment: AlignmentDirectional.centerStart, child: toggle),
     );
   }
 
   Widget _toolbar(BuildContext context, EmployeesState state) {
     final S s = S.of(context);
     final EmployeesCubit cubit = context.read<EmployeesCubit>();
-    final bool phone = context.isPhone;
     final bool assignedTab = state.segment == EmployeesSegment.assigned;
     final Map<String, String> departments = state.departments;
     return Row(
@@ -195,41 +197,27 @@ class _EmployeesTabState extends State<EmployeesTab> {
           controller: _search,
           onChanged: cubit.searchChanged,
         ),
-        if (_access.showEmployeesDepartmentFilter) ...<Widget>[
-          SizedBox(width: 15.w),
-          SizedBox(
-            width: phone ? 140.w : 160.w,
-            child: CustomDropdown<String>(
-              key: const ValueKey<String>('employeesDepartmentFilter'),
-              hint: s.timeTrackerDepartment,
-              height: TtToolbar.height,
-              borderRadius: TtToolbar.radius,
-              fillColor: AppColors.card,
-              itemStyle: StyleText.fontSize12Weight400,
-              // 9/10/2026: nothing chosen shows the Figma placeholder
-              // "Department" (was "All"); the "All" entry clears it.
-              value: state.departmentId.isEmpty ? null : state.departmentId,
-              items: <DropdownItem<String>>[
-                DropdownItem<String>(value: '', label: s.timeTrackerAll),
-                for (final MapEntry<String, String> d in departments.entries)
-                  DropdownItem<String>(value: d.key, label: d.value),
-              ],
-              onChanged: cubit.departmentChanged,
-            ),
-          ),
-        ],
-        if (assignedTab) ...<Widget>[
+        // 12/10/2026 (owner T2): Department lives INSIDE the filter sheet
+        // with Location (Location only for the Assigned list).
+        if (assignedTab || _access.showEmployeesDepartmentFilter) ...<Widget>[
           SizedBox(width: 15.w),
           TtFilterButton(
             key: const ValueKey<String>('employeesFilterButton'),
-            active: state.locationFilter.isNotEmpty,
+            active: (assignedTab && state.locationFilter.isNotEmpty) || state.departmentId.isNotEmpty,
             onTap: () async {
-              final String? picked = await CustomDialogManager.showContent<String>(
+              final EmployeesFilterResult? picked = await CustomDialogManager.showContent<EmployeesFilterResult>(
                 context: context,
                 width: 420,
-                child: EmployeesFilterDialog(initial: state.locationFilter, locations: state.locations),
+                child: EmployeesFilterDialog(
+                  location: state.locationFilter,
+                  department: state.departmentId,
+                  locations: assignedTab ? state.locations : null,
+                  departments: _access.showEmployeesDepartmentFilter ? departments : null,
+                ),
               );
-              if (picked != null) cubit.applyLocationFilter(picked);
+              if (picked == null) return;
+              if (assignedTab) cubit.applyLocationFilter(picked.location);
+              if (_access.showEmployeesDepartmentFilter) cubit.departmentChanged(picked.department);
             },
           ),
         ],

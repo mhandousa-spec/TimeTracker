@@ -276,11 +276,9 @@ void main() {
 
     // Reassign with custom rules.
     await _tapIn(tester, h, _key('employeesCounter_assigned'));
-    expect(find.descendant(of: _key('employeeRules_khaled@co.com'), matching: find.byType(RulesSourceTag)),
-        findsOneWidget);
-    expect(tester.widget<RulesSourceTag>(
-            find.descendant(of: _key('employeeRules_khaled@co.com'), matching: find.byType(RulesSourceTag))).source.name,
-        'location');
+    // 12/10/2026 (owner T3): rules from the location → no "Custom" ribbon.
+    expect(_key('employeeRules_khaled@co.com'), findsOneWidget);
+    expect(_key('employeeCustomRibbon_khaled@co.com'), findsNothing);
     await _tapIn(tester, h, _key('employeeReassign_khaled@co.com'));
     tester.widget<TtSwitchRow>(_key('useLocationRulesSwitch')).onChanged(false);
     await h.settle(tester);
@@ -296,7 +294,7 @@ void main() {
     await h.dispose(tester);
   });
 
-  testWidgets('employee cards: the effective rules line + "From location" / "Custom" tag (AR, phone)',
+  testWidgets('employee cards: the effective rules line + the "Custom" corner ribbon only for custom rules (AR, phone)',
       (WidgetTester tester) async {
     final TimeTrackerHarness h = TimeTrackerHarness(people: _people);
     seedAssignment(h.remote, location: _hq, email: 'khaled@co.com', rules: AttendanceRules.fromLocation,
@@ -305,14 +303,13 @@ void main() {
         rules: const AttendanceRules(isBreakAllowed: true, breakMinutes: 15), startDate: DateTime(2026, 10, 1));
     await h.pump(tester, const TimeTrackerHomePage(), size: kTimeTrackerPhone, locale: const Locale('ar'));
     await _open(tester, h, S.current.timeTrackerTabEmployees);
-    RulesSourceTag tagOf(String email) => tester.widget<RulesSourceTag>(
-        find.descendant(of: _key('employeeRules_$email'), matching: find.byType(RulesSourceTag)));
+    // 12/10/2026 (owner T3): "From location" shows no tag; "Custom" is a
+    // corner ribbon on the card.
     await tester.ensureVisible(_key('employeeRules_khaled@co.com'));
-    expect(tagOf('khaled@co.com').source.name, 'location');
+    expect(_key('employeeCustomRibbon_khaled@co.com'), findsNothing);
     await tester.ensureVisible(_key('employeeRules_me@co.com'));
-    expect(tagOf('me@co.com').source.name, 'employee');
-    final BuildContext ctx = tester.element(_key('employeeRules_khaled@co.com'));
-    expect(_plain(tester, _key('employeeRules_khaled@co.com')), contains(S.of(ctx).timeTrackerRulesFromLocationTag));
+    expect(_key('employeeCustomRibbon_me@co.com'), findsOneWidget);
+    expect(find.descendant(of: _key('employeeCustomRibbon_me@co.com'), matching: find.byType(Banner)), findsOneWidget);
     expect(tester.takeException(), isNull);
     await h.dispose(tester);
   });

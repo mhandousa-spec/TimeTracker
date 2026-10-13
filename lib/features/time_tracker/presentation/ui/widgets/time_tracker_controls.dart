@@ -403,7 +403,11 @@ class TtSegmentedToggle extends StatelessWidget {
     required this.onChanged,
     this.onCard = false,
     this.compact = false,
+    this.tabKeys,
   });
+
+  /// ADDED 12/10/2026: one key per tab (core `CustomSegmentedTabs.tabKeys`).
+  final List<Key>? tabKeys;
 
   final List<String> tabs;
   final int selectedIndex;
@@ -420,6 +424,7 @@ class TtSegmentedToggle extends StatelessWidget {
     final Color surface = onCard ? AppColors.background : AppColors.card;
     if (compact && !onCard) {
       return CustomSegmentedTabs(
+        tabKeys: tabKeys,
         tabs: tabs,
         selectedIndex: selectedIndex,
         onTabSelected: (int i) {
@@ -442,6 +447,7 @@ class TtSegmentedToggle extends StatelessWidget {
       );
     }
     return CustomSegmentedTabs(
+      tabKeys: tabKeys,
       tabs: tabs,
       selectedIndex: selectedIndex,
       onTabSelected: (int i) {
