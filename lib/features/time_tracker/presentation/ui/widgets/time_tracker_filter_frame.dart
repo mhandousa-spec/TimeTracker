@@ -277,6 +277,7 @@ class TtToolbarMultiFilter extends StatelessWidget {
       // toolbar dropdowns (Employee, Year).
       triggerBorderRadius: TtToolbar.radius,
       hintStyle: StyleText.fontSize12Weight400.copyWith(color: kDropdownHintColor),
+      valueStyle: StyleText.fontSize12Weight400.copyWith(color: AppColors.text),
       fillColor: AppColors.card,
       itemStyle: StyleText.fontSize12Weight400,
       values: <String>[

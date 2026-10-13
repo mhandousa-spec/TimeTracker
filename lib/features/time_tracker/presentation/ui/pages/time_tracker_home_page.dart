@@ -80,12 +80,20 @@ class TimeTrackerHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
+      // 13/10/2026 (owner: the title's space from the left must equal the
+      // space from the top): the page sits under the app's header, so the
+      // status-bar inset is not added again at the top.
       body: SafeArea(
+        top: false,
         child: Padding(
           padding: EdgeInsetsDirectional.only(
             start: TimeTrackerHomePage.gutter,
             end: TimeTrackerHomePage.gutter,
-            top: TimeTrackerHomePage.gutter,
+            // 13/10/2026 (owner): the title's letters start one gutter from the
+            // top, like from the left — the title font already carries about
+            // a gutter of empty space above its letters (measured: 22 px top
+            // vs 21 px left on the iPad).
+            top: 0,
           ),
           child: BlocBuilder<TimeTrackerHomeCubit, TimeTrackerHomeState>(
             builder: (BuildContext context, TimeTrackerHomeState state) {
@@ -132,10 +140,16 @@ class _TitleRow extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Row(
+            // The title hugs the top (the debug-only demo button beside it is
+            // taller and used to push it down).
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Expanded(
                 child: Text(
                   s.timeTrackerTitle,
+                  // No extra line spacing above the first line, so the
+                  // title starts one gutter below the top edge.
+                  textHeightBehavior: const TextHeightBehavior(applyHeightToFirstAscent: false),
                   style: (context.isPhone
                           ? StyleText.fontSize24Weight600
                           : StyleText.fontSize28Weight600)
@@ -153,20 +167,10 @@ class _TitleRow extends StatelessWidget {
           // UI quality pass (9/10/2026): the collapsed check-in control gets
           // its own row, so the title never wraps. 13/10/2026 (owner N4 + iPad
           // review): that row also holds Expand — Check In and Expand on ONE
-          // line, centred on each other (phone: Check In at the start; tablet:
-          // both at the end).
-          if (collapsed && state.canCheckIn && !context.isPhone) ...<Widget>[
-            SizedBox(height: 8.h),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                const CheckInControl(compact: true),
-                SizedBox(width: 15.w),
-                _link(context, s, collapsed),
-              ],
-            ),
-          ] else if (collapsed && state.canCheckIn && context.isPhone) ...<Widget>[
+          // line, centred on each other.
+          // 13/10/2026 (owner): Check In at the START on every device,
+          // Expand at the end of the same line.
+          if (collapsed && state.canCheckIn) ...<Widget>[
             SizedBox(height: 8.h),
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,

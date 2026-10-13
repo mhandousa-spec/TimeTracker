@@ -73,6 +73,10 @@ class GroupedBarChartCard extends StatelessWidget {
   /// Optional SVG asset placed inside the header dot.
   final String? dotIcon;
 
+  /// ADDED 13/10/2026 (Time Tracker owner) — the value axis shows whole
+  /// numbers only (counts of days / people: no "0.5"). False = unchanged.
+  final bool wholeNumbers;
+
   const GroupedBarChartCard({
     super.key,
     required this.title,
@@ -88,10 +92,36 @@ class GroupedBarChartCard extends StatelessWidget {
     this.expandChild = false,
     this.dotColor,
     this.dotIcon,
+    this.wholeNumbers = false,
   });
+
+  double get _rawMax {
+    double m = 0;
+    for (final g in groups) {
+      for (final v in g.values) {
+        if (v > m) m = v;
+      }
+    }
+    return m;
+  }
+
+  /// Whole-number gap between axis labels (1, 2, 5, 10, 20, 50 …), so four
+  /// steps cover the tallest bar ([wholeNumbers] only).
+  double get _wholeStep {
+    final double target = _rawMax / 4;
+    double step = 1;
+    while (step < target) {
+      final double next2 = step * 2, next5 = step * 5, next10 = step * 10;
+      if (next2 >= target) return next2;
+      if (next5 >= target) return next5;
+      step = next10;
+    }
+    return step;
+  }
 
   double get _maxY {
     if (maxY != null) return maxY!;
+    if (wholeNumbers) return _wholeStep * 4 + _wholeStep * 0.4;
     double m = 0;
     for (final g in groups) {
       for (final v in g.values) {
@@ -173,6 +203,7 @@ class GroupedBarChartCard extends StatelessWidget {
                 borderData: FlBorderData(show: false),
                 gridData: FlGridData(
                   show: !axisOnly,
+                  horizontalInterval: wholeNumbers ? _wholeStep : null,
                   drawVerticalLine: false,
                   getDrawingHorizontalLine: (v) => FlLine(
                     color: AppColors.border.withOpacity(.4),
@@ -189,8 +220,10 @@ class GroupedBarChartCard extends StatelessWidget {
                     sideTitles: SideTitles(
                       showTitles: showAxis,
                       reservedSize: 34.w,
+                      interval: wholeNumbers ? _wholeStep : null,
                       getTitlesWidget: (v, meta) {
                         if (v >= meta.max) return const SizedBox.shrink();
+                        if (wholeNumbers && v != v.roundToDouble()) return const SizedBox.shrink();
                         return Text(_localizeDigits(meta.formattedValue, isRtl),
                             style: CardStyles.label(9));
                       },

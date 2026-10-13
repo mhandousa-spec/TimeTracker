@@ -57,6 +57,30 @@ class HrPickedEmployees extends StatelessWidget {
         onMessage: () => openTimeTrackerChat(context, e.email),
       );
     }
+    // 13/10/2026 (owner): more than four picked → ONE row that scrolls
+    // sideways (the cards no longer push the dashboard down).
+    if (people.length > 4) {
+      return LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints c) {
+          final double w = context.isPhone ? c.maxWidth * 0.85 : (c.maxWidth - 15.w) / 2;
+          return SingleChildScrollView(
+            key: const ValueKey<String>('hrPickedRow'),
+            scrollDirection: Axis.horizontal,
+            child: IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  for (int i = 0; i < people.length; i++) ...<Widget>[
+                    if (i > 0) SizedBox(width: 15.w),
+                    SizedBox(width: w, child: _CompactCard(employee: people[i])),
+                  ],
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    }
     // Cards hug their content (`TtCardGrid`; the fixed 112.h cut values).
     return TtCardGrid(
       key: const ValueKey<String>('hrPickedGrid'),
@@ -67,38 +91,43 @@ class HrPickedEmployees extends StatelessWidget {
 }
 
 /// "Title: Technician" with a small leading icon.
+/// 13/10/2026 (owner): the icon sits in the text line (always centred on
+/// it); [oneLine] keeps a value on one line ("…" — the e-mail).
 class _Info extends StatelessWidget {
-  const _Info({required this.icon, required this.label, required this.value});
+  const _Info({required this.icon, required this.label, required this.value, this.oneLine = false});
 
   final TtGlyph icon;
   final String label;
   final String value;
+  final bool oneLine;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        TtIcon(icon, size: 13.r, color: AppColors.secondaryText),
-        SizedBox(width: 4.w),
-        Flexible(
-          child: Text.rich(
+    return Padding(
+      padding: EdgeInsetsDirectional.only(top: 3.h),
+      child: Text.rich(
+        TextSpan(
+          children: <InlineSpan>[
+            WidgetSpan(
+              alignment: PlaceholderAlignment.middle,
+              child: Padding(
+                padding: EdgeInsetsDirectional.only(end: 5.w),
+                child: TtIcon(icon, size: 14.r, color: AppColors.secondaryText),
+              ),
+            ),
             TextSpan(
               text: '$label: ',
               style: StyleText.fontSize12Weight400.copyWith(color: AppColors.secondaryText),
-              children: <InlineSpan>[
-                TextSpan(
-                  text: value.trim().isEmpty ? TimeTrackerFormat.dash : value,
-                  style: StyleText.fontSize12Weight500.copyWith(color: AppColors.text),
-                ),
-              ],
             ),
-            // 9/10/2026 (UI pass): values in full (wrap), never "…".
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
-          ),
+            TextSpan(
+              text: value.trim().isEmpty ? TimeTrackerFormat.dash : value,
+              style: StyleText.fontSize12Weight500.copyWith(color: AppColors.text),
+            ),
+          ],
         ),
-      ],
+        maxLines: oneLine ? 1 : null,
+        overflow: oneLine ? TextOverflow.ellipsis : null,
+      ),
     );
   }
 }
@@ -132,10 +161,12 @@ class _CompactCard extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: StyleText.fontSize14Weight500.copyWith(color: AppColors.text)),
-                  _Info(icon: const TtGlyph.icon(Icons.work_outline), label: s.timeTrackerTitleLabel, value: employee.jobTitle(isArabic: ar)),
+                  // 13/10/2026 (owner): the job-title icon of the Figma
+                  // request details (a briefcase line icon).
+                  _Info(icon: const TtGlyph.svg(TtAssets.reqJob), label: s.timeTrackerTitleLabel, value: employee.jobTitle(isArabic: ar)),
                   _Info(icon: const TtGlyph.svg(TtAssets.department), label: s.timeTrackerDepartment, value: employee.department(isArabic: ar)),
                   _Info(icon: const TtGlyph.svg(TtAssets.phone), label: s.timeTrackerPhoneNumber, value: employee.phone),
-                  _Info(icon: const TtGlyph.svg(TtAssets.email), label: s.timeTrackerEmail, value: employee.email),
+                  _Info(icon: const TtGlyph.svg(TtAssets.email), label: s.timeTrackerEmail, value: employee.email, oneLine: true),
                 ],
               ),
             ),

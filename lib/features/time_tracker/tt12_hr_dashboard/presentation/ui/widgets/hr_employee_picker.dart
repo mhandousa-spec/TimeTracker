@@ -107,7 +107,28 @@ class _HrEmployeePickerState extends State<HrEmployeePicker> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          TtDialogHeader(title: s.timeTrackerTabEmployees, icon: AppAssets.group),
+          Row(
+            children: <Widget>[
+              Expanded(child: TtDialogHeader(title: s.timeTrackerTabEmployees, icon: AppAssets.group)),
+              // 13/10/2026 (owner): undo the whole pick in one tap.
+              if (_picked.isNotEmpty)
+                GestureDetector(
+                  key: const ValueKey<String>('hrPickerClearAll'),
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () {
+                    HapticController.low();
+                    setState(_picked.clear);
+                    widget.onChanged(const <String>{});
+                  },
+                  child: Text(s.clearAll,
+                      style: StyleText.fontSize14Weight500.copyWith(
+                        color: AppColors.blue,
+                        decoration: TextDecoration.underline,
+                        decorationColor: AppColors.blue,
+                      )),
+                ),
+            ],
+          ),
           SizedBox(height: 15.h),
           Row(
             children: <Widget>[

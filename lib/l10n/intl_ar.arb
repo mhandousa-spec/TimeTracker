@@ -4857,5 +4857,7 @@
   "timeTrackerTerrainView": "التضاريس",
   "timeTrackerAddressFromPin": "تمت تعبئة الدولة والمنطقة والمدينة من موقع الدبوس.",
   "timeTrackerGroupRulesTag": "قواعد المجموعة",
-  "timeTrackerCustomRulesTag": "قواعد مخصصة"
+  "timeTrackerCustomRulesTag": "قواعد مخصصة",
+  "timeTrackerLateAbsentRanking": "ترتيب التأخير والغياب",
+  "timeTrackerRankingEmpty": "لا توجد أيام تأخير أو غياب في هذه الفترة."
 }

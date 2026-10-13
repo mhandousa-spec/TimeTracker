@@ -32,6 +32,7 @@ import 'package:knowticed_plus/features/time_tracker/tt12_hr_dashboard/presentat
 import 'package:knowticed_plus/features/time_tracker/tt12_hr_dashboard/presentation/ui/widgets/hr_dashboard_kpi_strip.dart';
 import 'package:knowticed_plus/features/time_tracker/tt12_hr_dashboard/presentation/ui/widgets/hr_needs_attention_card.dart';
 import 'package:knowticed_plus/features/time_tracker/tt12_hr_dashboard/presentation/ui/widgets/hr_picked_employees.dart';
+import 'package:knowticed_plus/features/time_tracker/tt12_hr_dashboard/presentation/ui/widgets/hr_ranking_card.dart';
 import 'package:knowticed_plus/generated/l10n.dart';
 
 class HrDashboardView extends StatelessWidget {
@@ -86,6 +87,9 @@ class HrDashboardView extends StatelessWidget {
             section(1, HrDashboardKpiStrip(kpi: state.stats.kpi)),
             SizedBox(height: 15.h),
             section(2, HrNeedsAttentionCard(state: state)),
+            SizedBox(height: 15.h),
+            // 13/10/2026 (owner: "more dashboards"): who is late / absent most.
+            section(2, HrRankingCard(state: state)),
             SizedBox(height: 15.h),
             section(
               3,

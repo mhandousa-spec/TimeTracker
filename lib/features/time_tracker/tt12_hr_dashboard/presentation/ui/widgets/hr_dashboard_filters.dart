@@ -31,10 +31,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:knowticed_plus/core/custom/1-custom_dropdown.dart';
-import 'package:knowticed_plus/core/custom/31-custom_multi_select_dropdown.dart';
 import 'package:knowticed_plus/core/custom/57-custom_dialog_manager.dart';
 import 'package:knowticed_plus/core/extensions/context_extensions.dart';
-import 'package:knowticed_plus/core/helper/main_helper/localized_number.dart';
 import 'package:knowticed_plus/core/theme/app_animations.dart';
 import 'package:knowticed_plus/core/custom/41-custom_button_sizing.dart';
 import 'package:knowticed_plus/core/theme/app_colors.dart';
@@ -86,6 +84,8 @@ class HrDashboardFilterBar extends StatelessWidget {
         ? _EmployeeButton(
             selectedCount: state.filters.employeeEmails.length,
             onTap: () => _pickEmployees(context),
+            // 13/10/2026 (owner): one tap back to every employee.
+            onClear: () => cubit.setEmployees(const <String>{}),
           )
         : null;
     final Widget? department = state.allDepartments
@@ -122,27 +122,32 @@ class HrDashboardFilterBar extends StatelessWidget {
     // the same height (`ButtonSizing.height`) and radius, ONE gap between
     // each of them, the row shared evenly — nothing ever touches.
     final double gap = context.isPhone ? 10.w : 15.w;
-    Widget row(List<Widget> controls, {Widget? trailing}) => Row(
+    // 13/10/2026 (owner): Department and Location get more room (their
+    // picks stay readable); Employee and the period need less.
+    Widget row(List<(Widget, int)> controls, {Widget? trailing}) => Row(
           children: <Widget>[
             for (int i = 0; i < controls.length; i++) ...<Widget>[
               if (i > 0) SizedBox(width: gap),
-              Expanded(child: controls[i]),
+              Expanded(flex: controls[i].$2, child: controls[i].$1),
             ],
             if (trailing != null) ...<Widget>[SizedBox(width: gap), trailing],
           ],
         );
-    final List<Widget> people = <Widget>[if (employee != null) employee, if (department != null) department];
+    final List<(Widget, int)> people = <(Widget, int)>[
+      if (employee != null) (employee, 2),
+      if (department != null) (department, 3),
+    ];
     if (context.isPhone) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         spacing: gap,
         children: <Widget>[
           if (people.isNotEmpty) row(people),
-          row(<Widget>[location, time], trailing: export),
+          row(<(Widget, int)>[(location, 3), (time, 2)], trailing: export),
         ],
       );
     }
-    return row(<Widget>[...people, location, time], trailing: export);
+    return row(<(Widget, int)>[...people, (location, 3), (time, 2)], trailing: export);
   }
 }
 
@@ -158,16 +163,18 @@ class HrDashboardFilterBar extends StatelessWidget {
 /// it turns yellow ("Employee (2)"). Toolbar height + radius; LOW haptic,
 /// shrinks on press.
 class _EmployeeButton extends StatelessWidget {
-  const _EmployeeButton({required this.selectedCount, required this.onTap});
+  const _EmployeeButton({required this.selectedCount, required this.onTap, required this.onClear});
 
   final int selectedCount;
   final VoidCallback onTap;
+
+  /// The small × (only when employees are picked): back to everyone.
+  final VoidCallback onClear;
 
   @override
   Widget build(BuildContext context) {
     final String title = S.of(context).employee;
     final bool picked = selectedCount > 0;
-    final String text = picked ? '$title (${LocalizedNumber.of(context, selectedCount)})' : title;
     return ShrinkOnTap(
       child: GestureDetector(
         key: const ValueKey<String>('hrEmployeeButton'),
@@ -180,19 +187,40 @@ class _EmployeeButton extends StatelessWidget {
           duration: const Duration(milliseconds: 200),
           // Same scaled height as the dropdowns and Export (`ButtonSizing`).
           height: ButtonSizing.height,
-          alignment: Alignment.center,
           padding: EdgeInsetsDirectional.symmetric(horizontal: 10.w),
           decoration: BoxDecoration(
             color: picked ? AppColors.primary : AppColors.card,
             borderRadius: TtToolbar.radius,
           ),
-          child: Text(
-            text,
-            textAlign: TextAlign.center,
-            // Unpicked: the same grey as the other filters' placeholders.
-            style: picked
-                ? StyleText.fontSize12Weight500.copyWith(color: AppColors.textButton)
-                : StyleText.fontSize12Weight400.copyWith(color: kDropdownHintColor),
+          child: Stack(
+            alignment: Alignment.center,
+            children: <Widget>[
+              // 13/10/2026 (owner): no count — yellow says "employees are
+              // picked"; unpicked = the other filters' placeholder grey.
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: picked
+                    ? StyleText.fontSize12Weight500.copyWith(color: AppColors.textButton)
+                    : StyleText.fontSize12Weight400.copyWith(color: kDropdownHintColor),
+              ),
+              if (picked)
+                PositionedDirectional(
+                  end: 0,
+                  child: GestureDetector(
+                    key: const ValueKey<String>('hrEmployeeClear'),
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () {
+                      HapticController.low();
+                      onClear();
+                    },
+                    child: Padding(
+                      padding: EdgeInsetsDirectional.all(4.r),
+                      child: Icon(Icons.close_rounded, size: 16.r, color: AppColors.textButton),
+                    ),
+                  ),
+                ),
+            ],
           ),
         ),
       ),

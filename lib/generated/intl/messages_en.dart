@@ -8225,6 +8225,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "timeTrackerLastUpdateValue": m51,
     "timeTrackerLate": MessageLookupByLibrary.simpleMessage("Late"),
+    "timeTrackerLateAbsentRanking": MessageLookupByLibrary.simpleMessage(
+      "Late & Absent Ranking",
+    ),
     "timeTrackerLateAfter": MessageLookupByLibrary.simpleMessage(
       "Late After (Minutes)",
     ),
@@ -8482,6 +8485,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerRangeTime": MessageLookupByLibrary.simpleMessage("Time"),
     "timeTrackerRangeWeek": MessageLookupByLibrary.simpleMessage("Week"),
     "timeTrackerRangeYear": MessageLookupByLibrary.simpleMessage("Year"),
+    "timeTrackerRankingEmpty": MessageLookupByLibrary.simpleMessage(
+      "No late or absent days in this period.",
+    ),
     "timeTrackerReasonOfCancellation": MessageLookupByLibrary.simpleMessage(
       "Reason Of Cancellation",
     ),

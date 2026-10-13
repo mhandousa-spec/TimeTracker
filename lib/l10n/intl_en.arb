@@ -4874,5 +4874,7 @@
   "timeTrackerTerrainView": "Terrain",
   "timeTrackerAddressFromPin": "Country, State and City were filled in from the pin.",
   "timeTrackerGroupRulesTag": "Group Rules",
-  "timeTrackerCustomRulesTag": "Custom Rules"
+  "timeTrackerCustomRulesTag": "Custom Rules",
+  "timeTrackerLateAbsentRanking": "Late & Absent Ranking",
+  "timeTrackerRankingEmpty": "No late or absent days in this period."
 }

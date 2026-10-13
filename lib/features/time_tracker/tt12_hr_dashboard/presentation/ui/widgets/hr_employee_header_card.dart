@@ -57,7 +57,7 @@ class HrEmployeeHeaderCard extends StatelessWidget {
     // 13/10/2026 (owner): job title and department sit under the name (next
     // to the photo); the rows below keep the contact details.
     final List<Widget> info = <Widget>[
-      _Info(icon: const TtGlyph.svg(TtAssets.email), label: s.timeTrackerEmail, value: employee.email),
+      _Info(icon: const TtGlyph.svg(TtAssets.email), label: s.timeTrackerEmail, value: employee.email, oneLine: true),
       _Info(icon: const TtGlyph.svg(TtAssets.phone), label: s.timeTrackerPhoneNumber, value: employee.phone),
     ];
     final Widget card = Container(
@@ -135,39 +135,40 @@ class HrEmployeeHeaderCard extends StatelessWidget {
   }
 }
 
-/// "💼 Title: Service Center Coordinator" — the value in full (wraps).
+/// "✉ Email: name@company.com" — the icon sits in the text line (always
+/// centred on it, 13/10/2026 owner); [oneLine] keeps the e-mail on one line.
 class _Info extends StatelessWidget {
-  const _Info({required this.icon, required this.label, required this.value});
+  const _Info({required this.icon, required this.label, required this.value, this.oneLine = false});
 
   final TtGlyph icon;
   final String label;
   final String value;
+  final bool oneLine;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Padding(
-          padding: EdgeInsetsDirectional.only(top: 2.sp),
-          child: TtIcon(icon, size: 15.r, color: AppColors.secondaryText),
-        ),
-        SizedBox(width: 6.w),
-        Expanded(
-          child: Text.rich(
-            TextSpan(
-              text: '$label: ',
-              style: StyleText.fontSize12Weight400.copyWith(color: AppColors.secondaryText),
-              children: <InlineSpan>[
-                TextSpan(
-                  text: TimeTrackerFormat.orDash(value),
-                  style: StyleText.fontSize12Weight500.copyWith(color: AppColors.text),
-                ),
-              ],
+    return Text.rich(
+      TextSpan(
+        children: <InlineSpan>[
+          WidgetSpan(
+            alignment: PlaceholderAlignment.middle,
+            child: Padding(
+              padding: EdgeInsetsDirectional.only(end: 6.w),
+              child: TtIcon(icon, size: 15.r, color: AppColors.secondaryText),
             ),
           ),
-        ),
-      ],
+          TextSpan(
+            text: '$label: ',
+            style: StyleText.fontSize12Weight400.copyWith(color: AppColors.secondaryText),
+          ),
+          TextSpan(
+            text: TimeTrackerFormat.orDash(value),
+            style: StyleText.fontSize12Weight500.copyWith(color: AppColors.text),
+          ),
+        ],
+      ),
+      maxLines: oneLine ? 1 : null,
+      overflow: oneLine ? TextOverflow.ellipsis : null,
     );
   }
 }

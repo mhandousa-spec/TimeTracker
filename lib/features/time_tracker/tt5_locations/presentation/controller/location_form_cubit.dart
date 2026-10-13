@@ -24,7 +24,6 @@ import 'package:knowticed_plus/features/time_tracker/domain/base_repository/devi
 import 'package:knowticed_plus/features/time_tracker/domain/base_repository/location_base_repository.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/entities/work_location.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/rules/geofence.dart';
-import 'package:knowticed_plus/features/time_tracker/domain/rules/location_import_rules.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/controller/time_tracker_action_failure.dart';
 import 'package:knowticed_plus/features/time_tracker/tt5_locations/presentation/controller/location_form_state.dart';
 

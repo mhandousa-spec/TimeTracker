@@ -186,6 +186,8 @@ class HrAttendanceHistoryCard extends StatelessWidget {
       title: s.timeTrackerChartMonthlyAttendance,
       dotIcon: _historyIcon,
       barWidth: 15,
+      // 13/10/2026 (owner): days are whole numbers — no "0.5" on the axis.
+      wholeNumbers: true,
       trailing: _ChartDropdown<HrAttendanceSeries>(
         key: const ValueKey<String>('hrAttendanceStatus'),
         width: 110.w,
@@ -245,7 +247,7 @@ class HrRequestTypeBarsCard extends StatelessWidget {
       barColor: AppColors.yellow,
       barWidth: 40,
       trailing: SizedBox(
-        width: 170.w,
+        width: 190.w,
         child: CustomMultiSelectDropdown<String>(
           key: const ValueKey<String>('hrRequestTypeFilter'),
           hint: s.timeTrackerRequestType,
@@ -253,6 +255,11 @@ class HrRequestTypeBarsCard extends StatelessWidget {
           heightSizesWholeTrigger: true,
           fillColor: AppColors.background,
           itemStyle: StyleText.fontSize12Weight400,
+          // 13/10/2026 (owner): "Request Type (3)" was cut in the 30-high box
+          // (14 text) — the same 12 text and grey as the Status dropdown.
+          valueStyle: StyleText.fontSize12Weight400.copyWith(color: AppColors.text),
+          hintStyle: StyleText.fontSize12Weight400.copyWith(color: kDropdownHintColor),
+          triggerPadding: EdgeInsetsDirectional.symmetric(horizontal: 10.w),
           values: picked,
           items: <MultiSelectDropdownItem<String>>[
             for (final String n in names) MultiSelectDropdownItem<String>(value: n, label: n),

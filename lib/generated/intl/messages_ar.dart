@@ -7920,6 +7920,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerLastUpdate": MessageLookupByLibrary.simpleMessage("آخر تحديث"),
     "timeTrackerLastUpdateValue": m51,
     "timeTrackerLate": MessageLookupByLibrary.simpleMessage("متأخر"),
+    "timeTrackerLateAbsentRanking": MessageLookupByLibrary.simpleMessage(
+      "ترتيب التأخير والغياب",
+    ),
     "timeTrackerLateAfter": MessageLookupByLibrary.simpleMessage(
       "التأخير بعد (دقائق)",
     ),
@@ -8177,6 +8180,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerRangeTime": MessageLookupByLibrary.simpleMessage("الوقت"),
     "timeTrackerRangeWeek": MessageLookupByLibrary.simpleMessage("أسبوع"),
     "timeTrackerRangeYear": MessageLookupByLibrary.simpleMessage("سنة"),
+    "timeTrackerRankingEmpty": MessageLookupByLibrary.simpleMessage(
+      "لا توجد أيام تأخير أو غياب في هذه الفترة.",
+    ),
     "timeTrackerReasonOfCancellation": MessageLookupByLibrary.simpleMessage(
       "سبب الإلغاء",
     ),

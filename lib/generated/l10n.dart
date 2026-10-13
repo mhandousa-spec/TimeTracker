@@ -41355,6 +41355,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Late & Absent Ranking`
+  String get timeTrackerLateAbsentRanking {
+    return Intl.message(
+      'Late & Absent Ranking',
+      name: 'timeTrackerLateAbsentRanking',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No late or absent days in this period.`
+  String get timeTrackerRankingEmpty {
+    return Intl.message(
+      'No late or absent days in this period.',
+      name: 'timeTrackerRankingEmpty',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

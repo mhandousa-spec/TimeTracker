@@ -250,11 +250,17 @@ class HrDashboardCubit extends Cubit<HrDashboardState> {
   /// Overview toggle. None of them reads Firestore.
   ///
   /// Return type: [void]
-  void setDepartments(Set<String> ids) =>
-      _set(state.copyWith(filters: state.filters.copyWith(departmentIds: Set<String>.unmodifiable(ids))));
+  // 13/10/2026 (owner: "maybe I want a department, not employees"):
+  // choosing Departments or Locations starts a new "who" — the picked
+  // employees are cleared (else both would have to match and the dashboard
+  // could go empty).
+  void setDepartments(Set<String> ids) => _set(state.copyWith(
+        filters: state.filters.copyWith(departmentIds: Set<String>.unmodifiable(ids), employeeEmails: const <String>{}),
+      ));
 
-  void setLocations(Set<String> ids) =>
-      _set(state.copyWith(filters: state.filters.copyWith(locationIds: Set<String>.unmodifiable(ids))));
+  void setLocations(Set<String> ids) => _set(state.copyWith(
+        filters: state.filters.copyWith(locationIds: Set<String>.unmodifiable(ids), employeeEmails: const <String>{}),
+      ));
 
   void setEmployees(Set<String> emails) => _set(state.copyWith(
         filters: state.filters.copyWith(

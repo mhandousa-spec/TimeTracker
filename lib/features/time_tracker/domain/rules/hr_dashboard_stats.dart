@@ -96,6 +96,16 @@ class HrDashboardKpi {
   final int pendingApprovals;
 }
 
+/// ADDED 13/10/2026 (owner: "more dashboards"): one employee's late and
+/// absent days in the chosen range (the Late & Absent ranking).
+class HrEmployeeAttendance {
+  const HrEmployeeAttendance({required this.email, this.late = 0, this.absent = 0});
+
+  final String email;
+  final int late;
+  final int absent;
+}
+
 class HrDashboardStats {
   const HrDashboardStats({
     this.employeeCount = 0,
@@ -109,6 +119,7 @@ class HrDashboardStats {
     this.timelineByMonth = const <HrMonthCount>[],
     this.kpi = const HrDashboardKpi(),
     this.attention = HrNeedsAttention.empty,
+    this.byEmployee = const <HrEmployeeAttendance>[],
   });
 
   /// Default number of named slices in the Request Types donut (Figma: 4 +
@@ -126,6 +137,27 @@ class HrDashboardStats {
   final List<HrMonthCount> timelineByMonth;
   final HrDashboardKpi kpi;
   final HrNeedsAttention attention;
+
+  /// Every employee with a late or absent day in the range (13/10/2026).
+  final List<HrEmployeeAttendance> byEmployee;
+
+  /// Function Name: [ranking]
+  ///
+  /// Purpose: The [top] employees with the most late ([late] true) or
+  /// absent days; ties by name order of the e-mail. Zero counts left out.
+  ///
+  /// Return type: [List<HrEmployeeAttendance>]
+  List<HrEmployeeAttendance> ranking({required bool late, int top = 5}) {
+    int of(HrEmployeeAttendance e) => late ? e.late : e.absent;
+    final List<HrEmployeeAttendance> list = <HrEmployeeAttendance>[
+      for (final HrEmployeeAttendance e in byEmployee)
+        if (of(e) > 0) e,
+    ]..sort((HrEmployeeAttendance a, HrEmployeeAttendance b) {
+        final int c = of(b).compareTo(of(a));
+        return c != 0 ? c : a.email.compareTo(b.email);
+      });
+    return List<HrEmployeeAttendance>.unmodifiable(list.take(top));
+  }
 
   int get totalRequests => approved + pending + rejected + canceled;
   int get totalTypeRequests => typeSlices.fold<int>(0, (int s, HrTypeSlice t) => s + t.count);
@@ -233,8 +265,17 @@ class HrDashboardStats {
       timelineByMonth: _trimTail(_bars(timeline, monthList), (HrMonthCount m) => future(m.month) && m.count == 0),
       kpi: _kpi(book, emails, scoped),
       attention: HrNeedsAttention.compute(emails: emails, book: book, requests: scoped),
+      byEmployee: _byEmployee(book, emails, span),
     );
   }
+
+  static List<HrEmployeeAttendance> _byEmployee(HrDayBook book, Set<String> emails, DateSpan span) =>
+      List<HrEmployeeAttendance>.unmodifiable(<HrEmployeeAttendance>[
+        for (final String email in emails)
+          if (book.countIn(email, span) case final Map<HrDayKind, int> c
+              when (c[HrDayKind.late] ?? 0) > 0 || (c[HrDayKind.absent] ?? 0) > 0)
+            HrEmployeeAttendance(email: email, late: c[HrDayKind.late] ?? 0, absent: c[HrDayKind.absent] ?? 0),
+      ]);
 
   /// [list] without its trailing entries that [drop] (empty future months —
   /// a Year range ends on Oct, not on two empty Nov / Dec bars). The first

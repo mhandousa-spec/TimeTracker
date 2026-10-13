@@ -16,6 +16,8 @@
 /// (`MessagingInterfaceImplementation.tryOpenChatWithUser`, same as GRC /
 /// User Management) and a failure says why (`showOpenChatFailure`).
 /// MEDIUM haptic (core button), shrinks on tap.
+/// Updated: 13/10/2026 - owner: on a tablet the chat opens inside the
+/// Messages module (list + conversation), not as a full page.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -23,7 +25,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:knowticed_plus/core/constants/app_assets.dart';
 import 'package:knowticed_plus/core/custom/32-custom_svg.dart';
 import 'package:knowticed_plus/core/custom/6-custom_button_with_svg.dart';
+import 'package:get/get.dart';
 import 'package:knowticed_plus/core/helper/message_module/main_helper/messaging_interface_implementation.dart';
+import 'package:knowticed_plus/core/helper/role/modules_enum.dart';
+import 'package:knowticed_plus/features/home/h3_app_drawer/presentation/controller/app_drawer_cubit.dart';
 import 'package:knowticed_plus/core/theme/app_animations.dart';
 import 'package:knowticed_plus/core/theme/app_colors.dart';
 import 'package:knowticed_plus/core/theme/app_theme.dart';
@@ -37,8 +42,26 @@ import 'package:knowticed_plus/generated/l10n.dart';
 /// Return type: [Future<void>]
 Future<void> openTimeTrackerChat(BuildContext context, String email) async {
   if (email.trim().isEmpty) return;
-  final OpenChatResult result =
-      await MessagingInterfaceImplementation().tryOpenChatWithUser(context: context, userEmail: email);
+  final MessagingInterfaceImplementation messaging = MessagingInterfaceImplementation();
+  // 13/10/2026 (owner): on a tablet the chat opens INSIDE the Messages module
+  // (chats and groups on the left, this conversation on the right) — the
+  // same route as the notification and form-owner Message buttons: select
+  // the chat, then switch the side menu to Messages. A phone (or no Messages
+  // module in this user's menu) pushes the chat full screen as before.
+  final bool shell = MediaQuery.of(context).size.width >= 600;
+  final AppDrawerCubit? drawer = shell && Get.isRegistered<AppDrawerCubit>() ? Get.find<AppDrawerCubit>() : null;
+  final int messagesIndex = drawer?.allowedDrawerModules.indexOf(Modules.messages) ?? -1;
+  final OpenChatResult result;
+  if (drawer != null && messagesIndex != -1) {
+    result = await messaging.selectChatWithUser(userEmail: email);
+    if (result == OpenChatResult.opened) {
+      drawer.updateSelectedIndex(messagesIndex);
+      return;
+    }
+  } else {
+    if (!context.mounted) return;
+    result = await messaging.tryOpenChatWithUser(context: context, userEmail: email);
+  }
   if (context.mounted) await showOpenChatFailure(context, result);
 }
 

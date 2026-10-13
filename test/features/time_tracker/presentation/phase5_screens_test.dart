@@ -243,6 +243,12 @@ void main() {
       expect(_key('requestDetails_waiting'), findsOneWidget, reason: 'it waits for me → approver details');
       Navigator.of(tester.element(_key('requestDetails_waiting'))).pop();
       await h.settle(tester);
+      // 13/10/2026 (owner redesign): pick the Absences tile to see its people.
+      await tester.ensureVisible(_key('hrAttentionAbsences'));
+      await tester.tap(_key('hrAttentionAbsences'));
+      await h.settle(tester);
+      await tester.ensureVisible(_key('hrAttentionAbsence_amr@co.com'));
+      await tester.pump();
       await tester.tap(_key('hrAttentionAbsence_amr@co.com'));
       await h.settle(tester);
       expect(_key('employeeDashboard_amr@co.com'), findsOneWidget);
