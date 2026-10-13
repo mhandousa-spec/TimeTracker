@@ -421,6 +421,9 @@ void main() {
           await c.push(const GroupFormPage());
           await c.shot('63_group_form');
           await c.scroll();
+          // 13/10/2026 (owner U2): pick two members → chips.
+          await c.tap('groupMemberRow_omar.farouk@dm003.test');
+          await c.tap('groupMemberRow_mona.elsayed@dm003.test');
           await c.shot('63_group_form_s1');
           await c.back();
           await c.push(const GroupDetailsPage(groupId: TtDemoIds.group));

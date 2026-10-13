@@ -142,6 +142,28 @@ class _GroupMemberPickerState extends State<GroupMemberPicker> {
             ],
           ],
         ),
+        // 13/10/2026 (owner U2): who is selected, as chips (avatar + ✕).
+        if (_picked.isNotEmpty) ...<Widget>[
+          SizedBox(height: 10.h),
+          SingleChildScrollView(
+            key: const ValueKey<String>('groupSelectedChips'),
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: <Widget>[
+                for (final TimeTrackerEmployee e in rows)
+                  if (_picked.contains(e.email.trim().toLowerCase())) ...<Widget>[
+                    TtPersonChip(
+                      key: ValueKey<String>('groupSelectedChip_${e.email}'),
+                      name: e.name(isArabic: ar),
+                      photo: e.photo,
+                      onRemove: () => _toggle(e.email),
+                    ),
+                    SizedBox(width: 8.w),
+                  ],
+              ],
+            ),
+          ),
+        ],
         SizedBox(height: 10.h),
         if (rows.isEmpty)
           Padding(

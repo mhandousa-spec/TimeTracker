@@ -880,3 +880,46 @@ class TtImportSteps extends StatelessWidget {
     );
   }
 }
+
+/// ADDED 13/10/2026 (owner U2): a picked person — avatar, name, ✕ to remove.
+class TtPersonChip extends StatelessWidget {
+  const TtPersonChip({super.key, required this.name, required this.photo, required this.onRemove});
+
+  final String name;
+  final String photo;
+  final VoidCallback onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsetsDirectional.fromSTEB(4.r, 4.r, 8.r, 4.r),
+      decoration: BoxDecoration(
+        color: AppColors.primary.withValues(alpha: 0.18),
+        borderRadius: BorderRadius.circular(20.r),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          TimeTrackerAvatar(photo: photo, size: 24.r),
+          SizedBox(width: 6.w),
+          ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: 140.w),
+            child: Text(name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: StyleText.fontSize12Weight500.copyWith(color: AppColors.text)),
+          ),
+          SizedBox(width: 6.w),
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () {
+              HapticController.high();
+              onRemove();
+            },
+            child: TtIcon(const TtGlyph.svg('assets/icons_assets/messaging_assets/vectors_close.svg'), size: 14.r, color: AppColors.secondaryText),
+          ),
+        ],
+      ),
+    );
+  }
+}
