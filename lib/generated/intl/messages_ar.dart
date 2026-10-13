@@ -160,53 +160,55 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m63(location) => "القواعد من ${location}";
 
-  static String m64(role, decision) => "${role} · ${decision}";
+  static String m64(date, start, end) => "${date}، ${start} – ${end}";
 
-  static String m65(start, end) => "${start} إلى ${end}";
+  static String m65(role, decision) => "${role} · ${decision}";
 
-  static String m66(date) => "تاريخ الرفع: ${date}";
+  static String m66(start, end) => "${start} إلى ${end}";
 
-  static String m67(year) =>
+  static String m67(date) => "تاريخ الرفع: ${date}";
+
+  static String m68(year) =>
       "حمل النموذج، وحدد إجمالي أيام كل موظف لسنة ${year}، ثم ارفعه. السنة الفارغة تعني ${year}، ويتم تجاهل السنوات الأخرى. لا يتم حذف أي شيء.";
 
-  static String m68(count) => "الطلبات: ${count}";
+  static String m69(count) => "الطلبات: ${count}";
 
-  static String m69(count) => "بانتظار القرار منذ ${count}";
+  static String m70(count) => "بانتظار القرار منذ ${count}";
 
-  static String m70(year, days) =>
+  static String m71(year, days) =>
       "المتبقي من رصيد إجازات ${year} هو ${days} فقط.";
 
-  static String m71(count) =>
+  static String m72(count) =>
       "تمت إضافة ${count} مهام تجريبية. ستصل التذكيرات خلال نحو ثلاث دقائق.";
 
-  static String m72(count) => "تمت إزالة ${count} مهام تجريبية.";
+  static String m73(count) => "تمت إزالة ${count} مهام تجريبية.";
 
-  static String m73(count) => "تم إرسال ${count} تذكيرات.";
+  static String m74(count) => "تم إرسال ${count} تذكيرات.";
 
-  static String m74(count, unit) => "كل ${count} ${unit}";
+  static String m75(count, unit) => "كل ${count} ${unit}";
 
-  static String m75(value) => "التكرار: ${value}";
+  static String m76(value) => "التكرار: ${value}";
 
-  static String m76(date, time) => "مجدولة: ${date} الساعة ${time}";
+  static String m77(date, time) => "مجدولة: ${date} الساعة ${time}";
 
-  static String m77(module, limit, assigned) =>
+  static String m78(module, limit, assigned) =>
       "الحد الأقصى لمستخدمي ${module} هو ${limit}، وتم تعيين ${assigned} بالفعل.";
 
-  static String m78(module) =>
+  static String m79(module) =>
       "تعذرت قراءة حد المستخدمين لـ ${module}، لذلك لم يتم منح أي صلاحية.";
 
-  static String m79(module, assigned, limit) =>
+  static String m80(module, assigned, limit) =>
       "${module}: ${assigned} من أصل ${limit}";
 
-  static String m80(remaining) => "يمكن إضافة ${remaining} فقط.";
+  static String m81(remaining) => "يمكن إضافة ${remaining} فقط.";
 
-  static String m81(limit, assigned) =>
+  static String m82(limit, assigned) =>
       "الحد الأقصى لعدد مستخدمي الشركة هو ${limit}، وتم تعيين ${assigned} بالفعل.";
 
-  static String m82(assigned, limit) =>
+  static String m83(assigned, limit) =>
       "المستخدمون: ${assigned} من أصل ${limit}";
 
-  static String m83(role) =>
+  static String m84(role) =>
       "تعذر العثور على الدور \"${role}\"، لذلك لا يمكن التحقق من حدود المستخدمين الخاصة به.";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -7257,7 +7259,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "تاريخ الحضور",
     ),
     "timeTrackerAttendanceExportName": MessageLookupByLibrary.simpleMessage(
-      "الحضور",
+      "تقرير الحضور",
     ),
     "timeTrackerAttendanceHistory": MessageLookupByLibrary.simpleMessage(
       "سجل الحضور",
@@ -7664,7 +7666,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "الموظفين — جميع الأقسام",
     ),
     "timeTrackerEmployeesExportName": MessageLookupByLibrary.simpleMessage(
-      "الموظفون",
+      "قائمة الموظفين",
     ),
     "timeTrackerEmployeesInScope": MessageLookupByLibrary.simpleMessage(
       "الموظفون المشمولون",
@@ -7796,7 +7798,7 @@ class MessageLookup extends MessageLookupByLibrary {
           "لوحة معلومات الموارد البشرية — جميع الأقسام",
         ),
     "timeTrackerHrDashboardExportName": MessageLookupByLibrary.simpleMessage(
-      "لوحة الموارد البشرية",
+      "تقرير لوحة الموارد البشرية",
     ),
     "timeTrackerHrDashboardFilterByEmployee":
         MessageLookupByLibrary.simpleMessage(
@@ -7996,7 +7998,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "timeTrackerLocationValue": m53,
     "timeTrackerLocationsExportName": MessageLookupByLibrary.simpleMessage(
-      "المواقع",
+      "قائمة المواقع",
     ),
     "timeTrackerLongitude": MessageLookupByLibrary.simpleMessage("خط الطول"),
     "timeTrackerLongitudeInvalid": MessageLookupByLibrary.simpleMessage(
@@ -8112,6 +8114,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerPending": MessageLookupByLibrary.simpleMessage("قيد الانتظار"),
     "timeTrackerPendingApprovals": MessageLookupByLibrary.simpleMessage(
       "الموافقات المعلقة",
+    ),
+    "timeTrackerPendingWithColumn": MessageLookupByLibrary.simpleMessage(
+      "بانتظار",
     ),
     "timeTrackerPersonalDashboard": MessageLookupByLibrary.simpleMessage(
       "لوحة المعلومات الشخصية",
@@ -8287,7 +8292,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "لقد غيرت حالة نوع الطلب هذا بنجاح",
     ),
     "timeTrackerRequestTypesExportName": MessageLookupByLibrary.simpleMessage(
-      "أنواع الطلبات",
+      "قائمة أنواع الطلبات",
     ),
     "timeTrackerRequestWord": MessageLookupByLibrary.simpleMessage("طلب"),
     "timeTrackerRequestedBy": MessageLookupByLibrary.simpleMessage(
@@ -8297,7 +8302,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "الفترة المطلوبة",
     ),
     "timeTrackerRequestsExportName": MessageLookupByLibrary.simpleMessage(
-      "الطلبات",
+      "تقرير الطلبات",
     ),
     "timeTrackerRequestsTitle": MessageLookupByLibrary.simpleMessage("الطلبات"),
     "timeTrackerRequired": MessageLookupByLibrary.simpleMessage("مطلوب"),
@@ -8322,6 +8327,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "من الموقع",
     ),
     "timeTrackerRulesLabel": MessageLookupByLibrary.simpleMessage("القواعد"),
+    "timeTrackerSameDayTimeframe": m64,
     "timeTrackerSatelliteView": MessageLookupByLibrary.simpleMessage(
       "قمر صناعي",
     ),
@@ -8330,6 +8336,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "timeTrackerSearchAddress": MessageLookupByLibrary.simpleMessage(
       "ابحث عن عنوان أو مكان",
+    ),
+    "timeTrackerSearchAttendanceHint": MessageLookupByLibrary.simpleMessage(
+      "ابحث بالتاريخ أو الحالة أو الوقت",
     ),
     "timeTrackerSearching": MessageLookupByLibrary.simpleMessage("جارٍ البحث…"),
     "timeTrackerSectionAddress": MessageLookupByLibrary.simpleMessage(
@@ -8393,7 +8402,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerStatusChangedTitle": MessageLookupByLibrary.simpleMessage(
       "تم تغيير الحالة",
     ),
-    "timeTrackerStepDecision": m64,
+    "timeTrackerStepDecision": m65,
     "timeTrackerSubmittedTransaction": MessageLookupByLibrary.simpleMessage(
       "تم إرسال المعاملة",
     ),
@@ -8420,7 +8429,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "timeTrackerTextHereAr": MessageLookupByLibrary.simpleMessage("اكتب هنا"),
     "timeTrackerTextHereEn": MessageLookupByLibrary.simpleMessage("Text here"),
-    "timeTrackerTimeframeValue": m65,
+    "timeTrackerTimeframeValue": m66,
     "timeTrackerTitle": MessageLookupByLibrary.simpleMessage("تتبع الوقت"),
     "timeTrackerTitleLabel": MessageLookupByLibrary.simpleMessage(
       "المسمى الوظيفي",
@@ -8447,9 +8456,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerTransactionButton": MessageLookupByLibrary.simpleMessage(
       "معاملة",
     ),
+    "timeTrackerTransactionDescriptionRequired":
+        MessageLookupByLibrary.simpleMessage("اكتب سبب تصحيح هذا الحضور."),
     "timeTrackerTransactionDocument": MessageLookupByLibrary.simpleMessage(
       "مستند المعاملة",
     ),
+    "timeTrackerTransactionDocumentRequired":
+        MessageLookupByLibrary.simpleMessage("أرفق مستندا يدعم هذا التصحيح."),
     "timeTrackerTransactionInFuture": MessageLookupByLibrary.simpleMessage(
       "لا يمكن أن تكون المعاملة في المستقبل.",
     ),
@@ -8477,7 +8490,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "تعذر رفع الملف. يرجى المحاولة مرة أخرى.",
     ),
     "timeTrackerUploadFile": MessageLookupByLibrary.simpleMessage("رفع ملف"),
-    "timeTrackerUploadedOn": m66,
+    "timeTrackerUploadedOn": m67,
     "timeTrackerUseLocationRules": MessageLookupByLibrary.simpleMessage(
       "استخدام قواعد الموقع",
     ),
@@ -8492,7 +8505,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "رصيد الإجازات",
     ),
     "timeTrackerVacationBalancesExportName":
-        MessageLookupByLibrary.simpleMessage("أرصدة الإجازات"),
+        MessageLookupByLibrary.simpleMessage("تقرير أرصدة الإجازات"),
     "timeTrackerVacationEdited": MessageLookupByLibrary.simpleMessage(
       "لقد قمت بتعديل رصيد الإجازات بنجاح",
     ),
@@ -8511,11 +8524,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerVacationImportDoneTitle": MessageLookupByLibrary.simpleMessage(
       "تم استيراد أرصدة الإجازات",
     ),
-    "timeTrackerVacationImportHelp": m67,
+    "timeTrackerVacationImportHelp": m68,
     "timeTrackerVacationImportNoColumns": MessageLookupByLibrary.simpleMessage(
       "يحتاج الملف إلى عمودي “Email” و“Total Days”. يرجى استخدام النموذج.",
     ),
-    "timeTrackerVacationRequestsCount": m68,
+    "timeTrackerVacationRequestsCount": m69,
     "timeTrackerVacationTemplateName": MessageLookupByLibrary.simpleMessage(
       "نموذج أرصدة الإجازات",
     ),
@@ -8547,7 +8560,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerViewVacationBalances": MessageLookupByLibrary.simpleMessage(
       "عرض أرصدة الإجازات",
     ),
-    "timeTrackerWaitingDays": m69,
+    "timeTrackerWaitingDays": m70,
     "timeTrackerWorkEndTime": MessageLookupByLibrary.simpleMessage(
       "وقت انتهاء العمل",
     ),
@@ -8589,7 +8602,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerWrongLocationTitle": MessageLookupByLibrary.simpleMessage(
       "موقع غير صحيح",
     ),
-    "timeTrackerYearBalanceShort": m70,
+    "timeTrackerYearBalanceShort": m71,
     "timeTrackerYes": MessageLookupByLibrary.simpleMessage("نعم"),
     "timeTrackerYourTabs": MessageLookupByLibrary.simpleMessage(
       "أقسام تتبع الوقت المتاحة لك",
@@ -8628,15 +8641,15 @@ class MessageLookup extends MessageLookupByLibrary {
       "تعذر إكمال الإجراء. يرجى المحاولة مرة أخرى.",
     ),
     "todoDebugLoad": MessageLookupByLibrary.simpleMessage("تحميل مهام تجريبية"),
-    "todoDebugLoadDone": m71,
+    "todoDebugLoadDone": m72,
     "todoDebugRemove": MessageLookupByLibrary.simpleMessage(
       "إزالة المهام التجريبية",
     ),
-    "todoDebugRemoveDone": m72,
+    "todoDebugRemoveDone": m73,
     "todoDebugSweep": MessageLookupByLibrary.simpleMessage(
       "إرسال التذكيرات المستحقة الآن",
     ),
-    "todoDebugSweepDone": m73,
+    "todoDebugSweepDone": m74,
     "todoDebugTools": MessageLookupByLibrary.simpleMessage(
       "أدوات العرض التجريبي",
     ),
@@ -8647,8 +8660,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "todoEndAfterStart": MessageLookupByLibrary.simpleMessage(
       "يجب أن يكون تاريخ الانتهاء بعد تاريخ البدء.",
     ),
-    "todoEveryInterval": m74,
-    "todoFrequencyBadge": m75,
+    "todoEveryInterval": m75,
+    "todoFrequencyBadge": m76,
     "todoHomeNoOpen": MessageLookupByLibrary.simpleMessage(
       "لا توجد مهام مفتوحة",
     ),
@@ -8668,7 +8681,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "todoSaveError": MessageLookupByLibrary.simpleMessage(
       "تعذر حفظ المهمة. يرجى المحاولة مرة أخرى.",
     ),
-    "todoScheduledAt": m76,
+    "todoScheduledAt": m77,
     "todoTimeHint": MessageLookupByLibrary.simpleMessage("٠٠:٠٠"),
     "todoWeekDaysRequired": MessageLookupByLibrary.simpleMessage(
       "اختر يوماً واحداً على الأقل.",
@@ -8917,16 +8930,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "userLimitChecking": MessageLookupByLibrary.simpleMessage(
       "جار التحقق من حدود المستخدمين…",
     ),
-    "userLimitModuleReached": m77,
-    "userLimitModuleUnverifiable": m78,
-    "userLimitModuleUsage": m79,
-    "userLimitSeatsLeft": m80,
-    "userLimitTotalReached": m81,
+    "userLimitModuleReached": m78,
+    "userLimitModuleUnverifiable": m79,
+    "userLimitModuleUsage": m80,
+    "userLimitSeatsLeft": m81,
+    "userLimitTotalReached": m82,
     "userLimitTotalUnverifiable": MessageLookupByLibrary.simpleMessage(
       "تعذرت قراءة حد مستخدمي الشركة، لذلك لم يتم منح أي صلاحية.",
     ),
-    "userLimitTotalUsage": m82,
-    "userLimitUnknownRole": m83,
+    "userLimitTotalUsage": m83,
+    "userLimitUnknownRole": m84,
     "userLimitsTitle": MessageLookupByLibrary.simpleMessage("حدود المستخدمين"),
     "userManagement": MessageLookupByLibrary.simpleMessage("إدارة المستخدمين"),
     "userManagementModule": MessageLookupByLibrary.simpleMessage(

@@ -22,6 +22,8 @@
 /// must be on the SAME calendar day as the check-in — or the NEXT day only
 /// when the employee's shift crosses midnight — and the span is at most
 /// 24 hours (a 1 → 9 Oct "session" used to pass and corrupt one day).
+/// Updated: 13/10/2026 - owner rule: the description AND the transaction
+/// document are REQUIRED (the manager decides from them).
 
 import 'package:knowticed_plus/features/time_tracker/domain/entities/request_parts.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/entities/time_tracker_request.dart';
@@ -43,6 +45,14 @@ enum TransactionError {
 
   /// 9/10/2026 (finding 6): longer than [TransactionRules.maxSpan].
   tooLong,
+
+  /// 13/10/2026 (owner rule): a correction must say WHY — the manager reads
+  /// it to decide.
+  descriptionRequired,
+
+  /// 13/10/2026 (owner rule): a correction must carry its supporting
+  /// document.
+  documentRequired,
 }
 
 class TransactionRules {
@@ -59,6 +69,8 @@ class TransactionRules {
   /// Purpose: Every problem of a draft (empty = valid).
   ///
   /// Parameters:
+  ///   [bool] hasDocument: a transaction document is attached (13/10/2026:
+  ///     required).
   ///   [bool] overnightShift: the employee's shift crosses midnight — only
   ///     then may the check-out fall on the next day (9/10/2026).
   ///
@@ -68,6 +80,7 @@ class TransactionRules {
     required DateTime? checkOut,
     required String description,
     required DateTime now,
+    required bool hasDocument,
     bool overnightShift = false,
   }) {
     final Set<TransactionError> errors = <TransactionError>{};
@@ -89,6 +102,8 @@ class TransactionRules {
         (checkOut != null && checkOut.isAfter(now))) {
       errors.add(TransactionError.inFuture);
     }
+    if (description.trim().isEmpty) errors.add(TransactionError.descriptionRequired);
+    if (!hasDocument) errors.add(TransactionError.documentRequired);
     if (description.trim().length > maxDescriptionLength) {
       errors.add(TransactionError.descriptionTooLong);
     }
@@ -127,6 +142,7 @@ class TransactionRules {
       checkOut: checkOut,
       description: description,
       now: now,
+      hasDocument: attachments.isNotEmpty,
       overnightShift: overnightShift,
     );
     if (errors.isNotEmpty) {

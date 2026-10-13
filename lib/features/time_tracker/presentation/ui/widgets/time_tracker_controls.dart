@@ -440,6 +440,18 @@ class TtExportButton extends StatelessWidget {
   }
 }
 
+/// 13/10/2026 (owner rule): every Time Tracker dialog uses ONE of two
+/// widths, so a filter / form / import looks the same size on every tab.
+///   [standard] — filters, forms, edit and import dialogs.
+///   [compact]  — short choices (check-in options, country picker).
+/// Messages, success, confirm and export dialogs keep the core sizes.
+class TtDialogWidth {
+  const TtDialogWidth._();
+
+  static const double standard = 600;
+  static const double compact = 450;
+}
+
 /// A two-option toggle in its own rounded container (owner finding 1).
 ///
 /// [onCard] = it sits inside a white card (Late History "Counts / Minutes")
@@ -490,7 +502,9 @@ class TtSegmentedToggle extends StatelessWidget {
         unselectedTextColor: AppColors.secondaryText,
         containerPadding: EdgeInsets.all(5.r),
         borderRadius: 8.r,
-        tabBorderRadius: 8.r,
+        // 13/10/2026 (owner): the yellow "My Dashboard" pill was too round.
+        tabBorderRadius: 2.r,
+        animated: true,
         spacing: 5.w,
         tabHorizontalPadding: 16.w,
         tabVerticalPadding: 7.r,
@@ -518,6 +532,8 @@ class TtSegmentedToggle extends StatelessWidget {
       tabHorizontalPadding: onCard ? 14.w : 8.w,
       tabVerticalPadding: onCard ? 6.5.r : 5.5.r,
       textStyle: onCard ? StyleText.fontSize12Weight500 : StyleText.fontSize16Weight500,
+      // 13/10/2026 (owner): the pill slides instead of jumping (Counts ↔ Minutes).
+      animated: true,
     );
   }
 }

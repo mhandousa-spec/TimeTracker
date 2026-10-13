@@ -22,6 +22,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_controls.dart';
 import 'package:knowticed_plus/core/constants/app_assets.dart';
 import 'package:knowticed_plus/core/custom/2-custom_textfield.dart';
 import 'package:knowticed_plus/core/custom/57-custom_dialog_manager.dart';
@@ -46,7 +47,7 @@ Future<void> showVacationBalanceEdit(BuildContext context, VacationBalanceRow ro
   final VacationBalancesCubit cubit = context.read<VacationBalancesCubit>();
   final double? total = await CustomDialogManager.showContent<double>(
     context: context,
-    width: 520,
+    width: TtDialogWidth.standard,
     // 13/10/2026 (owner V2): scrolls above the keyboard instead of overflowing.
     scrollable: true,
     child: VacationBalanceEditDialog(row: row),

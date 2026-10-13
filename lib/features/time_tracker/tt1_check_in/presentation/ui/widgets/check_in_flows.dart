@@ -23,6 +23,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_controls.dart';
 import 'package:knowticed_plus/core/constants/app_assets.dart';
 import 'package:knowticed_plus/core/custom/57-custom_dialog_manager.dart';
 import 'package:knowticed_plus/core/helper/main_helper/app_toast.dart';
@@ -52,7 +53,7 @@ class CheckInFlows {
     }
     final CheckInOption? option = await CustomDialogManager.showContent<CheckInOption>(
       context: context,
-      width: 450,
+      width: TtDialogWidth.compact,
       child: CheckInSheet(options: cubit.state.options),
     );
     if (option == null || !context.mounted) return;
@@ -65,7 +66,7 @@ class CheckInFlows {
     if (result.locationVerified) {
       await CustomDialogManager.showContent<void>(
         context: context,
-        width: 450,
+        width: TtDialogWidth.compact,
         child: _AutoClose(
           after: matchNoticeDuration,
           child: LocationResultDialog(
@@ -157,7 +158,7 @@ class CheckInFlows {
       case CheckInOutcome.wrongLocation:
         return CustomDialogManager.showContent<void>(
           context: context,
-          width: 450,
+          width: TtDialogWidth.compact,
           child: LocationResultDialog(
             isMatch: false,
             title: s.timeTrackerWrongLocationTitle,

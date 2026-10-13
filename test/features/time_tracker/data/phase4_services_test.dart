@@ -366,7 +366,7 @@ void main() {
       await w.me.attendance.saveDay(
         day: AttendanceDay(id: '', employeeEmail: 'me@co.com', date: DateTime(2026, 10, 1), status: AttendanceStatus.absent),
       );
-      TimeTrackerRequest tx = await txService.submit(
+      TimeTrackerRequest tx = await txService.submit(attachments: const <RequestAttachment>[RequestAttachment(name: 'proof.pdf', url: 'https://x/proof.pdf')], 
         checkIn: DateTime(2026, 10, 1, 9),
         checkOut: DateTime(2026, 10, 1, 17),
         description: 'Forgot to check in',
@@ -399,10 +399,10 @@ void main() {
         log: w.me.log,
         clock: () => _now,
       );
-      final TimeTrackerRequest tx = await txService.submit(
+      final TimeTrackerRequest tx = await txService.submit(attachments: const <RequestAttachment>[RequestAttachment(name: 'proof.pdf', url: 'https://x/proof.pdf')], 
         checkIn: DateTime(2026, 10, 1, 9),
         checkOut: DateTime(2026, 10, 1, 17),
-        description: '',
+        description: 'Forgot',
       );
       expect(() => w.me.requestService.cancelPending(tx), throwsA(isA<TimeTrackerPermissionDenied>()));
       final _World ok = _World();
@@ -412,7 +412,7 @@ void main() {
         access: ok.me.access,
         log: ok.me.log,
         clock: () => _now,
-      ).submit(checkIn: DateTime(2026, 10, 1, 9), checkOut: DateTime(2026, 10, 1, 17), description: '');
+      ).submit(attachments: const <RequestAttachment>[RequestAttachment(name: 'proof.pdf', url: 'https://x/proof.pdf')], checkIn: DateTime(2026, 10, 1, 9), checkOut: DateTime(2026, 10, 1, 17), description: 'Forgot');
       expect((await ok.me.requestService.cancelPending(tx2)).status, RequestStatus.canceled);
       expect(ok.me.log.actions, contains(TimeTrackerLogService.actionCancelTransaction));
     });

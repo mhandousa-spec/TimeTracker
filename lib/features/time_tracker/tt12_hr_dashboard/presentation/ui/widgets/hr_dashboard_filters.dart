@@ -57,7 +57,7 @@ class HrDashboardFilterBar extends StatelessWidget {
     final Set<String> deps = <String>{for (final TimeTrackerEmployee e in people) e.departmentId};
     await CustomDialogManager.showContent<void>(
       context: context,
-      width: 615,
+      width: TtDialogWidth.standard,
       child: HrEmployeePicker(
         people: people,
         departments: <String, String>{

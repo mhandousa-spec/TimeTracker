@@ -33,6 +33,7 @@ import 'package:get_it/get_it.dart';
 
 import 'package:latlong2/latlong.dart';
 
+import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_controls.dart';
 import 'package:knowticed_plus/core/extensions/context_extensions.dart';
 import 'package:knowticed_plus/core/constants/app_assets.dart';
 import 'package:knowticed_plus/core/custom/1-custom_dropdown.dart';
@@ -361,7 +362,7 @@ class _LocationFormViewState extends State<_LocationFormView> {
       HapticController.low();
       final String? picked = await CustomDialogManager.showContent<String>(
         context: context,
-        width: 420,
+        width: TtDialogWidth.compact,
         child: TtSearchPickerDialog(
           title: title,
           searchHint: searchHint,

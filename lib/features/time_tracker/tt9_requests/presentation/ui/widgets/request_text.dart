@@ -18,12 +18,14 @@
 /// "7:30 Hrs".
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:knowticed_plus/core/theme/app_colors.dart';
 import 'package:knowticed_plus/core/theme/app_theme.dart';
 import 'package:knowticed_plus/features/time_tracker/data/services/time_tracker_notification_service.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/entities/request_parts.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/entities/request_type.dart';
+import 'package:knowticed_plus/features/time_tracker/domain/entities/time_tracker_employee.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/entities/time_tracker_request.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/enums/approval_step.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/enums/request_status.dart';
@@ -31,6 +33,7 @@ import 'package:knowticed_plus/features/time_tracker/domain/rules/request_form_r
 import 'package:knowticed_plus/features/time_tracker/domain/rules/request_list_rules.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/controller/requests_state.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_formatters.dart';
+import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_setup_widgets.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_table.dart';
 import 'package:knowticed_plus/generated/l10n.dart';
 
@@ -151,6 +154,20 @@ class RequestText {
   ///
   /// Return type: [String]
   static String timeframe(BuildContext context, TimeTrackerRequest r) {
+    // 13/10/2026 (owner): a request inside ONE day says the date once, so
+    // the line fits on one row ("18 Oct 2026, 10:00 AM – 12:00 PM";
+    // all day: just "15 Oct 2026").
+    final bool sameDay = r.startAt.year == r.endAt.year &&
+        r.startAt.month == r.endAt.month &&
+        r.startAt.day == r.endAt.day;
+    if (sameDay) {
+      if (r.isAllDay) return TimeTrackerFormat.date(context, r.startAt);
+      return S.of(context).timeTrackerSameDayTimeframe(
+        TimeTrackerFormat.date(context, r.startAt),
+        TimeTrackerFormat.time(context, r.startAt),
+        TimeTrackerFormat.time(context, r.endAt),
+      );
+    }
     String one(DateTime d) => r.isAllDay ? TimeTrackerFormat.date(context, d) : dateAt(context, d);
     return S.of(context).timeTrackerTimeframeValue(one(r.startAt), one(r.endAt));
   }
@@ -209,6 +226,8 @@ class RequestText {
       s.timeTrackerStatus,
       // 13/10/2026 (owner H1).
       s.timeTrackerApprovedByColumn,
+      // 13/10/2026 (owner): who it is waiting on now.
+      s.timeTrackerPendingWithColumn,
     ];
   }
 
@@ -221,6 +240,33 @@ class RequestText {
           state.employeeOf(st.approverEmail)?.name(isArabic: ar) ?? st.approverEmail,
     ];
     return names.isEmpty ? TimeTrackerFormat.dash : names.toSet().join(' · ');
+  }
+
+  /// 13/10/2026 (owner): the approvers so far as people (avatar + name).
+  static List<TimeTrackerEmployee?> approvers(TimeTrackerRequest r, RequestsState state) {
+    final Set<String> seen = <String>{};
+    return <TimeTrackerEmployee?>[
+      for (final RequestApprovalStep st in r.approvalSteps)
+        if (st.decision == ApprovalDecision.approved &&
+            !st.isCancellation &&
+            st.approverEmail.isNotEmpty &&
+            seen.add(st.approverEmail.toLowerCase()))
+          state.employeeOf(st.approverEmail),
+    ];
+  }
+
+  /// "Pending With": the approver of the open step, "–" when none.
+  static String pendingWith(BuildContext context, TimeTrackerRequest r, RequestsState state) {
+    final ApprovalStepKind? now = r.currentStep;
+    if (now == null || r.status.isFinal || r.status == RequestStatus.approved) return TimeTrackerFormat.dash;
+    final bool ar = Localizations.localeOf(context).languageCode == 'ar';
+    for (final RequestApprovalStep st in r.approvalSteps) {
+      if (st.step == now && st.decision == ApprovalDecision.pending) {
+        if (st.approverEmail.isEmpty) return stepRole(context, st);
+        return state.employeeOf(st.approverEmail)?.name(isArabic: ar) ?? st.approverEmail;
+      }
+    }
+    return TimeTrackerFormat.dash;
   }
 
   /// Function Name: [cells]
@@ -238,10 +284,11 @@ class RequestText {
       totalTime(context, r),
       statusLabel(context, r.status),
       approvedBy(context, r, state),
+      pendingWith(context, r, state),
     ];
   }
 
-  static const List<double> _widths = <double>[50, 130, 160, 190, 190, 110, 130, 170];
+  static const List<double> _widths = <double>[50, 130, 160, 190, 190, 110, 130, 190, 170];
 
   /// Table columns: "No" + [headers].
   static List<TtColumn> columns(BuildContext context) {
@@ -252,10 +299,16 @@ class RequestText {
   /// Table cells: index + [cells], status coloured.
   static List<TtCell> tableCells(BuildContext context, int index, TimeTrackerRequest r, RequestsState state) {
     final List<String> c = cells(context, r, state);
+    final int statusAt = c.length - 3;
+    final int approvedAt = c.length - 2;
+    final List<TimeTrackerEmployee?> people = approvers(r, state);
     return <TtCell>[
       TtCell(TimeTrackerFormat.count(context, index + 1)),
       for (int i = 0; i < c.length; i++)
-        TtCell(c[i], color: i == c.length - 2 ? statusColor(r.status) : null),
+        if (i == approvedAt && people.isNotEmpty)
+          TtCell.widget(_ApproverList(people: people, fallback: c[i]))
+        else
+          TtCell(c[i], color: i == statusAt ? statusColor(r.status) : null),
     ];
   }
 }
@@ -279,6 +332,39 @@ class RequestStatusLabel extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// "Approved By" cell: each approver as avatar + name (owner 13/10/2026).
+class _ApproverList extends StatelessWidget {
+  const _ApproverList({required this.people, required this.fallback});
+
+  final List<TimeTrackerEmployee?> people;
+  final String fallback;
+
+  @override
+  Widget build(BuildContext context) {
+    final bool ar = Localizations.localeOf(context).languageCode == 'ar';
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      spacing: 6.h,
+      children: <Widget>[
+        for (final TimeTrackerEmployee? e in people)
+          Row(
+            children: <Widget>[
+              TimeTrackerAvatar(photo: e?.photo ?? '', size: 24.r),
+              SizedBox(width: 6.w),
+              Expanded(
+                child: Text(
+                  e?.name(isArabic: ar) ?? fallback,
+                  style: StyleText.fontSize12Weight400.copyWith(color: AppColors.text),
+                ),
+              ),
+            ],
+          ),
+      ],
     );
   }
 }

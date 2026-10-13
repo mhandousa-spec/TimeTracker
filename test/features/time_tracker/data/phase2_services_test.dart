@@ -11,6 +11,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:knowticed_plus/features/time_tracker/domain/entities/request_parts.dart';
 import 'package:knowticed_plus/features/time_tracker/data/data_source/remote_data_source/employee_directory_remote_data_source.dart';
 import 'package:knowticed_plus/features/time_tracker/data/models/time_tracker_history_codec.dart';
 import 'package:knowticed_plus/features/time_tracker/data/repository/attendance_repository_impl.dart';
@@ -218,6 +219,7 @@ void main() {
       final TimeTrackerRequest saved = await service(remote, log: log).submit(
         checkIn: DateTime(2026, 10, 7, 9),
         checkOut: DateTime(2026, 10, 7, 17),
+        attachments: const <RequestAttachment>[RequestAttachment(name: 'proof.pdf', url: 'https://x/proof.pdf')],
         description: 'Forgot to check in',
       );
       expect(saved.id, isNotEmpty);
@@ -236,7 +238,8 @@ void main() {
           .submit(
         checkIn: DateTime(2026, 10, 7, 9),
         checkOut: DateTime(2026, 10, 7, 17),
-        description: '',
+        attachments: const <RequestAttachment>[RequestAttachment(name: 'proof.pdf', url: 'https://x/proof.pdf')],
+        description: 'Forgot',
       );
       expect(saved.currentStep, ApprovalStepKind.hr);
     });
@@ -247,7 +250,8 @@ void main() {
         service(remote, on: <String>{'Attendance_Permissions', 'View_Attendance'}).submit(
           checkIn: DateTime(2026, 10, 7, 9),
           checkOut: DateTime(2026, 10, 7, 17),
-          description: '',
+          attachments: const <RequestAttachment>[RequestAttachment(name: 'proof.pdf', url: 'https://x/proof.pdf')],
+          description: 'Forgot',
         ),
         throwsA(isA<TimeTrackerPermissionDenied>()),
       );
@@ -261,7 +265,8 @@ void main() {
       final TimeTrackerRequest saved = await s.submit(
         checkIn: DateTime(2026, 10, 7, 9),
         checkOut: DateTime(2026, 10, 7, 17),
-        description: '',
+        attachments: const <RequestAttachment>[RequestAttachment(name: 'proof.pdf', url: 'https://x/proof.pdf')],
+        description: 'Forgot',
       );
       final TimeTrackerRequest canceled = await s.cancel(saved, reason: 'duplicate');
       expect(canceled.status, RequestStatus.canceled);

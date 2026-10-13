@@ -36371,10 +36371,10 @@ class S {
     );
   }
 
-  /// `Attendance`
+  /// `Attendance Report`
   String get timeTrackerAttendanceExportName {
     return Intl.message(
-      'Attendance',
+      'Attendance Report',
       name: 'timeTrackerAttendanceExportName',
       desc: '',
       args: [],
@@ -37201,10 +37201,10 @@ class S {
     );
   }
 
-  /// `Locations`
+  /// `Locations List`
   String get timeTrackerLocationsExportName {
     return Intl.message(
-      'Locations',
+      'Locations List',
       name: 'timeTrackerLocationsExportName',
       desc: '',
       args: [],
@@ -37621,10 +37621,10 @@ class S {
     );
   }
 
-  /// `Employees`
+  /// `Employees List`
   String get timeTrackerEmployeesExportName {
     return Intl.message(
-      'Employees',
+      'Employees List',
       name: 'timeTrackerEmployeesExportName',
       desc: '',
       args: [],
@@ -37911,10 +37911,10 @@ class S {
     );
   }
 
-  /// `Request Types`
+  /// `Request Types List`
   String get timeTrackerRequestTypesExportName {
     return Intl.message(
-      'Request Types',
+      'Request Types List',
       name: 'timeTrackerRequestTypesExportName',
       desc: '',
       args: [],
@@ -38391,6 +38391,16 @@ class S {
     );
   }
 
+  /// `{date}, {start} – {end}`
+  String timeTrackerSameDayTimeframe(Object date, Object start, Object end) {
+    return Intl.message(
+      '$date, $start – $end',
+      name: 'timeTrackerSameDayTimeframe',
+      desc: '',
+      args: [date, start, end],
+    );
+  }
+
   /// `{date} At {time}`
   String timeTrackerDateAtTime(Object date, Object time) {
     return Intl.message(
@@ -38411,10 +38421,10 @@ class S {
     );
   }
 
-  /// `Requests`
+  /// `Requests Report`
   String get timeTrackerRequestsExportName {
     return Intl.message(
-      'Requests',
+      'Requests Report',
       name: 'timeTrackerRequestsExportName',
       desc: '',
       args: [],
@@ -38661,6 +38671,26 @@ class S {
     return Intl.message(
       'This request type needs a description.',
       name: 'timeTrackerDescriptionRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Write why this attendance needs correcting.`
+  String get timeTrackerTransactionDescriptionRequired {
+    return Intl.message(
+      'Write why this attendance needs correcting.',
+      name: 'timeTrackerTransactionDescriptionRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Attach a document that supports this correction.`
+  String get timeTrackerTransactionDocumentRequired {
+    return Intl.message(
+      'Attach a document that supports this correction.',
+      name: 'timeTrackerTransactionDocumentRequired',
       desc: '',
       args: [],
     );
@@ -39246,6 +39276,16 @@ class S {
     );
   }
 
+  /// `Search by date, status or time`
+  String get timeTrackerSearchAttendanceHint {
+    return Intl.message(
+      'Search by date, status or time',
+      name: 'timeTrackerSearchAttendanceHint',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `No place was found for this address. Try a fuller address, or tap the map.`
   String get timeTrackerAddressNotFound {
     return Intl.message(
@@ -39781,10 +39821,10 @@ class S {
     );
   }
 
-  /// `HR Dashboard`
+  /// `HR Dashboard Report`
   String get timeTrackerHrDashboardExportName {
     return Intl.message(
-      'HR Dashboard',
+      'HR Dashboard Report',
       name: 'timeTrackerHrDashboardExportName',
       desc: '',
       args: [],
@@ -39871,10 +39911,10 @@ class S {
     );
   }
 
-  /// `Vacation Balances`
+  /// `Vacation Balances Report`
   String get timeTrackerVacationBalancesExportName {
     return Intl.message(
-      'Vacation Balances',
+      'Vacation Balances Report',
       name: 'timeTrackerVacationBalancesExportName',
       desc: '',
       args: [],
@@ -40941,6 +40981,16 @@ class S {
     return Intl.message(
       'Approved By',
       name: 'timeTrackerApprovedByColumn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pending With`
+  String get timeTrackerPendingWithColumn {
+    return Intl.message(
+      'Pending With',
+      name: 'timeTrackerPendingWithColumn',
       desc: '',
       args: [],
     );

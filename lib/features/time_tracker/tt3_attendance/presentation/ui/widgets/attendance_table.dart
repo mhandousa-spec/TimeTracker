@@ -72,7 +72,8 @@ class AttendanceRowText {
 
 /// Column weights (No · Date · Status · In · Out · Break · Total).
 /// 13/10/2026 (owner F2): the six data columns are EQUAL; only "No" is
-/// narrow.
+/// narrow. 13/10/2026 (owner): one fixed gap between columns
+/// ([ttTableColumnGap]) and no "…" — a long header wraps.
 const List<int> _flex = <int>[4, 10, 10, 10, 10, 10, 10];
 
 class AttendanceTableView extends StatelessWidget {
@@ -92,14 +93,15 @@ class AttendanceTableView extends StatelessWidget {
               color: TtTableColors.header,
               padding: EdgeInsetsDirectional.symmetric(horizontal: 10.w, vertical: 11.sp),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: ttTableColumnGap,
                 children: <Widget>[
                   for (int i = 0; i < headers.length; i++)
                     Expanded(
                       flex: _flex[i],
+                      // 13/10/2026 (owner rule): wraps, never "…".
                       child: Text(
                         headers[i],
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                         style: StyleText.fontSize14Weight500
                             .copyWith(color: AppColors.white),
                       ),
@@ -124,14 +126,14 @@ class AttendanceTableView extends StatelessWidget {
       color: TtTableColors.row(index),
       padding: EdgeInsetsDirectional.symmetric(horizontal: 10.w, vertical: 11.sp),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: ttTableColumnGap,
         children: <Widget>[
           for (int i = 0; i < cells.length; i++)
             Expanded(
               flex: _flex[i],
               child: Text(
                 cells[i],
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
                 // 9/10/2026 (UI pass): table values 12 (house: value 12;
                 // Figma 661:14182 rows).
                 style: StyleText.fontSize12Weight400.copyWith(

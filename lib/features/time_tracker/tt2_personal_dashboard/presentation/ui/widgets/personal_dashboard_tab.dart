@@ -35,6 +35,9 @@
 /// Overall tiles are `TtStatsCard` — neutral label on ONE line, colour on
 /// the icon only; Work Locations gets distinct colours per place (Remote
 /// slate, Client Site dark grey, offices yellow shades — Figma 661:17426).
+/// Updated: 13/10/2026 - owner review: donuts sit at the card's end edge
+/// (legend names get the room, "Citizen Services" on one line); Late History
+/// bars animate between Counts and Minutes.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -196,6 +199,7 @@ class _RequestsDonut extends StatelessWidget {
       centerValue: TimeTrackerFormat.count(context, stats.totalRequests),
       centerLabel: s.timeTrackerTotal,
       legendMaxLines: 2,
+      ringAtEnd: true,
       sections: <ChartData>[
         ChartData(label: s.timeTrackerApproved, value: stats.approved.toDouble(), color: AppColors.lightGreen),
         ChartData(label: s.timeTrackerPending, value: stats.pending.toDouble(), color: AppColors.orange),
@@ -237,6 +241,7 @@ class _WorkLocationsDonut extends StatelessWidget {
       centerValue: TimeTrackerFormat.count(context, total),
       centerLabel: s.timeTrackerTotal,
       legendMaxLines: 2,
+      ringAtEnd: true,
       sections: sections,
     );
   }
@@ -272,6 +277,9 @@ class _LateHistoryCard extends StatelessWidget {
       dotIcon: _historyIcon,
       barColor: AppColors.primary,
       barWidth: 40,
+      // 13/10/2026 (owner): Counts ↔ Minutes morphs the bars smoothly.
+      animationDuration: const Duration(milliseconds: 450),
+      animationCurve: Curves.easeInOutCubic,
       trailing: TtSegmentedToggle(
         key: const ValueKey<String>('timeTrackerLateModeToggle'),
         onCard: true,

@@ -78,3 +78,12 @@ Facts found in code (8/10):
 
 ## Built 13 Oct 2026 — readable IDs (decision 48)
 50. New records get readable ids inside the same Firestore transaction as the write: REQ-{year}-0001, TRX-{year}-0001 (year of creation), LOC-0001, GRP-0001, RQT-0001, CMT-0001 (numbered per request). Counter documents: `Modules/time_tracker/Counters/{series}` with `Last_Number` (series = `REQ-2026`, `TRX-2026`, `LOC`, `GRP`, `RQT`, `CMT__{requestId}`). An id that already exists is skipped. Existing records keep their old ids (no migration). **Amr:** the security rules must allow company users to read/write `Counters` like the other Time Tracker collections.
+
+## Round 11 (13 Oct 2026) — owner standing rules from the iPad test
+51. Data is never cut with "…": table headers and cells wrap. Every table has ONE fixed gap between columns (`ttTableColumnGap`).
+52. Dialogs have one size per kind: filters / forms / edits / imports = `TtDialogWidth.standard` (600); short choices = `TtDialogWidth.compact` (450); messages, success, confirm and export keep the core sizes.
+53. A transaction (attendance correction) REQUIRES a description and a transaction document — the manager decides from them (validation + Submit disabled until both exist).
+54. Export names are professional: `{Report}_{Employee (personal reports)}_{yyyy-MM-dd}`, e.g. `Attendance_Report_Moataz_Handousa_2026-10-13`. Import templates keep their plain name.
+55. No divider lines inside cards (e.g. above Send Reminder).
+56. Request counters follow the life of a request: All · Pending · Under Review · Approved · Rejected · Canceled (Approvals: All · Pending · Approved · Rejected · Canceled).
+57. Dashboard "Custom" range = one date-range picker (no Start / End form). Two-option toggles slide (animation) with a LOW haptic; the yellow pill of "My Dashboard | HR" has radius 2.

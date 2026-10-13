@@ -5,6 +5,7 @@
 /// Purpose: Declares `BarChartCard`.
 /// Author: Knowticed Plus team
 /// Updated: 11/8/2026 - Added the standard module + FILE INFO header.
+/// Updated: 13/10/2026 - opt-in `animationDuration` / `animationCurve`.
 
 // Figma: vertical bar charts — "Stocks Overview", "Product Consumption",
 // "Products Allocated". Built with fl_chart.
@@ -84,6 +85,12 @@ class BarChartCard extends StatelessWidget {
   /// Optional SVG asset placed inside the header dot.
   final String? dotIcon;
 
+  /// ADDED 13/10/2026 (Time Tracker owner review): how long the bars take
+  /// to grow / shrink when [bars] change (e.g. a Counts ↔ Minutes toggle),
+  /// and the easing. Null keeps fl_chart's default (150 ms, linear).
+  final Duration? animationDuration;
+  final Curve? animationCurve;
+
   const BarChartCard({
     super.key,
     required this.title,
@@ -101,6 +108,8 @@ class BarChartCard extends StatelessWidget {
     this.expandChild = false,
     this.dotColor,
     this.dotIcon,
+    this.animationDuration,
+    this.animationCurve,
   });
 
   /// Highest bar value.
@@ -279,6 +288,8 @@ class BarChartCard extends StatelessWidget {
             width: width,
             height: chartHeight.h,
             child: BarChart(
+          duration: animationDuration ?? const Duration(milliseconds: 150),
+          curve: animationCurve ?? Curves.linear,
           BarChartData(
             maxY: _maxY,
             minY: 0,

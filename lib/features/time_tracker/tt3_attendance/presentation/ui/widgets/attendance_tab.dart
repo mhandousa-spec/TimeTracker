@@ -72,7 +72,7 @@ class _AttendanceTabState extends State<AttendanceTab> {
     final AttendanceFilter? picked =
         await CustomDialogManager.showContent<AttendanceFilter>(
       context: context,
-      width: 650,
+      width: TtDialogWidth.standard,
       child: AttendanceFilterDialog(initial: cubit.state.filter),
     );
     if (picked == null) return;
@@ -93,6 +93,8 @@ class _AttendanceTabState extends State<AttendanceTab> {
     await exportTimeTrackerCsv(
       context: context,
       defaultFileName: s.timeTrackerAttendanceExportName,
+      // 13/10/2026 (owner): whose report it is, in the file name.
+      subject: context.isArabic && _access.identity.nameAr.isNotEmpty ? _access.identity.nameAr : _access.identity.nameEn,
       header: AttendanceRowText.headers(context),
       rows: <List<String>>[
         for (int i = 0; i < rows.length; i++)
@@ -145,8 +147,11 @@ class _AttendanceTabState extends State<AttendanceTab> {
     // 13/10/2026 (Figma phone): "+ Transaction" full width under the row.
     return TtToolbarWithPrimary(
       tools: <Widget>[
+        // 13/10/2026 (owner): the hint says what the search matches — the
+        // row's date, status and times (`AttendanceRowText.describe`).
         TtSearchField(
           controller: _search,
+          hint: s.timeTrackerSearchAttendanceHint,
           onChanged: context.read<AttendanceCubit>().searchChanged,
         ),
         SizedBox(width: 15.w),

@@ -44,7 +44,7 @@ class TransactionFormCubit extends Cubit<TransactionFormState> {
         _access = access,
         _clock = clock,
         _pickFile = pickFile ?? MediaPickerService().pickAnyFile,
-        super(TransactionFormState(errors: _validate(null, null, '', clock())));
+        super(TransactionFormState(errors: _validate(null, null, '', clock(), hasDocument: false)));
 
   final TransactionService _service;
   final AttachmentBaseRepository _attachments;
@@ -65,6 +65,7 @@ class TransactionFormCubit extends Cubit<TransactionFormState> {
     DateTime? checkOut,
     String description,
     DateTime now, {
+    required bool hasDocument,
     bool overnightShift = false,
   }) =>
       TransactionRules.validate(
@@ -72,6 +73,7 @@ class TransactionFormCubit extends Cubit<TransactionFormState> {
         checkOut: checkOut,
         description: description,
         now: now,
+        hasDocument: hasDocument,
         overnightShift: overnightShift,
       );
 
@@ -81,6 +83,7 @@ class TransactionFormCubit extends Cubit<TransactionFormState> {
           next.checkOut,
           next.description,
           _clock(),
+          hasDocument: next.attachment != null,
           overnightShift: next.overnightShift,
         ),
       );
@@ -175,7 +178,7 @@ class TransactionFormCubit extends Cubit<TransactionFormState> {
         fileName: fileName,
         bytes: bytes,
       );
-      emit(state.copyWith(isUploading: false, attachment: file));
+      emit(_revalidated(state.copyWith(isUploading: false, attachment: file)));
     } catch (error) {
       emit(state.copyWith(
         isUploading: false,
@@ -190,7 +193,7 @@ class TransactionFormCubit extends Cubit<TransactionFormState> {
   /// Purpose: The red ⊖ on the file card.
   ///
   /// Return type: [void]
-  void removeAttachment() => emit(state.copyWith(clearAttachment: true));
+  void removeAttachment() => emit(_revalidated(state.copyWith(clearAttachment: true)));
 
   /// Function Name: [submit]
   ///

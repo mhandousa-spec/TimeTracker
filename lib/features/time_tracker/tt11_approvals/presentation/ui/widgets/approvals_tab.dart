@@ -53,8 +53,9 @@ class ApprovalsTab extends StatefulWidget {
   /// The Approvals counters (Figma: no Under Review).
   static const List<RequestBucket> buckets = <RequestBucket>[
     RequestBucket.all,
-    RequestBucket.approved,
+    // 13/10/2026 (owner): same order as Requests — waiting, then outcomes.
     RequestBucket.pending,
+    RequestBucket.approved,
     RequestBucket.rejected,
     RequestBucket.canceled,
   ];
@@ -128,7 +129,7 @@ class _ApprovalsTabState extends State<ApprovalsTab> {
           onTap: () async {
             final RequestFilter? picked = await CustomDialogManager.showContent<RequestFilter>(
               context: context,
-              width: 520,
+              width: TtDialogWidth.standard,
               child: RequestFilterDialog(
                 initial: state.approvals.employeeEmail.isEmpty
                     ? state.approvals.filter

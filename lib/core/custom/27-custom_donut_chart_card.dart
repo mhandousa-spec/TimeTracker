@@ -7,6 +7,7 @@
 /// Updated: 11/8/2026 - Added the standard module + FILE INFO header.
 /// Updated: 9/10/2026 - (Time Tracker UI fix round 1) `legendMaxLines`
 ///          (default 1 = unchanged) forwarded to the side legend rows.
+/// Updated: 13/10/2026 - opt-in `ringAtEnd` (ring at the card's end edge).
 
 // Figma: donut charts — "Demands", "Order Fulfillment Status".
 // fl_chart PieChart with center total + legend with amounts.
@@ -105,6 +106,12 @@ class DonutChartCard extends StatelessWidget {
   /// names read in full in the narrow iPad-portrait cards.
   final int? legendMaxLines;
 
+  /// ADDED 13/10/2026 (Time Tracker owner review): beside a side legend,
+  /// the ring sits at the card's END edge (only the card padding after it)
+  /// with a 16 gap to the legend, so the legend names get the room. False
+  /// keeps the historical 30 + 30 spacing.
+  final bool ringAtEnd;
+
   const DonutChartCard({
     super.key,
     required this.title,
@@ -126,6 +133,7 @@ class DonutChartCard extends StatelessWidget {
     this.percentageFontSize = 7,
     this.compactLegend = false,
     this.legendMaxLines = 1,
+    this.ringAtEnd = false,
   });
 
   @override
@@ -279,9 +287,9 @@ class DonutChartCard extends StatelessWidget {
                 // Gap between the legend text and the donut. The matching space
                 // on the far side is the card's own padding on a phone — see
                 // [symmetricEdges].
-                SizedBox(width: 30.w),
+                SizedBox(width: ringAtEnd ? 16.w : 30.w),
                 chart,
-                if (!symmetricEdges) SizedBox(width: 30.w),
+                if (!symmetricEdges && !ringAtEnd) SizedBox(width: 30.w),
               ],
             ),
     );

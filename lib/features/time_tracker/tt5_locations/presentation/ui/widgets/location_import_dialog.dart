@@ -22,6 +22,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
 
+import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_controls.dart';
 import 'package:knowticed_plus/core/constants/app_assets.dart';
 import 'package:knowticed_plus/core/custom/57-custom_dialog_manager.dart';
 import 'package:knowticed_plus/core/custom/66-circle_progress.dart';
@@ -49,7 +50,7 @@ Future<void> showLocationImportDialog(BuildContext context) async {
   final LocationsCubit cubit = context.read<LocationsCubit>();
   final LocationImportPlan? plan = await CustomDialogManager.showContent<LocationImportPlan>(
     context: context,
-    width: 620,
+    width: TtDialogWidth.standard,
     child: BlocProvider<LocationsCubit>.value(value: cubit, child: const LocationImportDialog()),
   );
   if (plan == null || !context.mounted) return;
@@ -98,6 +99,7 @@ class _LocationImportDialogState extends State<LocationImportDialog> {
     return exportTimeTrackerCsv(
       context: context,
       defaultFileName: S.of(context).timeTrackerImportTemplateName,
+      dated: false,
       header: LocationImportRules.headings,
       rows: <List<String>>[for (final WorkLocation l in existing) LocationImportRules.rowOf(l)],
     );

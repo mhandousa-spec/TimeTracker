@@ -208,7 +208,7 @@ class _EmployeesTabState extends State<EmployeesTab> {
             onTap: () async {
               final EmployeesFilterResult? picked = await CustomDialogManager.showContent<EmployeesFilterResult>(
                 context: context,
-                width: 420,
+                width: TtDialogWidth.standard,
                 child: EmployeesFilterDialog(
                   location: state.locationFilter,
                   department: state.departmentId,

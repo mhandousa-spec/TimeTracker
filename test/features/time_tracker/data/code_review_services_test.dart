@@ -16,6 +16,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:knowticed_plus/features/time_tracker/domain/entities/request_parts.dart';
 import 'package:knowticed_plus/features/roles/r1_role_management/presentation/controller/role_cubit.dart';
 import 'package:knowticed_plus/features/time_tracker/data/data_source/remote_data_source/time_tracker_role_remote_data_source.dart';
 import 'package:knowticed_plus/features/time_tracker/data/models/attendance_day_model.dart';
@@ -213,7 +214,7 @@ void main() {
         approvers: w.me.approvers,
         clock: () => _now,
       );
-      final TimeTrackerRequest pending = await tx.submit(
+      final TimeTrackerRequest pending = await tx.submit(attachments: const <RequestAttachment>[RequestAttachment(name: 'proof.pdf', url: 'https://x/proof.pdf')], 
         checkIn: DateTime(2026, 10, 1, 9),
         checkOut: DateTime(2026, 10, 1, 17),
         description: 'Forgot',

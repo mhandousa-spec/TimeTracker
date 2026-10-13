@@ -14,6 +14,8 @@
 /// (shell rail / nav bar stay). Provides its own `TransactionFormCubit`.
 /// The page owns the text controller and the picked TIMES; the cubit owns
 /// the draft (playbook §3). Breadcrumb frame = core `SideFrameMasterServices`.
+/// Updated: 13/10/2026 - owner rule: Description and Transaction Document are
+/// required (red border + message, Submit stays disabled until both exist).
 /// Updated: 9/10/2026 - code review finding 6: the Check Out field says
 /// when the check-out is not on the check-in day (or the next day for an
 /// overnight shift) or the span passes 24 hours.
@@ -197,6 +199,9 @@ class _TransactionFormViewState extends State<_TransactionFormView> {
       fileError = s.timeTrackerFileTooLarge;
     } else if (state.uploadFailed) {
       fileError = s.timeTrackerUploadFailed;
+    } else if (state.shows(TransactionError.documentRequired)) {
+      // 13/10/2026 (owner rule): the document is required.
+      fileError = s.timeTrackerTransactionDocumentRequired;
     }
     return Container(
       padding: EdgeInsetsDirectional.all(15.r),
@@ -248,6 +253,10 @@ class _TransactionFormViewState extends State<_TransactionFormView> {
             minLines: 3,
             maxLength: TransactionRules.maxDescriptionLength,
             keyboardType: TextInputType.multiline,
+            // 13/10/2026 (owner rule): the description is required.
+            errorText: state.shows(TransactionError.descriptionRequired)
+                ? s.timeTrackerTransactionDescriptionRequired
+                : null,
             valueStyle: StyleText.fontSize12Weight400.copyWith(color: AppColors.text),
             onChanged: _cubit.descriptionChanged,
           ),

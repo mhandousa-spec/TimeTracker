@@ -96,6 +96,8 @@ class _RequestsTabState extends State<RequestsTab> {
     await exportTimeTrackerCsv(
       context: context,
       defaultFileName: s.timeTrackerRequestsExportName,
+      // 13/10/2026 (owner): whose report it is, in the file name.
+      subject: context.isArabic && _access.identity.nameAr.isNotEmpty ? _access.identity.nameAr : _access.identity.nameEn,
       header: <String>[s.timeTrackerColumnNo, ...RequestText.headers(context)],
       rows: <List<String>>[
         for (int i = 0; i < rows.length; i++)
@@ -159,7 +161,7 @@ class _RequestsTabState extends State<RequestsTab> {
           onTap: () async {
             final RequestFilter? picked = await CustomDialogManager.showContent<RequestFilter>(
               context: context,
-              width: 460,
+              width: TtDialogWidth.standard,
               child: RequestFilterDialog(initial: state.mine.filter, types: state.types),
             );
             if (picked != null) cubit.setFilter(RequestScope.mine, picked);

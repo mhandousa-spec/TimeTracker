@@ -26,6 +26,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_controls.dart';
 import 'package:knowticed_plus/core/constants/app_assets.dart';
 import 'package:knowticed_plus/core/custom/1-custom_dropdown.dart';
 import 'package:knowticed_plus/core/custom/31-custom_multi_select_dropdown.dart';
@@ -66,7 +67,7 @@ Future<void> showGrantAccessFlow(BuildContext context, List<TimeTrackerEmployee>
   final EmployeesCubit cubit = context.read<EmployeesCubit>();
   final GrantAccessResult? result = await CustomDialogManager.showContent<GrantAccessResult>(
     context: context,
-    width: 615,
+    width: TtDialogWidth.standard,
     child: GrantAccessDialog(
       employees: employees,
       current: employees.length == 1 ? cubit.state.assignmentOf(employees.first.email) : null,

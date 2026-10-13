@@ -17,17 +17,16 @@
 /// it; `DashboardRangeMenu` binds it to the personal dashboard as before.
 /// Updated: 9/10/2026 - owner review: toolbar dropdowns take the toolbar's
 /// one height + corner radius (`TtToolbar` — same as Search / Export / Import).
+/// Updated: 13/10/2026 - owner review: Custom is one date-range picker
+/// (`CustomDropdownRangeCalendar.showRangePicker`); the Start / End dialog
+/// is gone.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:knowticed_plus/core/custom/1-custom_dropdown.dart';
-import 'package:knowticed_plus/core/custom/3-custom_dropdown_calander.dart';
-import 'package:knowticed_plus/core/custom/5-custom_button.dart';
-import 'package:knowticed_plus/core/custom/57-custom_dialog_manager.dart';
-import 'package:knowticed_plus/core/helper/main_helper/localized_date.dart';
-import 'package:knowticed_plus/core/theme/app_animations.dart';
+import 'package:knowticed_plus/core/custom/4-custom_dropdown_range_calander.dart';
 import 'package:knowticed_plus/core/theme/app_colors.dart';
 import 'package:knowticed_plus/core/theme/app_theme.dart';
 import 'package:knowticed_plus/core/theme/haptic_controller.dart';
@@ -98,13 +97,20 @@ class DashboardRangeDropdown extends StatelessWidget {
   final ValueChanged<DashboardRange> onRange;
   final ValueChanged<DateSpan> onCustom;
 
+  /// 13/10/2026 (owner review): "Custom" opens ONE date-range picker (the
+  /// core range calendar) — no Start Date / End Date form in between. One
+  /// tapped day = that single day.
   Future<void> _openCustom(BuildContext context) async {
-    final DateSpan? picked = await CustomDialogManager.showContent<DateSpan>(
-      context: context,
-      width: 520,
-      child: CustomRangeDialog(initial: customSpan()),
+    final DateSpan? current = customSpan();
+    final List<DateTime?>? picked = await CustomDropdownRangeCalendar.showRangePicker(
+      context,
+      start: current?.first,
+      end: current?.last,
     );
-    if (picked != null) onCustom(picked);
+    final DateTime? first = (picked == null || picked.isEmpty) ? null : picked.first;
+    if (first == null) return;
+    final DateTime last = (picked!.length > 1 ? picked[1] : null) ?? first;
+    onCustom(DateSpan(first, last));
   }
 
   @override
@@ -131,89 +137,6 @@ class DashboardRangeDropdown extends StatelessWidget {
             onRange(r);
           }
         },
-      ),
-    );
-  }
-}
-
-/// "Custom Date Selector": Start Date · End Date · Apply.
-class CustomRangeDialog extends StatefulWidget {
-  const CustomRangeDialog({super.key, this.initial});
-
-  final DateSpan? initial;
-
-  @override
-  State<CustomRangeDialog> createState() => _CustomRangeDialogState();
-}
-
-class _CustomRangeDialogState extends State<CustomRangeDialog> {
-  DateTime? _first;
-  DateTime? _last;
-
-  @override
-  void initState() {
-    super.initState();
-    _first = widget.initial?.first;
-    _last = widget.initial?.last;
-  }
-
-  Widget _field(String label, DateTime? value, ValueChanged<DateTime> onPick) =>
-      CustomDropdownCalendar(
-        label: label,
-        value: value,
-        hint: S.of(context).chooseDate,
-        height: 36,
-        dateFormatter: (DateTime d) => LocalizedDate.of(context, d),
-        onChanged: (DateTime? d) {
-          if (d != null) onPick(d);
-        },
-      );
-
-  @override
-  Widget build(BuildContext context) {
-    final S s = S.of(context);
-    final DateTime? first = _first;
-    final DateTime? last = _last;
-    final bool ready = first != null && last != null;
-    return ScaleInContent(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Text(
-            s.timeTrackerCustomDateSelector,
-            style: StyleText.fontSize18Weight500.copyWith(color: AppColors.text),
-          ),
-          SizedBox(height: 15.h),
-          _field(s.timeTrackerStartDate, first, (DateTime d) => setState(() => _first = d)),
-          SizedBox(height: 15.h),
-          _field(s.timeTrackerEndDate, last, (DateTime d) => setState(() => _last = d)),
-          SizedBox(height: 20.h),
-          Align(
-            alignment: AlignmentDirectional.centerEnd,
-            child: SizedBox(
-              width: 150.w,
-              child: ready
-                  ? ShrinkOnTap(
-                      child: customButton(
-                        title: s.apply,
-                        function: () => Navigator.of(context).pop(DateSpan(first, last)),
-                        color: AppColors.primary,
-                        textStyle: StyleText.fontSize16Weight500
-                            .copyWith(color: AppColors.textButton),
-                      ),
-                    )
-                  : customButton(
-                      title: s.apply,
-                      function: () {},
-                      haptic: () {},
-                      color: AppColors.disabledButton,
-                      textStyle: StyleText.fontSize16Weight500
-                          .copyWith(color: AppColors.colorGreyDark),
-                    ),
-            ),
-          ),
-        ],
       ),
     );
   }

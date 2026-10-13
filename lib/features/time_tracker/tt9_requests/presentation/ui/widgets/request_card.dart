@@ -91,12 +91,11 @@ class RequestCard extends StatelessWidget {
             ...RequestCardLines.timeLines(context, request),
             // Fills only when a neighbour in the row is taller (TtCardGrid).
             const Spacer(),
-            // 13/10/2026 (owner H2 / H3): a thin line, then Send Reminder
-            // across the card — or, inside the 24-hour window, the countdown.
+            // 13/10/2026 (owner H2 / H3): Send Reminder across the card — or,
+            // inside the 24-hour window, the countdown. NO divider line above
+            // it (owner rule: the design never uses one).
             if (canRemind) ...<Widget>[
-              SizedBox(height: 10.h),
-              Divider(height: 1, thickness: 1, color: AppColors.border.withValues(alpha: 0.4)),
-              SizedBox(height: 10.h),
+              SizedBox(height: 15.h),
               if (wait != null)
                 Center(
                   child: RequestReminderCountdown(

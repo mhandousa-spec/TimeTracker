@@ -200,20 +200,20 @@ void main() {
     test('check-out the same day; next day only for an overnight shift', () {
       expect(
         TransactionRules.validate(
-            checkIn: DateTime(2026, 10, 1, 9), checkOut: DateTime(2026, 10, 1, 17), description: '', now: now),
+            checkIn: DateTime(2026, 10, 1, 9), checkOut: DateTime(2026, 10, 1, 17), description: 'x', now: now, hasDocument: true),
         isEmpty,
       );
       expect(
         TransactionRules.validate(
-            checkIn: DateTime(2026, 10, 1, 22), checkOut: DateTime(2026, 10, 2, 6), description: '', now: now),
+            checkIn: DateTime(2026, 10, 1, 22), checkOut: DateTime(2026, 10, 2, 6), description: 'x', now: now, hasDocument: true),
         contains(TransactionError.checkOutWrongDay),
       );
       expect(
         TransactionRules.validate(
           checkIn: DateTime(2026, 10, 1, 22),
           checkOut: DateTime(2026, 10, 2, 6),
-          description: '',
-          now: now,
+          description: 'x',
+          now: now, hasDocument: true,
           overnightShift: true,
         ),
         isEmpty,
@@ -224,8 +224,8 @@ void main() {
       final Set<TransactionError> e = TransactionRules.validate(
         checkIn: DateTime(2026, 10, 1, 9),
         checkOut: DateTime(2026, 10, 9, 17),
-        description: '',
-        now: now,
+        description: 'x',
+        now: now, hasDocument: true,
         overnightShift: true,
       );
       expect(e, containsAll(<TransactionError>[TransactionError.checkOutWrongDay, TransactionError.tooLong]));
@@ -233,8 +233,8 @@ void main() {
         TransactionRules.validate(
           checkIn: DateTime(2026, 10, 1, 6),
           checkOut: DateTime(2026, 10, 2, 7),
-          description: '',
-          now: now,
+          description: 'x',
+          now: now, hasDocument: true,
           overnightShift: true,
         ),
         contains(TransactionError.tooLong),

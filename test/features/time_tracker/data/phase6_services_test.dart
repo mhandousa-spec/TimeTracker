@@ -508,7 +508,7 @@ void main() {
           );
       const TimeTrackerTypeName tx = TimeTrackerTypeName(en: 'Transaction');
       TimeTrackerRequest t = await txService(w.me)
-          .submit(checkIn: DateTime(2026, 10, 1, 9), checkOut: DateTime(2026, 10, 1, 17), description: 'Forgot to check in');
+          .submit(attachments: const <RequestAttachment>[RequestAttachment(name: 'proof.pdf', url: 'https://x/proof.pdf')], checkIn: DateTime(2026, 10, 1, 9), checkOut: DateTime(2026, 10, 1, 17), description: 'Forgot to check in');
       expect(w.me.notifications.of(TimeTrackerNotificationEvent.pendingApprovalsManager).last.requestId, t.id);
       t = await w.boss.approvalService.approve(t, typeName: tx, isArabic: false);
       final Phase4Kit hr = w.hr;
@@ -520,7 +520,7 @@ void main() {
       _expectRendered(fixed);
 
       TimeTrackerRequest t2 = await txService(w.me)
-          .submit(checkIn: DateTime(2026, 10, 2, 9), checkOut: DateTime(2026, 10, 2, 17), description: 'Badge reader down');
+          .submit(attachments: const <RequestAttachment>[RequestAttachment(name: 'proof.pdf', url: 'https://x/proof.pdf')], checkIn: DateTime(2026, 10, 2, 9), checkOut: DateTime(2026, 10, 2, 17), description: 'Badge reader down');
       final Phase4Kit boss = w.boss;
       t2 = await boss.approvalService.reject(t2, reason: 'No proof', typeName: tx, isArabic: false);
       final SentNotification refused = boss.notifications.of(TimeTrackerNotificationEvent.attendanceCorrectionRejected).single;

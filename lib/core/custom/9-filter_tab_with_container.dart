@@ -5,12 +5,15 @@
 /// Purpose: Declares `CustomSegmentedTabs`.
 /// Author: Knowticed Plus team
 /// Updated: 11/8/2026 - Added the standard module + FILE INFO header.
+/// Updated: 13/10/2026 - opt-in `animated`: the selected pill SLIDES to
+///          the tapped tab and the text colours fade (default off).
 
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:knowticed_plus/core/theme/app_theme.dart';
 import 'package:knowticed_plus/core/theme/app_colors.dart';
+
 /// A customizable segmented tabs widget that can be reused throughout the app
 ///
 /// Example usage:
@@ -43,7 +46,15 @@ class CustomSegmentedTabs extends StatelessWidget {
     this.equalWidth = false,
     this.tabBorderRadius,
     this.tabKeys,
+    this.animated = false,
   });
+
+  /// ADDED 13/10/2026 (Time Tracker owner review): the selected pill slides
+  /// to the tapped tab and the text colours fade, instead of jumping.
+  /// False keeps every existing caller exactly as it was.
+  final bool animated;
+
+  static const Duration _slide = Duration(milliseconds: 280);
 
   /// ADDED 12/10/2026 (Time Tracker owner review T1): an optional key per
   /// tab (same order as [tabs]) so a screen / test can find one segment.
@@ -103,6 +114,7 @@ class CustomSegmentedTabs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (animated) return _buildAnimated(context);
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(borderRadius ?? 8),
@@ -122,21 +134,123 @@ class CustomSegmentedTabs extends StatelessWidget {
 
           return equalWidth
               ? Expanded(
-            child: _buildTab(
-              key: tabKeys?[tabIndex],
-              title: tabs[tabIndex],
-              isSelected: isSelected,
-              onTap: () => onTabSelected(tabIndex),
-            ),
-          )
+                  child: _buildTab(
+                    key: tabKeys?[tabIndex],
+                    title: tabs[tabIndex],
+                    isSelected: isSelected,
+                    onTap: () => onTabSelected(tabIndex),
+                  ),
+                )
               : _buildTab(
-            key: tabKeys?[tabIndex],
-            title: tabs[tabIndex],
-            isSelected: isSelected,
-            onTap: () => onTabSelected(tabIndex),
-          );
+                  key: tabKeys?[tabIndex],
+                  title: tabs[tabIndex],
+                  isSelected: isSelected,
+                  onTap: () => onTabSelected(tabIndex),
+                );
         }),
       ),
+    );
+  }
+
+  /// [animated]: one pill under the row slides to the selected tab. Tab
+  /// widths come from their text (plus the tab padding) — or equal shares
+  /// when [equalWidth] — so the pill lands exactly where the static tab
+  /// would be drawn.
+  Widget _buildAnimated(BuildContext context) {
+    final TextStyle base =
+        (textStyle ?? StyleText.fontSize14Weight600).copyWith(height: 1, leadingDistribution: TextLeadingDistribution.even);
+    final double hPad = tabHorizontalPadding ?? 6.sp;
+    final double vPad = tabVerticalPadding ?? 6.sp;
+    final double gap = spacing ?? 10.sp;
+    final TextScaler scaler = MediaQuery.textScalerOf(context);
+    final TextDirection direction = Directionality.of(context);
+    final List<double> natural = <double>[
+      for (final String t in tabs)
+        (TextPainter(
+              text: TextSpan(text: t, style: base),
+              textDirection: direction,
+              textScaler: scaler,
+              maxLines: 1,
+            )..layout())
+                .width +
+            hPad * 2,
+    ];
+    Widget row(List<double> widths) {
+      double start = 0;
+      for (int i = 0; i < selectedIndex && i < widths.length; i++) {
+        start += widths[i] + gap;
+      }
+      // No tab selected (index -1, e.g. an unset status) → no pill.
+      final bool hasPill = selectedIndex >= 0 && selectedIndex < widths.length;
+      final double pillWidth = hasPill ? widths[selectedIndex] : 0;
+      return Stack(
+        children: [
+          if (hasPill)
+            AnimatedPositionedDirectional(
+              duration: _slide,
+              curve: Curves.easeOutCubic,
+              start: start,
+              top: 0,
+              bottom: 0,
+              width: pillWidth,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(tabBorderRadius ?? 4),
+                  color: selectedColor ?? AppColors.primary,
+                ),
+              ),
+            ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (int i = 0; i < tabs.length; i++) ...[
+                if (i > 0) SizedBox(width: gap),
+                GestureDetector(
+                  key: tabKeys?[i],
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => onTabSelected(i),
+                  child: SizedBox(
+                    width: widths[i],
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: vPad),
+                      child: Center(
+                        child: AnimatedDefaultTextStyle(
+                          duration: _slide,
+                          curve: Curves.easeOutCubic,
+                          style: base.copyWith(
+                            color: i == selectedIndex
+                                ? (selectedTextColor ?? AppColors.textButton)
+                                : (unselectedTextColor ??
+                                    AppColors.secondaryText),
+                          ),
+                          child: Text(tabs[i], maxLines: 1, softWrap: false),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ],
+      );
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(borderRadius ?? 8),
+        color: containerColor ?? AppColors.field,
+      ),
+      padding: containerPadding ?? EdgeInsets.all(8.sp),
+      child: equalWidth
+          ? LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints box) {
+                final double each =
+                    (box.maxWidth - gap * (tabs.length - 1)) / tabs.length;
+                return row(List<double>.filled(tabs.length, each));
+              },
+            )
+          : row(natural),
     );
   }
 

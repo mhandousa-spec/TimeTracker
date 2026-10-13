@@ -216,7 +216,9 @@ void main() {
       await h.settle(tester);
       expect(_key('requestTypesTable'), findsOneWidget);
       expect(_key('requestTypeRow_t1'), findsOneWidget);
-      await tester.tap(_key('requestTypeRow_t1'));
+      // The table scrolls sideways here (13/10/2026: fixed column gaps), so
+      // tap the row's visible start, not its off-screen centre.
+      await tester.tapAt(tester.getTopLeft(_key('requestTypeRow_t1')) + const Offset(30, 10));
       await h.settle(tester);
       expect(_key('requestTypeEditButton'), findsOneWidget);
       expect(_key('requestTypeRemoveButton'), findsOneWidget);

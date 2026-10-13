@@ -46,6 +46,11 @@ abstract class TtTableColors {
       : (AppTheme.isDark ? AppColors.tableDarkBackground : AppColors.oddRowColor);
 }
 
+/// 13/10/2026 (owner rule): the SAME gap between every pair of table
+/// columns (header and rows), so a long header never runs into its
+/// neighbour ("Oncoming TimeLeaving Time").
+double get ttTableColumnGap => 12.w;
+
 /// One column: its title and width (unscaled; `.w` is applied).
 class TtColumn {
   const TtColumn(this.title, this.width);
@@ -84,6 +89,9 @@ class TimeTrackerTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // The column gaps are NOT counted here: a table that fit the card before
+    // still stretches (its columns give the gaps back); only a scrolling
+    // table grows by them (see [_table]).
     final double total = columns.fold<double>(0, (double s, TtColumn c) => s + c.width.w) + 20.w;
     return AnimatedSizeWrap(
       child: TtOverflowFade(
@@ -97,7 +105,8 @@ class TimeTrackerTable extends StatelessWidget {
       borderRadius: CardStyles.radius(),
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints box) {
-          final double width = total < box.maxWidth ? box.maxWidth : total;
+          final double width =
+              total < box.maxWidth ? box.maxWidth : total + ttTableColumnGap * (columns.length - 1);
           return SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: SizedBox(
@@ -108,14 +117,13 @@ class TimeTrackerTable extends StatelessWidget {
                     color: TtTableColors.header,
                     cells: <Widget>[
                       for (final TtColumn c in columns)
+                        // 13/10/2026 (owner rule): table text wraps, never "…".
                         Text(c.title,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
                             style: StyleText.fontSize14Weight500.copyWith(color: AppColors.white)),
                     ],
-                    stretch: width > total,
+                    stretch: total < box.maxWidth,
                   ),
-                  for (int r = 0; r < rows.length; r++) _row(r, width > total),
+                  for (int r = 0; r < rows.length; r++) _row(r, total < box.maxWidth),
                 ],
               ),
             ),
@@ -134,8 +142,6 @@ class TimeTrackerTable extends StatelessWidget {
         for (final TtCell cell in rows[r])
           cell.child ??
               Text(cell.text,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                   style: StyleText.fontSize12Weight400.copyWith(color: cell.color ?? AppColors.text)),
       ],
     );
@@ -157,6 +163,8 @@ class TimeTrackerTable extends StatelessWidget {
       color: color,
       padding: EdgeInsetsDirectional.symmetric(horizontal: 10.w, vertical: 11.sp),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: ttTableColumnGap,
         children: <Widget>[
           for (int i = 0; i < columns.length; i++)
             stretch

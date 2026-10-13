@@ -22,6 +22,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
 
+import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_controls.dart';
 import 'package:knowticed_plus/core/constants/app_assets.dart';
 import 'package:knowticed_plus/core/custom/57-custom_dialog_manager.dart';
 import 'package:knowticed_plus/core/custom/66-circle_progress.dart';
@@ -47,7 +48,7 @@ Future<void> showVacationBalanceImport(BuildContext context) async {
   final VacationBalancesCubit cubit = context.read<VacationBalancesCubit>();
   final VacationImportPlan? plan = await CustomDialogManager.showContent<VacationImportPlan>(
     context: context,
-    width: 620,
+    width: TtDialogWidth.standard,
     child: BlocProvider<VacationBalancesCubit>.value(value: cubit, child: const VacationBalanceImportDialog()),
   );
   if (plan == null || !context.mounted) return;
@@ -93,6 +94,7 @@ class _VacationBalanceImportDialogState extends State<VacationBalanceImportDialo
     return exportTimeTrackerCsv(
       context: context,
       defaultFileName: S.of(context).timeTrackerVacationTemplateName,
+      dated: false,
       header: VacationBalanceImportRules.headings,
       rows: <List<String>>[for (final VacationBalanceRow r in rows) VacationBalanceImportRules.templateRow(r)],
     );

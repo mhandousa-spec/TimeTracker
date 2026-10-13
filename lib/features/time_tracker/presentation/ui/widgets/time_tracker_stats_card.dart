@@ -28,6 +28,10 @@
 /// core `OverallStatsCard` the module used before. A tile with [TtStat.onTap]
 /// (Pending Approvals → Approvals tab) shows a small "›" after its number
 /// and fires a LOW haptic. No hover / splash (owner rule).
+///
+/// Updated: 13/10/2026 - owner review (iPad portrait): on a tablet the tiles
+/// sit on ONE line whenever they fit at their own label width (spread evenly);
+/// title gap 14 → 10.
 
 import 'dart:math' as math;
 
@@ -85,7 +89,8 @@ class TtStatsCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Text(title, style: StyleText.fontSize16Weight500.copyWith(color: AppColors.text)),
-          SizedBox(height: 14.h),
+          // 13/10/2026 (owner): 14 → 10 under the title.
+          SizedBox(height: 10.h),
           LayoutBuilder(builder: (BuildContext context, BoxConstraints c) => _rows(context, c.maxWidth)),
         ],
       ),
@@ -102,6 +107,7 @@ class TtStatsCard extends StatelessWidget {
     final TextDirection direction = Directionality.of(context);
     final TextScaler scaler = MediaQuery.textScalerOf(context);
     double longest = 0;
+    final List<double> labelWidths = <double>[];
     for (final TtStat s in stats) {
       final TextPainter p = TextPainter(
         text: TextSpan(text: s.label, style: label),
@@ -110,7 +116,38 @@ class TtStatsCard extends StatelessWidget {
         maxLines: 1,
       )..layout();
       longest = math.max(longest, p.width);
+      labelWidths.add(p.width);
       p.dispose();
+    }
+    // 13/10/2026 (owner): on a tablet every tile on ONE line when the tiles,
+    // each only as wide as its OWN label, fit — spread evenly across the
+    // card. (Sizing every tile for the longest label, "Vacations Credit",
+    // pushed the fourth tile onto a second line on iPad portrait.)
+    if (!phone && stats.length > 1) {
+      final List<double> natural = <double>[
+        for (final double w in labelWidths) icon + gap + math.max(w, 24.w) + 4.w,
+      ];
+      final double needed = natural.fold<double>(0, (double a, double b) => a + b) + spacing * (stats.length - 1);
+      if (needed <= width) {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            for (int i = 0; i < stats.length; i++)
+              SizedBox(
+                width: natural[i],
+                child: _Tile(
+                  stat: stats[i],
+                  iconSize: icon,
+                  gap: gap,
+                  labelStyle: label,
+                  valueStyle: value,
+                  stacked: false,
+                ),
+              ),
+          ],
+        );
+      }
     }
     int fit(double tile) =>
         stats.isEmpty ? 1 : ((width + spacing) / (tile + spacing)).floor().clamp(1, stats.length);

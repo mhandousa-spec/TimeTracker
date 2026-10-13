@@ -75,7 +75,7 @@ class _LocationsTabState extends State<LocationsTab> {
     final LocationsCubit cubit = context.read<LocationsCubit>();
     final LocationsFilter? picked = await CustomDialogManager.showContent<LocationsFilter>(
       context: context,
-      width: 520,
+      width: TtDialogWidth.standard,
       child: LocationFilterDialog(initial: cubit.state.filter),
     );
     if (picked != null) cubit.applyFilter(picked);

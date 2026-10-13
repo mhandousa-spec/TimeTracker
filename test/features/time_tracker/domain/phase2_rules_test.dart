@@ -15,6 +15,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:knowticed_plus/features/time_tracker/data/models/work_location_model.dart';
 import 'package:knowticed_plus/features/time_tracker/data/models/time_tracker_field_codec.dart';
 import 'package:knowticed_plus/features/time_tracker/data/models/time_tracker_history_codec.dart';
+import 'package:knowticed_plus/features/time_tracker/domain/entities/request_parts.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/entities/attendance_day.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/entities/employee_assignment.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/entities/employee_work_setup.dart';
@@ -413,15 +414,15 @@ void main() {
 
     test('validation', () {
       expect(
-        TransactionRules.validate(checkIn: null, checkOut: null, description: '', now: now),
+        TransactionRules.validate(checkIn: null, checkOut: null, description: 'x', now: now, hasDocument: true),
         <TransactionError>{TransactionError.checkInRequired, TransactionError.checkOutRequired},
       );
       expect(
         TransactionRules.validate(
           checkIn: DateTime(2026, 10, 7, 17),
           checkOut: DateTime(2026, 10, 7, 9),
-          description: '',
-          now: now,
+          description: 'x',
+          now: now, hasDocument: true,
         ),
         <TransactionError>{TransactionError.checkOutBeforeCheckIn},
       );
@@ -430,9 +431,34 @@ void main() {
           checkIn: DateTime(2026, 10, 8, 9),
           checkOut: DateTime(2026, 10, 8, 18),
           description: 'x' * 501,
-          now: now,
+          now: now, hasDocument: true,
         ),
         <TransactionError>{TransactionError.inFuture, TransactionError.descriptionTooLong},
+      );
+    });
+
+    test('owner rule 13/10/2026: description and document are required', () {
+      expect(
+        TransactionRules.validate(
+          checkIn: DateTime(2026, 10, 7, 9),
+          checkOut: DateTime(2026, 10, 7, 17),
+          description: '   ',
+          now: now,
+          hasDocument: false,
+        ),
+        <TransactionError>{TransactionError.descriptionRequired, TransactionError.documentRequired},
+      );
+      expect(
+        () => TransactionRules.build(
+          requesterEmail: 'me@co.com',
+          requesterDepartmentId: '',
+          managerEmail: '',
+          checkIn: DateTime(2026, 10, 7, 9),
+          checkOut: DateTime(2026, 10, 7, 17),
+          description: 'forgot',
+          now: now,
+        ),
+        throwsStateError,
       );
     });
 
@@ -445,6 +471,7 @@ void main() {
         checkOut: DateTime(2026, 10, 7, 17, 30),
         description: '  forgot  ',
         now: now,
+        attachments: const <RequestAttachment>[RequestAttachment(name: 'proof.pdf', url: 'https://x/proof.pdf')],
       );
       expect(t.isTransaction, isTrue);
       expect(t.requesterEmail, 'me@co.com');
@@ -463,8 +490,9 @@ void main() {
         managerEmail: '',
         checkIn: DateTime(2026, 10, 7, 9),
         checkOut: DateTime(2026, 10, 7, 17),
-        description: '',
+        description: 'x',
         now: now,
+        attachments: const <RequestAttachment>[RequestAttachment(name: 'proof.pdf', url: 'https://x/proof.pdf')],
       );
       expect(t.currentStep, ApprovalStepKind.hr);
       expect(t.approvalSteps.single.step, ApprovalStepKind.hr);
@@ -477,8 +505,9 @@ void main() {
         managerEmail: '',
         checkIn: DateTime(2026, 10, 7, 9),
         checkOut: DateTime(2026, 10, 7, 17),
-        description: '',
+        description: 'x',
         now: now,
+        attachments: const <RequestAttachment>[RequestAttachment(name: 'proof.pdf', url: 'https://x/proof.pdf')],
       );
       expect(TransactionRules.canCancel(t, 'ME@co.com'), isTrue);
       expect(TransactionRules.canCancel(t, 'other@co.com'), isFalse);

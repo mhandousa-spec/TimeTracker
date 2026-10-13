@@ -5,6 +5,8 @@
 /// Purpose: Declares `CustomDropdownRangeCalendar`.
 /// Author: Knowticed Plus team
 /// Updated: 11/8/2026 - Added the standard module + FILE INFO header.
+/// Updated: 13/10/2026 - `showRangePicker` opens the range calendar on its
+///          own (opt-in; the field itself is unchanged).
 
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +14,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import 'package:knowticed_plus/core/theme/app_colors.dart';
+import 'package:knowticed_plus/core/theme/app_animations.dart';
 import 'package:knowticed_plus/core/theme/app_theme.dart';
+import 'package:knowticed_plus/core/theme/haptic_controller.dart';
 import 'package:knowticed_plus/core/custom/32-custom_svg.dart';
 // For `kDropdownHintColor` — the single placeholder grey all three dropdowns
 // share. Imported rather than redeclared: a local copy is exactly how this
@@ -72,6 +76,27 @@ class CustomDropdownRangeCalendar extends StatefulWidget {
     this.helperStyle,
   });
 
+  /// ADDED 13/10/2026 (Time Tracker owner review): opens the same range
+  /// calendar this field opens, without the field — for a menu item
+  /// ("Custom") that should go straight to one date-range picker. Returns
+  /// [start, end] (end may be null when only one day was tapped), or null
+  /// when the picker was cancelled.
+  static Future<List<DateTime?>?> showRangePicker(
+    BuildContext context, {
+    DateTime? start,
+    DateTime? end,
+    DateTime? firstDate,
+    DateTime? lastDate,
+  }) =>
+      _CustomDropdownRangeCalendarState._show(
+        context,
+        start: start,
+        end: end,
+        firstDate: firstDate,
+        lastDate: lastDate,
+        standards: true,
+      );
+
   @override
   State<CustomDropdownRangeCalendar> createState() =>
       _CustomDropdownRangeCalendarState();
@@ -81,19 +106,50 @@ class _CustomDropdownRangeCalendarState
     extends State<CustomDropdownRangeCalendar> {
   Future<void> _openPicker() async {
     if (!widget.enabled) return;
-    final result = await showCalendarDatePicker2Dialog(
+    final result = await CustomDropdownRangeCalendar.showRangePicker(
+      context,
+      start: widget.startDate,
+      end: widget.endDate,
+      firstDate: widget.firstDate,
+      lastDate: widget.lastDate,
+    );
+    if (result != null) {
+      widget.onChanged?.call(
+        result.isNotEmpty ? result[0] : null,
+        result.length > 1 ? result[1] : null,
+      );
+    }
+  }
+
+  static Future<List<DateTime?>?> _show(
+    BuildContext context, {
+    DateTime? start,
+    DateTime? end,
+    DateTime? firstDate,
+    DateTime? lastDate,
+    bool standards = false,
+  }) {
+    // [standards] (13/10/2026, `showRangePicker` only): the app's dialog
+    // standard — scale-in entrance, yellow button shrinks on press, haptics
+    // Set Date = MEDIUM, Cancel = LOW. The field keeps its old behaviour.
+    final Widget ok = _buildActionButton(S.of(context).setDate);
+    final Widget cancel = _buildActionButton(S.of(context).Cancel, isCancel: true);
+    return showCalendarDatePicker2Dialog(
+      builder: standards
+          ? (BuildContext ctx, Widget? dialog) => ScaleInContent(child: dialog!)
+          : null,
       context: context,
       dialogBackgroundColor: AppColors.card,
       barrierDismissible: true,
-      value: [widget.startDate, widget.endDate],
+      value: [start, end],
       config: CalendarDatePicker2WithActionButtonsConfig(
-        firstDate: widget.firstDate ?? DateTime(1900),
-        lastDate: widget.lastDate ?? DateTime(2100),
+        firstDate: firstDate ?? DateTime(1900),
+        lastDate: lastDate ?? DateTime(2100),
         calendarType: CalendarDatePicker2Type.range,
         calendarViewMode: CalendarDatePicker2Mode.day,
         closeDialogOnCancelTapped: true,
         closeDialogOnOkTapped: true,
-        currentDate: widget.startDate ?? DateTime.now(),
+        currentDate: start ?? DateTime.now(),
         centerAlignModePicker: true,
         dayBorderRadius: BorderRadius.circular(8.r),
         dayBuilder: _buildDay,
@@ -117,8 +173,15 @@ class _CustomDropdownRangeCalendarState
    colorFilter: ColorFilter.mode(AppColors.primary, BlendMode.srcIn),
  ),
         ),
-        okButton: _buildActionButton(S.of(context).setDate),
-        cancelButton: _buildActionButton(S.of(context).Cancel, isCancel: true),
+        okButton: standards
+            ? Listener(
+                onPointerUp: (_) => HapticController.medium(),
+                child: ShrinkOnTap(child: ok),
+              )
+            : ok,
+        cancelButton: standards
+            ? Listener(onPointerUp: (_) => HapticController.low(), child: cancel)
+            : cancel,
         weekdayLabelTextStyle: StyleText.fontSize16Weight400
             .copyWith(color: AppColors.primary),
         controlsTextStyle: StyleText.fontSize14Weight400
@@ -141,15 +204,9 @@ class _CustomDropdownRangeCalendarState
       borderRadius: BorderRadius.circular(10.r),
       useSafeArea: true,
     );
-    if (result != null) {
-      widget.onChanged?.call(
-        result.isNotEmpty ? result[0] : null,
-        result.length > 1 ? result[1] : null,
-      );
-    }
   }
 
-  Widget _buildDay({
+  static Widget _buildDay({
     required DateTime date,
     BoxDecoration? decoration,
     bool? isDisabled,
@@ -185,7 +242,7 @@ class _CustomDropdownRangeCalendarState
     );
   }
 
-  Widget _buildActionButton(String label, {bool isCancel = false}) {
+  static Widget _buildActionButton(String label, {bool isCancel = false}) {
     return GestureDetector(
       child: Container(
         height: 38.sp,

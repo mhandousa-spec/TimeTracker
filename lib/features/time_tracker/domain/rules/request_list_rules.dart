@@ -39,12 +39,15 @@ import 'package:knowticed_plus/features/time_tracker/domain/rules/approval_route
 import 'package:knowticed_plus/features/time_tracker/domain/rules/request_cycle_rules.dart';
 
 /// One status counter.
+/// 13/10/2026 (owner): the counters follow the request's life — waiting
+/// first (Pending, then Under Review = with HR), then the outcomes
+/// (Approved, Rejected, Canceled).
 enum RequestBucket {
   all,
-  approved,
   pending,
-  rejected,
   underReview,
+  approved,
+  rejected,
   canceled;
 
   /// Function Name: [matches]
