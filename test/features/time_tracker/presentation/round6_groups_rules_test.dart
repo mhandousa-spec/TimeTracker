@@ -314,4 +314,19 @@ void main() {
     expect(tester.takeException(), isNull);
     await h.dispose(tester);
   });
+  testWidgets('tapping an employee opens Employee Details: current assignment + location history (owner T8)',
+      (WidgetTester tester) async {
+    final TimeTrackerHarness h = TimeTrackerHarness(people: _people);
+    seedAssignment(h.remote, location: _hq, email: 'khaled@co.com', rules: AttendanceRules.fromLocation,
+        startDate: DateTime(2026, 10, 1));
+    // GetMaterialApp ([frame]): the pushed page's core spinner reads Get.height.
+    await h.pump(tester, const TimeTrackerHomePage(), frame: (Widget page) => page);
+    await _open(tester, h, S.current.timeTrackerTabEmployees);
+    await _tapIn(tester, h, _key('employeeRules_khaled@co.com'));
+    expect(_key('employeeDetails_khaled@co.com'), findsOneWidget);
+    expect(_key('employeeDetailsAssignedBy'), findsOneWidget);
+    expect(_key('employeeHistory_0'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await h.dispose(tester);
+  });
 }

@@ -32,4 +32,14 @@ abstract class LocationAssignmentBaseRepository {
   Future<LocationAssignment> saveAssignment({
     required LocationAssignment assignment,
   });
+
+  /// Function Name: [historyOf]
+  ///
+  /// Purpose: ADDED 13/10/2026 (owner T8) — the employee's location history,
+  /// NEWEST first: one entry per change of work locations (rows that only
+  /// changed rules are folded into the step before).
+  ///
+  /// Return type: [Future<List<AssignmentHistoryEntry>>] — empty when the
+  /// employee was never assigned.
+  Future<List<AssignmentHistoryEntry>> historyOf(String employeeEmail);
 }

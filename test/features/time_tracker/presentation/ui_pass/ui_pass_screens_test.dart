@@ -40,6 +40,7 @@ import 'package:knowticed_plus/features/time_tracker/tt4_transaction_form/presen
 import 'package:knowticed_plus/features/time_tracker/data/services/demo/time_tracker_demo_plan.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/controller/requests_state.dart';
 import 'package:knowticed_plus/features/time_tracker/tt6_employees/presentation/controller/employees_state.dart';
+import 'package:knowticed_plus/features/time_tracker/tt6_employees/presentation/ui/pages/employee_details_page.dart';
 import 'package:knowticed_plus/features/time_tracker/tt2_personal_dashboard/presentation/controller/personal_dashboard_cubit.dart';
 
 import '../../_support/time_tracker_phase5_fakes.dart';
@@ -383,6 +384,11 @@ void main() {
           await c.tap('employeeReassign_omar.farouk@dm003.test');
           await c.shot('61_reassign_dialog');
           await c.closeDialog();
+          await c.push(const EmployeeDetailsPage(employeeEmail: 'omar.farouk@dm003.test'));
+          await c.shot('61b_employee_details');
+          await c.scroll();
+          await c.shot('61b_employee_details_s1');
+          await c.back();
           c.h.employees.setSegment(EmployeesSegment.groups);
           await c.settle();
           await c.shot('62_groups');

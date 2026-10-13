@@ -127,6 +127,32 @@ class LocationAssignment {
       );
 }
 
+/// ADDED 13/10/2026 (owner T8): one step of an employee's location history
+/// — a row of `Location_Assignments/{email}` where the work locations
+/// changed (assigned, transferred or removed).
+class AssignmentHistoryEntry {
+  const AssignmentHistoryEntry({
+    required this.locationId,
+    this.extraLocationIds = const <String>[],
+    this.startDate,
+    this.changedAt,
+    this.changedBy = '',
+    this.groupId = '',
+  });
+
+  /// Main location ('' = the assignment was removed).
+  final String locationId;
+  final List<String> extraLocationIds;
+  final DateTime? startDate;
+
+  /// When the row was written, and by whom (e-mail).
+  final DateTime? changedAt;
+  final String changedBy;
+  final String groupId;
+
+  bool get isRemoval => locationId.isEmpty;
+}
+
 class EmployeeGroup {
   const EmployeeGroup({
     required this.id,

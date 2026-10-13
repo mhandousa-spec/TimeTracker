@@ -18,12 +18,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
 
+import 'package:knowticed_plus/core/extensions/context_extensions.dart';
+import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_controls.dart';
 import 'package:knowticed_plus/core/custom/89-custom_empty_state.dart';
 import 'package:knowticed_plus/core/helper/main_helper/localized_number.dart';
 import 'package:knowticed_plus/core/theme/app_animations.dart';
-import 'package:knowticed_plus/core/theme/app_colors.dart';
-import 'package:knowticed_plus/core/theme/app_theme.dart';
-import 'package:knowticed_plus/core/theme/haptic_controller.dart';
 import 'package:knowticed_plus/features/time_tracker/data/services/time_tracker_access.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/entities/time_tracker_employee.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/entities/work_location.dart';
@@ -61,14 +60,23 @@ class EmployeesLocationsView extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
+            // 13/10/2026 (owner T9): the SAME filter control as the row
+            // above (core segmented tabs) — "Location (count)"; scrolls
+            // sideways when the locations do not fit.
             SlideInContent(
-              child: Wrap(
-                spacing: 10.w,
-                runSpacing: 10.h,
-                children: <Widget>[
-                  for (final WorkLocation l in locations)
-                    _chip(context, l.name(isArabic: ar), counts[l.id] ?? 0, l.id == open, l.id),
-                ],
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: TtSegmentedToggle(
+                  key: const ValueKey<String>('employeesLocationTabs'),
+                  tabs: <String>[
+                    for (final WorkLocation l in locations)
+                      '${l.name(isArabic: ar)} (${LocalizedNumber.of(context, counts[l.id] ?? 0)})',
+                  ],
+                  tabKeys: <Key>[for (final WorkLocation l in locations) ValueKey<String>('locationChip_${l.id}')],
+                  compact: context.isPhone,
+                  selectedIndex: locations.indexWhere((WorkLocation l) => l.id == open),
+                  onChanged: (int i) => context.read<EmployeesCubit>().openChip(locations[i].id),
+                ),
               ),
             ),
             SizedBox(height: 15.h),
@@ -96,36 +104,6 @@ class EmployeesLocationsView extends StatelessWidget {
           ],
         );
       },
-    );
-  }
-
-  Widget _chip(BuildContext context, String name, int count, bool open, String id) {
-    return GestureDetector(
-      key: ValueKey<String>('locationChip_$id'),
-      onTap: () {
-        HapticController.low();
-        context.read<EmployeesCubit>().openChip(id);
-      },
-      child: Container(
-        height: 36.h,
-        padding: EdgeInsetsDirectional.symmetric(horizontal: 12.w),
-        decoration: BoxDecoration(
-          color: open ? AppColors.primary : AppColors.card,
-          borderRadius: BorderRadiusDirectional.circular(8.r),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text(name,
-                style: StyleText.fontSize14Weight500
-                    .copyWith(color: open ? AppColors.textButton : AppColors.text)),
-            SizedBox(width: 8.w),
-            Text(LocalizedNumber.of(context, count),
-                style: StyleText.fontSize14Weight500
-                    .copyWith(color: open ? AppColors.textButton : AppColors.secondaryText)),
-          ],
-        ),
-      ),
     );
   }
 }

@@ -49,6 +49,7 @@ import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/tim
 import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_formatters.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_setup_widgets.dart';
 import 'package:knowticed_plus/features/time_tracker/tt6_employees/presentation/controller/employees_cubit.dart';
+import 'package:knowticed_plus/features/time_tracker/tt6_employees/presentation/ui/pages/employee_details_page.dart';
 import 'package:knowticed_plus/features/time_tracker/tt6_employees/presentation/ui/widgets/employee_card.dart';
 import 'package:knowticed_plus/features/time_tracker/tt6_employees/presentation/ui/widgets/employees_filter_dialog.dart';
 import 'package:knowticed_plus/features/time_tracker/tt6_employees/presentation/ui/widgets/employees_locations_view.dart';
@@ -341,6 +342,10 @@ class _EmployeesTabState extends State<EmployeesTab> {
               rules: assignedTab ? state.effectiveRulesOf(r.employee.email) : null,
               selected: !assignedTab && canAssign ? state.selected.contains(r.employee.email) : null,
               onSelect: () => cubit.toggleSelected(r.employee.email),
+              // 13/10/2026 (owner T8): tap an employee → Employee Details.
+              onTap: () => Navigator.of(context).push<void>(
+                MaterialPageRoute<void>(builder: (_) => EmployeeDetailsPage(employeeEmail: r.employee.email)),
+              ),
               // UI quality pass (owner 13:45 #5): ONE action area —
               // Reassign / Assign is the primary (bottom end); Remove is the
               // small red trash at the top end, away from it.

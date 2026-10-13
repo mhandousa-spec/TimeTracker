@@ -61,6 +61,7 @@ import 'package:knowticed_plus/generated/l10n.dart';
 
 import 'package:knowticed_plus/features/time_tracker/data/repository/group_repository_impl.dart';
 import 'package:knowticed_plus/features/time_tracker/data/repository/location_assignment_repository_impl.dart';
+import 'package:knowticed_plus/features/time_tracker/domain/base_repository/location_assignment_base_repository.dart';
 import 'package:knowticed_plus/features/time_tracker/data/repository/location_repository_impl.dart';
 import 'package:knowticed_plus/features/time_tracker/data/repository/request_type_repository_impl.dart';
 import 'package:knowticed_plus/features/time_tracker/data/services/group_service.dart';
@@ -360,6 +361,18 @@ class TimeTrackerHarness {
           clock: now,
         );
     T make<T>() => _makers[T]!() as T;
+    // Pages that build their own cubits from GetIt (Employee Details, T8) —
+    // unless the test registered its own.
+    void put<T extends Object>(T Function() build) {
+      if (getIt.isRegistered<T>()) return;
+      getIt.registerFactory<T>(build);
+      addTearDown(() {
+        if (getIt.isRegistered<T>()) getIt.unregister<T>();
+      });
+    }
+
+    put<LocationAssignmentBaseRepository>(() => assignments);
+    if (!moduleEntry) put<PersonalDashboardCubit>(() => make<PersonalDashboardCubit>());
     await tester.runAsync(() async {
       home = make<TimeTrackerHomeCubit>();
       checkIn = make<CheckInCubit>();

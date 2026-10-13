@@ -540,18 +540,13 @@ class _EmployeeSummary extends StatelessWidget {
     final S s = S.of(context);
     final bool ar = Localizations.localeOf(context).languageCode == 'ar';
     final TimeTrackerEmployee first = employees.first;
-    final TextStyle label = StyleText.fontSize12Weight400.copyWith(color: AppColors.secondaryText);
-    final TextStyle value = StyleText.fontSize12Weight500.copyWith(color: AppColors.text);
-    Widget pair(String l, String v) => Text.rich(
-          TextSpan(children: <InlineSpan>[
-            TextSpan(text: '$l: ', style: label),
-            TextSpan(text: v.isEmpty ? '-' : v, style: value),
-          ]),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        );
+    // 13/10/2026 (owner T7): one compact row — the card was too big for
+    // the dialog (64 photo + four label lines).
+    final String sub = <String>[first.jobTitle(isArabic: ar), first.department(isArabic: ar)]
+        .where((String v) => v.isNotEmpty)
+        .join(' · ');
     return Container(
-      padding: EdgeInsetsDirectional.all(15.r),
+      padding: EdgeInsetsDirectional.symmetric(horizontal: 12.w, vertical: 10.h),
       decoration: BoxDecoration(
         color: AppColors.background,
         borderRadius: BorderRadiusDirectional.circular(8.r),
@@ -559,33 +554,29 @@ class _EmployeeSummary extends StatelessWidget {
       child: employees.length > 1
           ? Text(
               s.timeTrackerEmployeesSelected(LocalizedNumber.of(context, employees.length)),
-              style: StyleText.fontSize16Weight500.copyWith(color: AppColors.text),
+              style: StyleText.fontSize14Weight500.copyWith(color: AppColors.text),
             )
           : Row(
               children: <Widget>[
-                TimeTrackerAvatar(photo: first.photo, size: 64.r),
-                SizedBox(width: 12.w),
+                TimeTrackerAvatar(photo: first.photo, size: 36.r),
+                SizedBox(width: 10.w),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(first.name(isArabic: ar),
-                          style: StyleText.fontSize16Weight500.copyWith(color: AppColors.text)),
-                      SizedBox(height: 6.h),
-                      TtPair(
-                        start: pair(s.timeTrackerTitleLabel, first.jobTitle(isArabic: ar)),
-                        end: pair(s.timeTrackerPhoneNumber, first.phone),
-                      ),
-                      SizedBox(height: 4.h),
-                      TtPair(
-                        start: pair(s.timeTrackerDepartment, first.department(isArabic: ar)),
-                        end: pair(s.timeTrackerEmail, first.email),
-                      ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: StyleText.fontSize14Weight500.copyWith(color: AppColors.text)),
+                      if (sub.isNotEmpty)
+                        Text(sub,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: StyleText.fontSize12Weight400.copyWith(color: AppColors.secondaryText)),
                     ],
                   ),
                 ),
               ],
             ),
-    );
-  }
+    );  }
 }

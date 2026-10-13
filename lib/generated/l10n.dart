@@ -39296,6 +39296,166 @@ class S {
     );
   }
 
+  /// `Employee Details`
+  String get timeTrackerEmployeeDetails {
+    return Intl.message(
+      'Employee Details',
+      name: 'timeTrackerEmployeeDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Current Assignment`
+  String get timeTrackerCurrentAssignment {
+    return Intl.message(
+      'Current Assignment',
+      name: 'timeTrackerCurrentAssignment',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Assigned By`
+  String get timeTrackerAssignedBy {
+    return Intl.message(
+      'Assigned By',
+      name: 'timeTrackerAssignedBy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Group`
+  String get timeTrackerGroupNameLabel {
+    return Intl.message(
+      'Group',
+      name: 'timeTrackerGroupNameLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Rules`
+  String get timeTrackerRulesLabel {
+    return Intl.message(
+      'Rules',
+      name: 'timeTrackerRulesLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Location History`
+  String get timeTrackerLocationHistory {
+    return Intl.message(
+      'Location History',
+      name: 'timeTrackerLocationHistory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `From {date}`
+  String timeTrackerHistoryFrom(Object date) {
+    return Intl.message(
+      'From $date',
+      name: 'timeTrackerHistoryFrom',
+      desc: '',
+      args: [date],
+    );
+  }
+
+  /// `By {name} on {date}`
+  String timeTrackerHistoryBy(Object name, Object date) {
+    return Intl.message(
+      'By $name on $date',
+      name: 'timeTrackerHistoryBy',
+      desc: '',
+      args: [name, date],
+    );
+  }
+
+  /// `Assignment Removed`
+  String get timeTrackerAssignmentRemovedEntry {
+    return Intl.message(
+      'Assignment Removed',
+      name: 'timeTrackerAssignmentRemovedEntry',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No changes yet.`
+  String get timeTrackerNoHistory {
+    return Intl.message(
+      'No changes yet.',
+      name: 'timeTrackerNoHistory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Break Rule Warnings`
+  String get timeTrackerBreakWarnings {
+    return Intl.message(
+      'Break Rule Warnings',
+      name: 'timeTrackerBreakWarnings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Break {taken} min, allowed {allowed} min`
+  String timeTrackerBreakWarningLine(Object taken, Object allowed) {
+    return Intl.message(
+      'Break $taken min, allowed $allowed min',
+      name: 'timeTrackerBreakWarningLine',
+      desc: '',
+      args: [taken, allowed],
+    );
+  }
+
+  /// `Break {taken} min, breaks are not allowed`
+  String timeTrackerBreakNotAllowedLine(Object taken) {
+    return Intl.message(
+      'Break $taken min, breaks are not allowed',
+      name: 'timeTrackerBreakNotAllowedLine',
+      desc: '',
+      args: [taken],
+    );
+  }
+
+  /// `No break rule warnings in this period.`
+  String get timeTrackerNoBreakWarnings {
+    return Intl.message(
+      'No break rule warnings in this period.',
+      name: 'timeTrackerNoBreakWarnings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Employee Dashboard`
+  String get timeTrackerEmployeeDashboard {
+    return Intl.message(
+      'Employee Dashboard',
+      name: 'timeTrackerEmployeeDashboard',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Not assigned to a location yet.`
+  String get timeTrackerNotAssignedYet {
+    return Intl.message(
+      'Not assigned to a location yet.',
+      name: 'timeTrackerNotAssignedYet',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Map`
   String get timeTrackerMapView {
     return Intl.message('Map', name: 'timeTrackerMapView', desc: '', args: []);
