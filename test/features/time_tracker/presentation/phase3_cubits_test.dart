@@ -213,6 +213,16 @@ void main() {
   });
 
   group('EmployeesCubit', () {
+    test('group sort: tapping the chosen sort again clears it (owner T10)', () {
+      final EmployeesCubit c = _Env().employees();
+      expect(c.state.groupSort, isNull);
+      c.groupSortChanged(GroupSort.newest);
+      expect(c.state.groupSort, GroupSort.newest);
+      c.groupSortChanged(null);
+      expect(c.state.groupSort, isNull);
+      c.close();
+    });
+
     test('department scope: own department only without Employees_All_Departments', () async {
       final _Env own = _Env(on: _without(<String>{'Employees_All_Departments'}));
       final EmployeesCubit a = own.employees();

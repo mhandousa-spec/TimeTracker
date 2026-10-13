@@ -149,7 +149,9 @@ class EmployeesCubit extends Cubit<EmployeesState> {
   void applyLocationFilter(String locationId) => emit(state.copyWith(locationFilter: locationId));
   void openChip(String locationId) => emit(state.copyWith(chipLocationId: locationId));
   void groupSearchChanged(String query) => emit(state.copyWith(groupQuery: query));
-  void groupSortChanged(GroupSort sort) => emit(state.copyWith(groupSort: sort));
+  /// [sort] null = the chosen sort was tapped again → cleared (owner T10).
+  void groupSortChanged(GroupSort? sort) =>
+      emit(sort == null ? state.copyWith(clearGroupSort: true) : state.copyWith(groupSort: sort));
   void clearSelection() => emit(state.copyWith(selected: const <String>{}));
 
   /// Function Name: [toggleSelected]

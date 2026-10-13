@@ -51,7 +51,7 @@ class EmployeesState {
     this.selected = const <String>{},
     this.chipLocationId = '',
     this.groupQuery = '',
-    this.groupSort = GroupSort.nameAsc,
+    this.groupSort,
     this.failure = TimeTrackerActionFailure.none,
     this.errorMessage = '',
   });
@@ -83,7 +83,9 @@ class EmployeesState {
   /// Locations sub-view: the chip that is open ('' = the first one).
   final String chipLocationId;
   final String groupQuery;
-  final GroupSort groupSort;
+  /// Null = no sort chosen (the button is neutral; the list keeps its
+  /// natural A → Z order). 12/10/2026 (owner T10): the sort can be cleared.
+  final GroupSort? groupSort;
   final TimeTrackerActionFailure failure;
   final String errorMessage;
 
@@ -122,7 +124,7 @@ class EmployeesState {
             '${g.name} ${g.nameAr} ${g.description} ${g.descriptionAr}'.toLowerCase().contains(q))
           g,
     ];
-    switch (groupSort) {
+    switch (groupSort ?? GroupSort.nameAsc) {
       case GroupSort.nameAsc:
         out.sort((EmployeeGroup a, EmployeeGroup b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
       case GroupSort.nameDesc:
@@ -219,6 +221,7 @@ class EmployeesState {
     String? chipLocationId,
     String? groupQuery,
     GroupSort? groupSort,
+    bool clearGroupSort = false,
     TimeTrackerActionFailure? failure,
     String? errorMessage,
   }) =>
@@ -238,7 +241,7 @@ class EmployeesState {
         selected: selected ?? this.selected,
         chipLocationId: chipLocationId ?? this.chipLocationId,
         groupQuery: groupQuery ?? this.groupQuery,
-        groupSort: groupSort ?? this.groupSort,
+        groupSort: clearGroupSort ? null : groupSort ?? this.groupSort,
         failure: failure ?? this.failure,
         errorMessage: errorMessage ?? this.errorMessage,
       );

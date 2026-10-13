@@ -103,7 +103,7 @@ class _GroupsViewState extends State<GroupsView> {
                     labelBuilder: (GroupSort g) => _sortLabel(s, g),
                     onChanged: (GroupSort? g) {
                       HapticController.low();
-                      if (g != null) cubit.groupSortChanged(g);
+                      cubit.groupSortChanged(g);
                     },
                   ),
                   if (access.canCreateGroup && !state.companyHasHr) ...<Widget>[
