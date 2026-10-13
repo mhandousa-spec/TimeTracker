@@ -7282,6 +7282,27 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerChangingStatus": MessageLookupByLibrary.simpleMessage(
       "تغيير الحالة",
     ),
+    "timeTrackerChartAttendanceSummary": MessageLookupByLibrary.simpleMessage(
+      "ملخص الحضور",
+    ),
+    "timeTrackerChartLateArrivalsHistory": MessageLookupByLibrary.simpleMessage(
+      "سجل التأخر عن الحضور",
+    ),
+    "timeTrackerChartMonthlyAttendance": MessageLookupByLibrary.simpleMessage(
+      "سجل الحضور الشهري",
+    ),
+    "timeTrackerChartMonthlyRequestsByType":
+        MessageLookupByLibrary.simpleMessage("الطلبات الشهرية حسب النوع"),
+    "timeTrackerChartMonthlyRequestsVolume":
+        MessageLookupByLibrary.simpleMessage("عدد الطلبات الشهري"),
+    "timeTrackerChartRequestsByStatus": MessageLookupByLibrary.simpleMessage(
+      "الطلبات حسب الحالة",
+    ),
+    "timeTrackerChartRequestsByType": MessageLookupByLibrary.simpleMessage(
+      "الطلبات حسب النوع",
+    ),
+    "timeTrackerChartWorkLocationDistribution":
+        MessageLookupByLibrary.simpleMessage("توزيع مواقع العمل"),
     "timeTrackerCheckIn": MessageLookupByLibrary.simpleMessage("تسجيل الحضور"),
     "timeTrackerCheckInAndOut": MessageLookupByLibrary.simpleMessage(
       "تسجيل الحضور والانصراف",

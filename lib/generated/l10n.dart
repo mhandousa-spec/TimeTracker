@@ -39136,6 +39136,86 @@ class S {
     );
   }
 
+  /// `Attendance Summary`
+  String get timeTrackerChartAttendanceSummary {
+    return Intl.message(
+      'Attendance Summary',
+      name: 'timeTrackerChartAttendanceSummary',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Requests By Status`
+  String get timeTrackerChartRequestsByStatus {
+    return Intl.message(
+      'Requests By Status',
+      name: 'timeTrackerChartRequestsByStatus',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Work Location Distribution`
+  String get timeTrackerChartWorkLocationDistribution {
+    return Intl.message(
+      'Work Location Distribution',
+      name: 'timeTrackerChartWorkLocationDistribution',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Late Arrivals History`
+  String get timeTrackerChartLateArrivalsHistory {
+    return Intl.message(
+      'Late Arrivals History',
+      name: 'timeTrackerChartLateArrivalsHistory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Requests By Type`
+  String get timeTrackerChartRequestsByType {
+    return Intl.message(
+      'Requests By Type',
+      name: 'timeTrackerChartRequestsByType',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Monthly Attendance History`
+  String get timeTrackerChartMonthlyAttendance {
+    return Intl.message(
+      'Monthly Attendance History',
+      name: 'timeTrackerChartMonthlyAttendance',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Monthly Requests By Type`
+  String get timeTrackerChartMonthlyRequestsByType {
+    return Intl.message(
+      'Monthly Requests By Type',
+      name: 'timeTrackerChartMonthlyRequestsByType',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Monthly Requests Volume`
+  String get timeTrackerChartMonthlyRequestsVolume {
+    return Intl.message(
+      'Monthly Requests Volume',
+      name: 'timeTrackerChartMonthlyRequestsVolume',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Checked In Now`
   String get timeTrackerCheckedInNow {
     return Intl.message(

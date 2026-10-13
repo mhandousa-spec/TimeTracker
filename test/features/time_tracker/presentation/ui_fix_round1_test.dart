@@ -189,10 +189,10 @@ void main() {
     testWidgets('iPad V: the empty Work Locations legend is not cut', (WidgetTester tester) async {
       final TimeTrackerHarness h = _harness();
       await h.pump(tester, const TimeTrackerHomePage(), size: _ipadV);
-      // Empty donut → one legend row named after the card ("Work Locations").
+      // Empty donut → one legend row named after the card ("Work Location Distribution").
       final Finder legend = find.descendant(
         of: find.byType(DonutChartCard).first,
-        matching: find.text(S.current.timeTrackerWorkLocations),
+        matching: find.text(S.current.timeTrackerChartWorkLocationDistribution),
       );
       for (final Element e in legend.evaluate()) {
         final RenderParagraph p = e.renderObject! as RenderParagraph;

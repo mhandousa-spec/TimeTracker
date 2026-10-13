@@ -7599,6 +7599,27 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerChangingStatus": MessageLookupByLibrary.simpleMessage(
       "Changing Status",
     ),
+    "timeTrackerChartAttendanceSummary": MessageLookupByLibrary.simpleMessage(
+      "Attendance Summary",
+    ),
+    "timeTrackerChartLateArrivalsHistory": MessageLookupByLibrary.simpleMessage(
+      "Late Arrivals History",
+    ),
+    "timeTrackerChartMonthlyAttendance": MessageLookupByLibrary.simpleMessage(
+      "Monthly Attendance History",
+    ),
+    "timeTrackerChartMonthlyRequestsByType":
+        MessageLookupByLibrary.simpleMessage("Monthly Requests By Type"),
+    "timeTrackerChartMonthlyRequestsVolume":
+        MessageLookupByLibrary.simpleMessage("Monthly Requests Volume"),
+    "timeTrackerChartRequestsByStatus": MessageLookupByLibrary.simpleMessage(
+      "Requests By Status",
+    ),
+    "timeTrackerChartRequestsByType": MessageLookupByLibrary.simpleMessage(
+      "Requests By Type",
+    ),
+    "timeTrackerChartWorkLocationDistribution":
+        MessageLookupByLibrary.simpleMessage("Work Location Distribution"),
     "timeTrackerCheckIn": MessageLookupByLibrary.simpleMessage("Check In"),
     "timeTrackerCheckInAndOut": MessageLookupByLibrary.simpleMessage(
       "Check In And Out",

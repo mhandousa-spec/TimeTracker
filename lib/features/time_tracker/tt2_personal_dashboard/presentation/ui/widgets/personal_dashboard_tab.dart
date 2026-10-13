@@ -68,6 +68,10 @@ const String _vacationIcon = '$_ttAssets/tt_overall_vacation.svg';
 /// Late History header icon (clock with a back arrow).
 const String _historyIcon = 'assets/icons_assets/crm_icons_assets/history.svg';
 
+/// 12/10/2026 (owner R1 / A3): Work Locations gets its own map icon (it
+/// shared the request document with Requests).
+const String _locationsIcon = 'assets/icons_assets/main_icons_assets/map_new.svg';
+
 class PersonalDashboardTab extends StatelessWidget {
   const PersonalDashboardTab({super.key});
 
@@ -150,7 +154,7 @@ class _OverallCard extends StatelessWidget {
     // colour on the icon only (`TtStatsCard`).
     return TtStatsCard(
       key: const ValueKey<String>('timeTrackerOverallCard'),
-      title: s.timeTrackerOverall,
+      title: s.timeTrackerChartAttendanceSummary,
       stats: <TtStat>[
         TtStat(
           label: s.timeTrackerPresent,
@@ -187,7 +191,7 @@ class _RequestsDonut extends StatelessWidget {
     final S s = S.of(context);
     return DonutChartCard(
       key: const ValueKey<String>('timeTrackerRequestsDonut'),
-      title: s.timeTrackerRequestsTitle,
+      title: s.timeTrackerChartRequestsByStatus,
       dotIcon: ChartSvg.request,
       centerValue: TimeTrackerFormat.count(context, stats.totalRequests),
       centerLabel: s.timeTrackerTotal,
@@ -228,8 +232,8 @@ class _WorkLocationsDonut extends StatelessWidget {
       sections.add(ChartData(label: _placeName(context, e.key), value: e.value.toDouble(), color: color));
     }
     return DonutChartCard(
-      title: s.timeTrackerWorkLocations,
-      dotIcon: ChartSvg.request,
+      title: s.timeTrackerChartWorkLocationDistribution,
+      dotIcon: _locationsIcon,
       centerValue: TimeTrackerFormat.count(context, total),
       centerLabel: s.timeTrackerTotal,
       legendMaxLines: 2,
@@ -264,7 +268,7 @@ class _LateHistoryCard extends StatelessWidget {
     final String locale = Localizations.localeOf(context).languageCode;
     return BarChartCard(
       key: const ValueKey<String>('timeTrackerLateHistory'),
-      title: s.timeTrackerLateHistory,
+      title: s.timeTrackerChartLateArrivalsHistory,
       dotIcon: _historyIcon,
       barColor: AppColors.primary,
       barWidth: 40,

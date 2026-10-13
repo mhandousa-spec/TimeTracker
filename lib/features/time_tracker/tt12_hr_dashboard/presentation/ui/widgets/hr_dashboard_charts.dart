@@ -40,6 +40,12 @@ import 'package:knowticed_plus/generated/l10n.dart';
 /// Attendance History header icon (clock with a back arrow, as Late History).
 const String _historyIcon = 'assets/icons_assets/crm_icons_assets/history.svg';
 
+/// 12/10/2026 (owner R1 / B2): every chart has its OWN header icon (they all
+/// showed the request document) and a full title.
+const String _byTypeIcon = 'assets/icons_assets/home_assets/analytics_charts.svg';
+const String _barsIcon = 'assets/icons_assets/organization_chart_assets/chart.svg';
+const String _trendIcon = 'assets/icons_assets/crm_icons_assets/chart-line-solid.svg';
+
 /// Month label of a bar ("Jan", localized).
 String hrMonthLabel(BuildContext context, DateTime month) =>
     DateFormat('MMM', Localizations.localeOf(context).languageCode).format(month);
@@ -62,7 +68,7 @@ class HrRequestsDonut extends StatelessWidget {
     final S s = S.of(context);
     return DonutChartCard(
       key: const ValueKey<String>('hrRequestsDonut'),
-      title: s.timeTrackerRequestsTitle,
+      title: s.timeTrackerChartRequestsByStatus,
       dotIcon: ChartSvg.request,
       centerValue: TimeTrackerFormat.count(context, stats.totalRequests),
       centerLabel: s.timeTrackerTotal,
@@ -97,8 +103,8 @@ class HrRequestTypesDonut extends StatelessWidget {
     final List<HrTypeSlice> slices = state.stats.typeSlices;
     return DonutChartCard(
       key: const ValueKey<String>('hrRequestTypesDonut'),
-      title: s.timeTrackerTabRequestTypes,
-      dotIcon: ChartSvg.request,
+      title: s.timeTrackerChartRequestsByType,
+      dotIcon: _byTypeIcon,
       centerValue: TimeTrackerFormat.count(context, state.stats.totalTypeRequests),
       centerLabel: s.timeTrackerTotal,
       legendMaxLines: 2,
@@ -174,7 +180,7 @@ class HrAttendanceHistoryCard extends StatelessWidget {
     ];
     return GroupedBarChartCard(
       key: const ValueKey<String>('hrAttendanceHistory'),
-      title: s.timeTrackerAttendanceHistory,
+      title: s.timeTrackerChartMonthlyAttendance,
       dotIcon: _historyIcon,
       barWidth: 15,
       trailing: _ChartDropdown<HrAttendanceSeries>(
@@ -221,8 +227,8 @@ class HrRequestTypeBarsCard extends StatelessWidget {
           a.name(isArabic: ar).toLowerCase().compareTo(b.name(isArabic: ar).toLowerCase()));
     return BarChartCard(
       key: const ValueKey<String>('hrRequestTypeBars'),
-      title: s.timeTrackerTabRequestTypes,
-      dotIcon: ChartSvg.request,
+      title: s.timeTrackerChartMonthlyRequestsByType,
+      dotIcon: _barsIcon,
       barColor: AppColors.yellow,
       barWidth: 40,
       trailing: _ChartDropdown<String>(
@@ -253,8 +259,8 @@ class HrRequestTimelineCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return BarChartCard(
       key: const ValueKey<String>('hrRequestTimeline'),
-      title: S.of(context).timeTrackerRequestTimeline,
-      dotIcon: ChartSvg.request,
+      title: S.of(context).timeTrackerChartMonthlyRequestsVolume,
+      dotIcon: _trendIcon,
       barColor: AppColors.yellow,
       barWidth: 40,
       bars: <ChartData>[
