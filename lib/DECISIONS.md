@@ -111,3 +111,5 @@ Facts found in code (8/10):
 76. Needs Attention = four count tiles (tap to choose) + the chosen list as one sideways row (+ View All). New card "Late & Absent Ranking" (top 5, Late | Absent, row → that employee's dashboard).
 77. Collapsed header: Check In at the start, Expand at the end (every device). The page title starts the same distance from the top as from the left.
 78. "Message" on a tablet opens the chat inside the Messages module (chats and groups on the left, the conversation on the right); a phone pushes the chat.
+79. iPad landscape: Work Location Distribution beside Requests By Status (also on the phone, stacked); in landscape the donut legends stay compact and the ring is centred. Needs Attention people: a grid — 3 a row in landscape, 2 in portrait, 1 on a phone (two rows, then View All / "+N more").
+80. Check-in timer: hours : minutes : seconds, every second; while paused, "Pause left" (or "Paused" with no limit; red once the limit is passed). The info boxes hug their label and value. Check Out confirm uses the leaving (sign-out) animation.

@@ -121,6 +121,16 @@ class CheckInState {
   /// 661:12639 has no Pause button otherwise).
   bool get canPause => setup?.rules.isPauseAllowed ?? false;
 
+  /// ADDED 13/10/2026 (owner: show the pause time left): the longest pause
+  /// of a day — the employee's rules first, then the location's; 0 = no
+  /// limit.
+  int get allowedPauseMinutes {
+    final EmployeeWorkSetup? s = setup;
+    if (s == null) return 0;
+    if (s.rules.isPauseAllowed && s.rules.pauseMinutes > 0) return s.rules.pauseMinutes;
+    return s.location.pauseMinutes > 0 ? s.location.pauseMinutes : 0;
+  }
+
   /// Allowed break length shown on the info strip (assignment rules first,
   /// then the location's own setting); 0 = no break.
   int get allowedBreakMinutes {

@@ -4876,5 +4876,29 @@
   "timeTrackerGroupRulesTag": "Group Rules",
   "timeTrackerCustomRulesTag": "Custom Rules",
   "timeTrackerLateAbsentRanking": "Late & Absent Ranking",
-  "timeTrackerRankingEmpty": "No late or absent days in this period."
+  "timeTrackerRankingEmpty": "No late or absent days in this period.",
+  "timeTrackerPauseLeft": "Pause left: {time}",
+  "@timeTrackerPauseLeft": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackerPausedFor": "Paused: {time}",
+  "@timeTrackerPausedFor": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackerPauseOver": "Pause time is over ({time} more)",
+  "@timeTrackerPauseOver": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  }
 }

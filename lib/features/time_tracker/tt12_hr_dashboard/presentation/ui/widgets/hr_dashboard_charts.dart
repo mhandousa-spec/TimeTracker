@@ -29,6 +29,7 @@ import 'package:knowticed_plus/core/custom/24-custom_chart_card.dart';
 import 'package:knowticed_plus/core/custom/26-custom_bar_chart_card.dart';
 import 'package:knowticed_plus/core/custom/27-custom_donut_chart_card.dart';
 import 'package:knowticed_plus/core/custom/29-custom_grouped_bar_chart_card.dart';
+import 'package:knowticed_plus/core/extensions/context_extensions.dart';
 import 'package:knowticed_plus/core/theme/app_colors.dart';
 import 'package:knowticed_plus/core/theme/app_theme.dart';
 import 'package:knowticed_plus/core/theme/haptic_controller.dart';
@@ -74,7 +75,10 @@ class HrRequestsDonut extends StatelessWidget {
       centerValue: TimeTrackerFormat.count(context, stats.totalRequests),
       centerLabel: s.timeTrackerTotal,
       legendMaxLines: 2,
-      ringAtEnd: true,
+      // 13/10/2026 (owner): iPad landscape — amounts beside their names and
+      // the ring centred; portrait keeps the ring at the end.
+      ringAtEnd: !context.isLandscape || context.isPhone,
+      centerRing: context.isLandscape && !context.isPhone,
       sections: <ChartData>[
         ChartData(label: s.timeTrackerApproved, value: stats.approved.toDouble(), color: AppColors.lightGreen),
         ChartData(label: s.timeTrackerPending, value: stats.pending.toDouble(), color: AppColors.orange),
@@ -110,7 +114,10 @@ class HrRequestTypesDonut extends StatelessWidget {
       centerValue: TimeTrackerFormat.count(context, state.stats.totalTypeRequests),
       centerLabel: s.timeTrackerTotal,
       legendMaxLines: 2,
-      ringAtEnd: true,
+      // 13/10/2026 (owner): iPad landscape — amounts beside their names and
+      // the ring centred; portrait keeps the ring at the end.
+      ringAtEnd: !context.isLandscape || context.isPhone,
+      centerRing: context.isLandscape && !context.isPhone,
       sections: <ChartData>[
         for (int i = 0; i < slices.length; i++)
           ChartData(

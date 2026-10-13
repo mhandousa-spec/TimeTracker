@@ -102,7 +102,10 @@ class PersonalDashboardTab extends StatelessWidget {
           );
         }
         final PersonalDashboardStats stats = state.stats;
-        final bool portraitTablet = !context.isPhone && !context.isLandscape;
+        // 13/10/2026 (owner): Work Location Distribution on EVERY device —
+        // beside Requests on a tablet (portrait and landscape), above it on
+        // a phone (it was missing in landscape and on the phone).
+        final bool tablet = !context.isPhone;
         final Widget requests = _RequestsDonut(stats: stats);
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -116,7 +119,7 @@ class PersonalDashboardTab extends StatelessWidget {
             SizedBox(height: 15.h),
             SlideInContent(
               delay: const Duration(milliseconds: 80),
-              child: portraitTablet
+              child: tablet
                   ? IntrinsicHeight(
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -127,7 +130,10 @@ class PersonalDashboardTab extends StatelessWidget {
                         ],
                       ),
                     )
-                  : requests,
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[_WorkLocationsDonut(state: state), SizedBox(height: 15.h), requests],
+                    ),
             ),
             SizedBox(height: 15.h),
             SlideInContent(
@@ -201,7 +207,10 @@ class _RequestsDonut extends StatelessWidget {
       centerValue: TimeTrackerFormat.count(context, stats.totalRequests),
       centerLabel: s.timeTrackerTotal,
       legendMaxLines: 2,
-      ringAtEnd: true,
+      // 13/10/2026 (owner): iPad landscape — amounts beside their names and
+      // the ring centred; portrait keeps the ring at the end.
+      ringAtEnd: !context.isLandscape || context.isPhone,
+      centerRing: context.isLandscape && !context.isPhone,
       sections: <ChartData>[
         ChartData(label: s.timeTrackerApproved, value: stats.approved.toDouble(), color: AppColors.lightGreen),
         ChartData(label: s.timeTrackerPending, value: stats.pending.toDouble(), color: AppColors.orange),
@@ -243,7 +252,10 @@ class _WorkLocationsDonut extends StatelessWidget {
       centerValue: TimeTrackerFormat.count(context, total),
       centerLabel: s.timeTrackerTotal,
       legendMaxLines: 2,
-      ringAtEnd: true,
+      // 13/10/2026 (owner): iPad landscape — amounts beside their names and
+      // the ring centred; portrait keeps the ring at the end.
+      ringAtEnd: !context.isLandscape || context.isPhone,
+      centerRing: context.isLandscape && !context.isPhone,
       sections: sections,
     );
   }

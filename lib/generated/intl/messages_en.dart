@@ -155,64 +155,70 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m60(year) => "No vacation requests in ${year}.";
 
-  static String m61(minutes) => "Pause up to ${minutes} min";
+  static String m61(time) => "Pause left: ${time}";
 
-  static String m62(time) => "You Can Remind Again In ${time}";
+  static String m62(time) => "Pause time is over (${time} more)";
 
-  static String m63(date) => "Reminder Was Sent On ${date}";
+  static String m63(minutes) => "Pause up to ${minutes} min";
 
-  static String m64(location) => "Rules from ${location}";
+  static String m64(time) => "Paused: ${time}";
 
-  static String m65(date, start, end) => "${date}, ${start} – ${end}";
+  static String m65(time) => "You Can Remind Again In ${time}";
 
-  static String m66(role, decision) => "${role} · ${decision}";
+  static String m66(date) => "Reminder Was Sent On ${date}";
 
-  static String m67(role) => "${role} Justification";
+  static String m67(location) => "Rules from ${location}";
 
-  static String m68(start, end) => "${start} To ${end}";
+  static String m68(date, start, end) => "${date}, ${start} – ${end}";
 
-  static String m69(date) => "Uploaded Date: ${date}";
+  static String m69(role, decision) => "${role} · ${decision}";
 
-  static String m70(year) =>
+  static String m70(role) => "${role} Justification";
+
+  static String m71(start, end) => "${start} To ${end}";
+
+  static String m72(date) => "Uploaded Date: ${date}";
+
+  static String m73(year) =>
       "Download the template, set each employee\'s Total Days for ${year}, then upload it. A blank Year means ${year}; other years are skipped. Nothing is deleted.";
 
-  static String m71(count) => "Requests: ${count}";
+  static String m74(count) => "Requests: ${count}";
 
-  static String m72(count) => "Waiting ${count}";
+  static String m75(count) => "Waiting ${count}";
 
-  static String m73(year, days) =>
+  static String m76(year, days) =>
       "${year} has only ${days} vacation days left.";
 
-  static String m74(count) =>
+  static String m77(count) =>
       "${count} demo to-dos added. Reminders will arrive in about three minutes.";
 
-  static String m75(count) => "${count} demo to-dos removed.";
+  static String m78(count) => "${count} demo to-dos removed.";
 
-  static String m76(count) => "${count} reminders sent.";
+  static String m79(count) => "${count} reminders sent.";
 
-  static String m77(count, unit) => "Every ${count} ${unit}";
+  static String m80(count, unit) => "Every ${count} ${unit}";
 
-  static String m78(value) => "Frequency: ${value}";
+  static String m81(value) => "Frequency: ${value}";
 
-  static String m79(date, time) => "Scheduled: ${date} At ${time}";
+  static String m82(date, time) => "Scheduled: ${date} At ${time}";
 
-  static String m80(module, limit, assigned) =>
+  static String m83(module, limit, assigned) =>
       "${module} allows ${limit} users. ${assigned} are already assigned.";
 
-  static String m81(module) =>
+  static String m84(module) =>
       "The user limit for ${module} could not be read, so no access was granted.";
 
-  static String m82(module, assigned, limit) =>
+  static String m85(module, assigned, limit) =>
       "${module}: ${assigned} of ${limit} users";
 
-  static String m83(remaining) => "Only ${remaining} more can be added.";
+  static String m86(remaining) => "Only ${remaining} more can be added.";
 
-  static String m84(limit, assigned) =>
+  static String m87(limit, assigned) =>
       "Your plan allows ${limit} users. ${assigned} are already assigned.";
 
-  static String m85(assigned, limit) => "Users: ${assigned} of ${limit}";
+  static String m88(assigned, limit) => "Users: ${assigned} of ${limit}";
 
-  static String m86(role) =>
+  static String m89(role) =>
       "The role \"${role}\" could not be found, so its user limits cannot be checked.";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -8448,13 +8454,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerPauseAllowed": MessageLookupByLibrary.simpleMessage(
       "Pause Allowed",
     ),
+    "timeTrackerPauseLeft": m61,
     "timeTrackerPauseLimitHint": MessageLookupByLibrary.simpleMessage(
       "Longest pause in minutes (empty = no limit)",
     ),
+    "timeTrackerPauseOver": m62,
     "timeTrackerPauseTooLong": MessageLookupByLibrary.simpleMessage(
       "A pause can be at most 1440 minutes (one day).",
     ),
-    "timeTrackerPauseUpToMinutes": m61,
+    "timeTrackerPauseUpToMinutes": m63,
+    "timeTrackerPausedFor": m64,
     "timeTrackerPending": MessageLookupByLibrary.simpleMessage("Pending"),
     "timeTrackerPendingApprovals": MessageLookupByLibrary.simpleMessage(
       "Pending Approvals",
@@ -8521,11 +8530,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerRemainingDays": MessageLookupByLibrary.simpleMessage(
       "Remaining",
     ),
-    "timeTrackerRemindAgainIn": m62,
+    "timeTrackerRemindAgainIn": m65,
     "timeTrackerReminderRule": MessageLookupByLibrary.simpleMessage(
       "You Can Only Send A Reminder Once Every 24 Hours. Feel Free To Contact Your Supervisor Directly For Assistance",
     ),
-    "timeTrackerReminderSentOn": m63,
+    "timeTrackerReminderSentOn": m66,
     "timeTrackerRemote": MessageLookupByLibrary.simpleMessage("Remote"),
     "timeTrackerRemove": MessageLookupByLibrary.simpleMessage("Remove"),
     "timeTrackerRemoveAssignmentConfirm": MessageLookupByLibrary.simpleMessage(
@@ -8677,12 +8686,12 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "timeTrackerResume": MessageLookupByLibrary.simpleMessage("Resume"),
     "timeTrackerRetry": MessageLookupByLibrary.simpleMessage("Try Again"),
-    "timeTrackerRulesFromLocation": m64,
+    "timeTrackerRulesFromLocation": m67,
     "timeTrackerRulesFromLocationTag": MessageLookupByLibrary.simpleMessage(
       "From Location",
     ),
     "timeTrackerRulesLabel": MessageLookupByLibrary.simpleMessage("Rules"),
-    "timeTrackerSameDayTimeframe": m65,
+    "timeTrackerSameDayTimeframe": m68,
     "timeTrackerSatelliteView": MessageLookupByLibrary.simpleMessage(
       "Satellite",
     ),
@@ -8760,8 +8769,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerStatusChangedTitle": MessageLookupByLibrary.simpleMessage(
       "Status Changed",
     ),
-    "timeTrackerStepDecision": m66,
-    "timeTrackerStepJustification": m67,
+    "timeTrackerStepDecision": m69,
+    "timeTrackerStepJustification": m70,
     "timeTrackerSubmittedTransaction": MessageLookupByLibrary.simpleMessage(
       "Submitted Transaction",
     ),
@@ -8795,7 +8804,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerTerrainView": MessageLookupByLibrary.simpleMessage("Terrain"),
     "timeTrackerTextHereAr": MessageLookupByLibrary.simpleMessage("اكتب هنا"),
     "timeTrackerTextHereEn": MessageLookupByLibrary.simpleMessage("Text here"),
-    "timeTrackerTimeframeValue": m68,
+    "timeTrackerTimeframeValue": m71,
     "timeTrackerTitle": MessageLookupByLibrary.simpleMessage("Time Tracker"),
     "timeTrackerTitleLabel": MessageLookupByLibrary.simpleMessage("Title"),
     "timeTrackerTotal": MessageLookupByLibrary.simpleMessage("Total"),
@@ -8857,7 +8866,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerUploadFile": MessageLookupByLibrary.simpleMessage(
       "Upload File",
     ),
-    "timeTrackerUploadedOn": m69,
+    "timeTrackerUploadedOn": m72,
     "timeTrackerUseLocationRules": MessageLookupByLibrary.simpleMessage(
       "Use The Location\'s Rules",
     ),
@@ -8891,11 +8900,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerVacationImportDoneTitle": MessageLookupByLibrary.simpleMessage(
       "Vacation Balances Imported",
     ),
-    "timeTrackerVacationImportHelp": m70,
+    "timeTrackerVacationImportHelp": m73,
     "timeTrackerVacationImportNoColumns": MessageLookupByLibrary.simpleMessage(
       "The file needs the “Email” and “Total Days” columns. Please use the template.",
     ),
-    "timeTrackerVacationRequestsCount": m71,
+    "timeTrackerVacationRequestsCount": m74,
     "timeTrackerVacationTemplateName": MessageLookupByLibrary.simpleMessage(
       "Vacation Balances Template",
     ),
@@ -8927,7 +8936,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerViewVacationBalances": MessageLookupByLibrary.simpleMessage(
       "View Vacation Balances",
     ),
-    "timeTrackerWaitingDays": m72,
+    "timeTrackerWaitingDays": m75,
     "timeTrackerWorkEndRequired": MessageLookupByLibrary.simpleMessage(
       "Choose the work end time.",
     ),
@@ -8975,7 +8984,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerWrongLocationTitle": MessageLookupByLibrary.simpleMessage(
       "Wrong Location",
     ),
-    "timeTrackerYearBalanceShort": m73,
+    "timeTrackerYearBalanceShort": m76,
     "timeTrackerYes": MessageLookupByLibrary.simpleMessage("Yes"),
     "timeTrackerYourTabs": MessageLookupByLibrary.simpleMessage(
       "Your Time Tracker sections",
@@ -9014,15 +9023,15 @@ class MessageLookup extends MessageLookupByLibrary {
       "The action could not be completed. Please try again.",
     ),
     "todoDebugLoad": MessageLookupByLibrary.simpleMessage("Load demo to-dos"),
-    "todoDebugLoadDone": m74,
+    "todoDebugLoadDone": m77,
     "todoDebugRemove": MessageLookupByLibrary.simpleMessage(
       "Remove demo to-dos",
     ),
-    "todoDebugRemoveDone": m75,
+    "todoDebugRemoveDone": m78,
     "todoDebugSweep": MessageLookupByLibrary.simpleMessage(
       "Send due reminders now",
     ),
-    "todoDebugSweepDone": m76,
+    "todoDebugSweepDone": m79,
     "todoDebugTools": MessageLookupByLibrary.simpleMessage("Demo tools"),
     "todoDebugToolsHint": MessageLookupByLibrary.simpleMessage(
       "Available in debug builds only. Due reminders arrive about three minutes after loading the demo to-dos.",
@@ -9031,8 +9040,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "todoEndAfterStart": MessageLookupByLibrary.simpleMessage(
       "The end date must be after the start date.",
     ),
-    "todoEveryInterval": m77,
-    "todoFrequencyBadge": m78,
+    "todoEveryInterval": m80,
+    "todoFrequencyBadge": m81,
     "todoHomeNoOpen": MessageLookupByLibrary.simpleMessage("No open to-dos"),
     "todoItemHint": MessageLookupByLibrary.simpleMessage("Add an item"),
     "todoLoadError": MessageLookupByLibrary.simpleMessage(
@@ -9052,7 +9061,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "todoSaveError": MessageLookupByLibrary.simpleMessage(
       "Could not save the to-do. Please try again.",
     ),
-    "todoScheduledAt": m79,
+    "todoScheduledAt": m82,
     "todoTimeHint": MessageLookupByLibrary.simpleMessage("00:00"),
     "todoWeekDaysRequired": MessageLookupByLibrary.simpleMessage(
       "Select at least one day.",
@@ -9311,16 +9320,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "userLimitChecking": MessageLookupByLibrary.simpleMessage(
       "Checking user limits…",
     ),
-    "userLimitModuleReached": m80,
-    "userLimitModuleUnverifiable": m81,
-    "userLimitModuleUsage": m82,
-    "userLimitSeatsLeft": m83,
-    "userLimitTotalReached": m84,
+    "userLimitModuleReached": m83,
+    "userLimitModuleUnverifiable": m84,
+    "userLimitModuleUsage": m85,
+    "userLimitSeatsLeft": m86,
+    "userLimitTotalReached": m87,
     "userLimitTotalUnverifiable": MessageLookupByLibrary.simpleMessage(
       "The company user limit could not be read, so no access was granted.",
     ),
-    "userLimitTotalUsage": m85,
-    "userLimitUnknownRole": m86,
+    "userLimitTotalUsage": m88,
+    "userLimitUnknownRole": m89,
     "userLimitsTitle": MessageLookupByLibrary.simpleMessage("User Limits"),
     "userManagement": MessageLookupByLibrary.simpleMessage("User Management"),
     "userManagementModule": MessageLookupByLibrary.simpleMessage(

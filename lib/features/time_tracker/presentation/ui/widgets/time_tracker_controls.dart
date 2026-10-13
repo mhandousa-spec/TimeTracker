@@ -129,6 +129,10 @@ abstract class TtAssets {
   static const String reqType = '$_dir/tt_req_type.svg';
   static const String reqUser = '$_dir/tt_req_user.svg';
   static const String reqJob = '$_dir/tt_req_job.svg';
+
+  /// 13/10/2026 (owner: "this is not a Lottie for checking out"): the app's
+  /// leaving animation (the same one the sign-out confirm uses).
+  static const String lottieCheckOut = 'assets/lottie_assets/home_lottie_assets/newLogOut.json';
   static const String statusPending = '$_dir/tt_status_pending.svg';
   static const String statusReview = '$_dir/tt_status_review.svg';
   static const String statusCanceled = '$_dir/tt_status_canceled.svg';

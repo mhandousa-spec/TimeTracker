@@ -13,8 +13,9 @@
 /// (`661:12245`), no Pause when the rules forbid it (`661:12639`); paused →
 /// Resume + Check Out (`661:13030`). Buttons 100 × 35, radius 8; timer
 /// SemiBold 22. [compact] (header collapsed, `661:13832`) drops the timer.
-/// The timer refreshes every 20 s from the stored sessions (pauses are not
-/// work — owner decision 5).
+/// The timer counts from the stored sessions (pauses are not work — owner
+/// decision 5). Updated: 13/10/2026 - owner: hours : minutes : seconds,
+/// ticking every second; while paused, the pause time left.
 
 import 'dart:async';
 
@@ -60,7 +61,7 @@ class CheckInControl extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             if (!compact && state.day != null) ...<Widget>[
-              _LiveTimer(day: state.day!),
+              _LiveTimer(day: state.day!, pauseLimitMinutes: state.allowedPauseMinutes),
               SizedBox(height: 8.h),
             ],
             _RunningButtons(state: state),
@@ -152,11 +153,17 @@ class _RunningButtons extends StatelessWidget {
   }
 }
 
-/// "00 : 01 Hour" — worked time of the shown day, refreshed every 20 s.
+/// "01 : 05 : 09" — worked time of the shown day, to the second (13/10/2026
+/// owner: hours, minutes and seconds). While paused, the pause time left
+/// under it ("Pause left: 12 : 30"), or how long the pause has run when
+/// there is no limit; past the limit it says so in red.
 class _LiveTimer extends StatefulWidget {
-  const _LiveTimer({required this.day});
+  const _LiveTimer({required this.day, required this.pauseLimitMinutes});
 
   final AttendanceDay day;
+
+  /// The day's longest pause; 0 = no limit.
+  final int pauseLimitMinutes;
 
   @override
   State<_LiveTimer> createState() => _LiveTimerState();
@@ -168,7 +175,7 @@ class _LiveTimerState extends State<_LiveTimer> {
   @override
   void initState() {
     super.initState();
-    _ticker = Timer.periodic(const Duration(seconds: 20), (_) {
+    _ticker = Timer.periodic(const Duration(seconds: 1), (_) {
       if (mounted) setState(() {});
     });
   }
@@ -181,14 +188,47 @@ class _LiveTimerState extends State<_LiveTimer> {
 
   @override
   Widget build(BuildContext context) {
+    final S s = S.of(context);
     final DateTime now = DateTime.now();
-    int minutes = 0;
+    int worked = 0;
+    int paused = 0;
     for (final AttendanceSession session in widget.day.sessions) {
-      minutes += AttendanceCalculator.workMinutes(session, now);
+      worked += AttendanceCalculator.workSeconds(session, now);
+      paused += AttendanceCalculator.pauseSeconds(session, now);
     }
-    return Text(
-      '${TimeTrackerFormat.clock(context, minutes)} ${S.of(context).timeTrackerHourUnit}',
-      style: StyleText.fontSize22Weight600.copyWith(color: AppColors.text),
+    final int limit = widget.pauseLimitMinutes * 60;
+    String? pauseLine;
+    Color pauseColor = AppColors.secondaryText;
+    if (widget.day.isPaused) {
+      if (limit <= 0) {
+        pauseLine = s.timeTrackerPausedFor(TimeTrackerFormat.clockSeconds(context, paused));
+      } else if (paused <= limit) {
+        pauseLine = s.timeTrackerPauseLeft(TimeTrackerFormat.clockSeconds(context, limit - paused, short: limit < 3600));
+        pauseColor = AppColors.orange;
+      } else {
+        pauseLine = s.timeTrackerPauseOver(
+            TimeTrackerFormat.clockSeconds(context, paused - limit, short: paused - limit < 3600));
+        pauseColor = AppColors.red;
+      }
+    }
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Text(
+          '${TimeTrackerFormat.clockSeconds(context, worked)} ${s.timeTrackerHourUnit}',
+          key: const ValueKey<String>('timeTrackerLiveTimer'),
+          style: StyleText.fontSize22Weight600.copyWith(
+            color: AppColors.text,
+            fontFeatures: const <FontFeature>[FontFeature.tabularFigures()],
+          ),
+        ),
+        if (pauseLine != null)
+          Text(
+            pauseLine,
+            key: const ValueKey<String>('timeTrackerPauseLeft'),
+            style: StyleText.fontSize12Weight500.copyWith(color: pauseColor),
+          ),
+      ],
     );
   }
 }

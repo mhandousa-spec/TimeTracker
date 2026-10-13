@@ -198,6 +198,32 @@ class AttendanceCalculator {
     return now.isBefore(schedule.endOn(day)) ? null : AttendanceStatus.absent;
   }
 
+  /// Function Name: [pauseSeconds] / [workSeconds]
+  ///
+  /// Purpose: ADDED 13/10/2026 (owner: the live timer shows seconds) — the
+  /// same as [pauseMinutes] / [workMinutes], to the second.
+  ///
+  /// Return type: [int] — never negative.
+  static int pauseSeconds(AttendanceSession session, DateTime now) {
+    final DateTime sessionEnd = session.checkOutAt ?? now;
+    int total = 0;
+    for (final AttendancePause pause in session.pauses) {
+      total += _secondsBetween(pause.startAt, pause.endAt ?? sessionEnd);
+    }
+    return total;
+  }
+
+  static int workSeconds(AttendanceSession session, DateTime now) {
+    final int span = _secondsBetween(session.checkInAt, session.checkOutAt ?? now);
+    final int worked = span - pauseSeconds(session, now);
+    return worked < 0 ? 0 : worked;
+  }
+
+  static int _secondsBetween(DateTime from, DateTime to) {
+    final int seconds = to.difference(from).inSeconds;
+    return seconds < 0 ? 0 : seconds;
+  }
+
   static int _minutesBetween(DateTime from, DateTime to) {
     final int minutes = to.difference(from).inMinutes;
     return minutes < 0 ? 0 : minutes;

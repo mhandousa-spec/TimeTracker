@@ -170,9 +170,10 @@ class _InfoBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 13/10/2026 (owner): the box hugs its two lines — half the old space
+    // between the label and the value (the fixed 69 height pushed them
+    // apart).
     return Container(
-      height: wrap ? null : 69.h,
-      constraints: wrap ? BoxConstraints(minHeight: 69.h) : null,
       padding: EdgeInsetsDirectional.symmetric(horizontal: 12.w, vertical: 10.h),
       decoration: BoxDecoration(
         color: AppColors.background,
@@ -180,8 +181,7 @@ class _InfoBox extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: wrap ? MainAxisSize.min : MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Text(
             item.label,
@@ -189,7 +189,7 @@ class _InfoBox extends StatelessWidget {
             softWrap: true,
             style: _style().copyWith(color: AppColors.secondaryText),
           ),
-          if (wrap) SizedBox(height: 4.h),
+          SizedBox(height: 6.h),
           Text(
             item.value,
             maxLines: 1,

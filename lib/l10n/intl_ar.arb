@@ -4859,5 +4859,8 @@
   "timeTrackerGroupRulesTag": "قواعد المجموعة",
   "timeTrackerCustomRulesTag": "قواعد مخصصة",
   "timeTrackerLateAbsentRanking": "ترتيب التأخير والغياب",
-  "timeTrackerRankingEmpty": "لا توجد أيام تأخير أو غياب في هذه الفترة."
+  "timeTrackerRankingEmpty": "لا توجد أيام تأخير أو غياب في هذه الفترة.",
+  "timeTrackerPauseLeft": "المتبقي من الإيقاف المؤقت: {time}",
+  "timeTrackerPausedFor": "متوقف مؤقتاً: {time}",
+  "timeTrackerPauseOver": "انتهى وقت الإيقاف المؤقت (زيادة {time})"
 }

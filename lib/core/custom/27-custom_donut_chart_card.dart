@@ -112,6 +112,11 @@ class DonutChartCard extends StatelessWidget {
   /// keeps the historical 30 + 30 spacing.
   final bool ringAtEnd;
 
+  /// ADDED 13/10/2026 (Time Tracker owner, iPad landscape): the side legend
+  /// keeps a compact width (amounts beside their names) and the ring is
+  /// CENTRED in the space left. False = unchanged.
+  final bool centerRing;
+
   const DonutChartCard({
     super.key,
     required this.title,
@@ -134,6 +139,7 @@ class DonutChartCard extends StatelessWidget {
     this.compactLegend = false,
     this.legendMaxLines = 1,
     this.ringAtEnd = false,
+    this.centerRing = false,
   });
 
   @override
@@ -264,7 +270,31 @@ class DonutChartCard extends StatelessWidget {
                     ),
                   ],
                 )
-              : Row(
+              : centerRing
+                  ? Row(
+                      children: [
+                        Flexible(
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(maxWidth: 230.w),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                for (final s in legendSections)
+                                  ChartLegendRow(
+                                    name: s.label,
+                                    amount: _localizeDigits(s.value.toInt().toString(), isRtl),
+                                    color: s.color ?? AppColors.grey,
+                                    maxLines: legendMaxLines,
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 16.w),
+                        Expanded(child: Center(child: chart)),
+                      ],
+                    )
+                  : Row(
               children: [
                 Expanded(
                   child: Column(

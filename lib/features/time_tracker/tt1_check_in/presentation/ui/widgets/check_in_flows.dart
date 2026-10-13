@@ -102,7 +102,7 @@ class CheckInFlows {
       confirmWidth: TtDialogWidth.status,
       successWidth: TtDialogWidth.status,
       scaleIn: true,
-      confirmLottie: AppAssets.lottieConfirmation,
+      confirmLottie: TtAssets.lottieCheckOut,
       confirmTitle: s.timeTrackerCheckOutConfirmTitle,
       confirmSubtitle: s.timeTrackerCheckOutConfirmBody,
       confirmYesText: s.yes,

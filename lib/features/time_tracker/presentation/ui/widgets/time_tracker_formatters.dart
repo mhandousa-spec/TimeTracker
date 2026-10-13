@@ -58,6 +58,17 @@ class TimeTrackerFormat {
     return LocalizedNumber.digits(context, text);
   }
 
+  /// ADDED 13/10/2026 (owner): "01 : 05 : 09" — hours : minutes : seconds
+  /// (localized digits); [short] = "05 : 09" (minutes : seconds).
+  static String clockSeconds(BuildContext context, int seconds, {bool short = false}) {
+    final int safe = seconds < 0 ? 0 : seconds;
+    String two(int v) => v.toString().padLeft(2, '0');
+    final String text = short
+        ? '${two(safe ~/ 60)} : ${two(safe % 60)}'
+        : '${two(safe ~/ 3600)} : ${two((safe % 3600) ~/ 60)} : ${two(safe % 60)}';
+    return LocalizedNumber.digits(context, text);
+  }
+
   /// A count with localized digits ("11" / "١١").
   static String count(BuildContext context, num value) => LocalizedNumber.of(context, value);
 

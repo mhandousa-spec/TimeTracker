@@ -41375,6 +41375,36 @@ class S {
       args: [],
     );
   }
+
+  /// `Pause left: {time}`
+  String timeTrackerPauseLeft(String time) {
+    return Intl.message(
+      'Pause left: $time',
+      name: 'timeTrackerPauseLeft',
+      desc: '',
+      args: [time],
+    );
+  }
+
+  /// `Paused: {time}`
+  String timeTrackerPausedFor(String time) {
+    return Intl.message(
+      'Paused: $time',
+      name: 'timeTrackerPausedFor',
+      desc: '',
+      args: [time],
+    );
+  }
+
+  /// `Pause time is over ({time} more)`
+  String timeTrackerPauseOver(String time) {
+    return Intl.message(
+      'Pause time is over ($time more)',
+      name: 'timeTrackerPauseOver',
+      desc: '',
+      args: [time],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

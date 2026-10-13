@@ -22,8 +22,8 @@
 /// Updated: 13/10/2026 - owner (redesign): four count TILES in one row
 /// (Overdue Approvals · Frequent Absences · Missing Check-Outs ·
 /// Transactions Waiting; a 0 tile is greyed), tap one to choose it; the
-/// chosen list runs under them as ONE sideways-scrolling row of people
-/// cards (+ View All). The card keeps one height whatever the numbers.
+/// chosen list runs under them as a grid of people cards — 3 a row in
+/// landscape, 2 in portrait, 1 on a phone; two rows, then View All. The card keeps one height whatever the numbers.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -207,21 +207,32 @@ class _HrNeedsAttentionCardState extends State<HrNeedsAttentionCard> {
         if (approvals) viewAll = () => HrDashboardNavigation.openApprovals(context, transactionsOnly: true);
     }
     final VoidCallback? all = viewAll;
+    final int columns = context.isPhone ? 1 : (context.isLandscape ? 3 : 2);
+    final int more = rows.length - columns * 2;
     return Column(
       key: ValueKey<String>('hrAttentionList_${k.name}'),
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: <Widget>[
-              for (int i = 0; i < rows.length; i++) ...<Widget>[
-                if (i > 0) SizedBox(width: 10.w),
-                SizedBox(width: 250.w, child: rows[i]),
-              ],
-            ],
-          ),
+        // 13/10/2026 (owner): a grid — three cards a row in landscape, two
+        // in portrait, one on a phone; the first two rows, then View All.
+        LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints c) {
+            final double gap = 10.w;
+            final double w = (c.maxWidth - gap * (columns - 1)) / columns;
+            final List<Widget> shown = rows.take(columns * 2).toList();
+            return Wrap(
+              spacing: gap,
+              runSpacing: 10.h,
+              children: <Widget>[for (final Widget r in shown) SizedBox(width: w, child: r)],
+            );
+          },
         ),
+        // Without a list to open, say how many more there are.
+        if (all == null && more > 0) ...<Widget>[
+          SizedBox(height: 8.h),
+          Text(s.timeTrackerMoreItems(TimeTrackerFormat.count(context, more)),
+              style: StyleText.fontSize12Weight400.copyWith(color: AppColors.secondaryText)),
+        ],
         if (all != null) ...<Widget>[
           SizedBox(height: 8.h),
           Align(
