@@ -7684,7 +7684,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "الموظفين — جميع الأقسام",
     ),
     "timeTrackerEmployeesExportName": MessageLookupByLibrary.simpleMessage(
-      "قائمة الموظفين",
+      "تقرير الموظفين",
     ),
     "timeTrackerEmployeesInScope": MessageLookupByLibrary.simpleMessage(
       "الموظفون المشمولون",
@@ -8025,7 +8025,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "timeTrackerLocationValue": m54,
     "timeTrackerLocationsExportName": MessageLookupByLibrary.simpleMessage(
-      "قائمة المواقع",
+      "تقرير المواقع",
     ),
     "timeTrackerLongitude": MessageLookupByLibrary.simpleMessage("خط الطول"),
     "timeTrackerLongitudeInvalid": MessageLookupByLibrary.simpleMessage(
@@ -8328,7 +8328,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "لقد غيرت حالة نوع الطلب هذا بنجاح",
     ),
     "timeTrackerRequestTypesExportName": MessageLookupByLibrary.simpleMessage(
-      "قائمة أنواع الطلبات",
+      "تقرير أنواع الطلبات",
     ),
     "timeTrackerRequestWord": MessageLookupByLibrary.simpleMessage("طلب"),
     "timeTrackerRequestedBy": MessageLookupByLibrary.simpleMessage(

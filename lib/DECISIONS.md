@@ -84,6 +84,7 @@ Facts found in code (8/10):
 52. Dialogs have one size per kind: filters / forms / edits / imports = `TtDialogWidth.standard` (600); short choices = `TtDialogWidth.compact` (450); messages, success, confirm and export keep the core sizes.
 53. A transaction (attendance correction) REQUIRES a description and a transaction document — the manager decides from them (validation + Submit disabled until both exist).
 54. Export names are professional: `{Report}_{Employee (personal reports)}_{yyyy-MM-dd}`, e.g. `Attendance_Report_Moataz_Handousa_2026-10-13`. Import templates keep their plain name.
+    Updated 13/10/2026: every report is named "… Report" (Locations_Report_2026-10-13); the Export dialog has the Filter dialog's width (`TtDialogWidth.standard`).
 55. No divider lines inside cards (e.g. above Send Reminder).
 56. Request counters follow the life of a request: All · Pending · Under Review · Approved · Rejected · Canceled (Approvals: All · Pending · Approved · Rejected · Canceled).
 57. Dashboard "Custom" range = one date-range picker (no Start / End form). Two-option toggles slide (animation) with a LOW haptic; the yellow pill of "My Dashboard | HR" has radius 2.

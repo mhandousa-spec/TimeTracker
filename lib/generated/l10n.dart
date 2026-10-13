@@ -37201,10 +37201,10 @@ class S {
     );
   }
 
-  /// `Locations List`
+  /// `Locations Report`
   String get timeTrackerLocationsExportName {
     return Intl.message(
-      'Locations List',
+      'Locations Report',
       name: 'timeTrackerLocationsExportName',
       desc: '',
       args: [],
@@ -37621,10 +37621,10 @@ class S {
     );
   }
 
-  /// `Employees List`
+  /// `Employees Report`
   String get timeTrackerEmployeesExportName {
     return Intl.message(
-      'Employees List',
+      'Employees Report',
       name: 'timeTrackerEmployeesExportName',
       desc: '',
       args: [],
@@ -37911,10 +37911,10 @@ class S {
     );
   }
 
-  /// `Request Types List`
+  /// `Request Types Report`
   String get timeTrackerRequestTypesExportName {
     return Intl.message(
-      'Request Types List',
+      'Request Types Report',
       name: 'timeTrackerRequestTypesExportName',
       desc: '',
       args: [],

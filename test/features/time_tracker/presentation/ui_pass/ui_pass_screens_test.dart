@@ -375,6 +375,13 @@ void main() {
           await c.tab(TimeTrackerTab.locations);
           await c.shot('50_locations');
           // 13/10/2026 (owner S3): the self-explaining Import.
+          // 13/10/2026 (owner): Export is as wide as the Filter dialog.
+          await c.tap('locationsExportButton');
+          await c.shot('50a_location_export');
+          await c.closeDialog();
+          await c.tap('locationsFilterButton');
+          await c.shot('50a_location_filter');
+          await c.closeDialog();
           await c.tap('locationsImportButton');
           await c.shot('50b_location_import');
           // 13/10/2026 (owner): the bulk-upload review after a file is read

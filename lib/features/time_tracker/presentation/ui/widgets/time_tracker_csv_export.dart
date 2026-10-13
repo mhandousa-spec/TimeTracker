@@ -61,6 +61,8 @@ Future<void> exportTimeTrackerCsv({
   final String suggested = timeTrackerExportName(defaultFileName, subject: subject, dated: dated);
   return CustomDialogManager.showExport(
     context: context,
+    // 13/10/2026 (owner): the same width as the Filter dialog.
+    width: TtDialogWidth.standard,
     initialFileName: suggested,
     onDownload: (String fileName) async {
       final String name =

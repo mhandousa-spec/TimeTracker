@@ -774,6 +774,10 @@ class CustomDialogManager {
     required BuildContext context,
     required Future<void> Function(String fileName) onDownload,
     String? initialFileName,
+    // ADDED 13/10/2026 (Time Tracker owner): the dialog's width, as given
+    // (like `showContent`), so Export matches the module's Filter dialog.
+    // Null keeps 300 (phone) / 500.
+    double? width,
   }) async {
     final bool isArabic =
         Localizations.localeOf(context).languageCode == 'ar';
@@ -800,7 +804,7 @@ class CustomDialogManager {
               // nearly filled the row beneath it. 500 is what every other dialog
               // in this file uses (confirm, success, error, restore); the phone
               // keeps 300, where 500 would overflow the screen.
-              width: isMobile ? 300.sp : 500.sp,
+              width: width ?? (isMobile ? 300.sp : 500.sp),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
