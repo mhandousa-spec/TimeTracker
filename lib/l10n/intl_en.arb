@@ -4830,5 +4830,17 @@
   "timeTrackerSectionAddress": "Address",
   "timeTrackerSectionMap": "Location On Map",
   "timeTrackerOpenInGoogleMaps": "Open In Google Maps",
-  "timeTrackerSectionAttendanceRules": "Attendance Rules"
+  "timeTrackerSectionAttendanceRules": "Attendance Rules",
+  "timeTrackerImportStep1Title": "Download The Template",
+  "timeTrackerImportStep1Locations": "A spreadsheet (CSV) with one row per location, already filled with your current locations. Each column is one field: name, map link, address, work hours, rules.",
+  "timeTrackerImportStep1Balances": "A spreadsheet (CSV) with one row per employee: Email, Year and Total Days, already filled with the current balances.",
+  "timeTrackerImportStep2Title": "Fill It In",
+  "timeTrackerImportStep2Locations": "Add a row for each new location, or change values in an existing row (same name = update). An empty cell keeps the saved value. Nothing is ever deleted.",
+  "timeTrackerImportStep2Balances": "Change Total Days for each employee for {year}. A blank Year means {year}; other years are skipped. Nothing is ever deleted.",
+  "timeTrackerImportStep3Title": "Upload The File",
+  "timeTrackerImportStep3Body": "Choose the filled file (CSV or Excel). You will see what will be added, updated or skipped before anything is saved.",
+  "timeTrackerVacationHistory": "Vacation History",
+  "timeTrackerNoVacationsInYear": "No vacation requests in {year}.",
+  "timeTrackerDeductedFromBalance": "Deducted From Balance",
+  "timeTrackerVacationRequestsCount": "Requests: {count}"
 }

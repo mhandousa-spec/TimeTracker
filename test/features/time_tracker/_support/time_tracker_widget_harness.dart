@@ -62,6 +62,7 @@ import 'package:knowticed_plus/generated/l10n.dart';
 import 'package:knowticed_plus/features/time_tracker/data/repository/group_repository_impl.dart';
 import 'package:knowticed_plus/features/time_tracker/data/repository/location_assignment_repository_impl.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/base_repository/location_assignment_base_repository.dart';
+import 'package:knowticed_plus/features/time_tracker/domain/base_repository/request_base_repository.dart';
 import 'package:knowticed_plus/features/time_tracker/data/repository/location_repository_impl.dart';
 import 'package:knowticed_plus/features/time_tracker/data/repository/request_type_repository_impl.dart';
 import 'package:knowticed_plus/features/time_tracker/data/services/group_service.dart';
@@ -372,6 +373,7 @@ class TimeTrackerHarness {
     }
 
     put<LocationAssignmentBaseRepository>(() => assignments);
+    put<RequestBaseRepository>(() => requests);
     if (!moduleEntry) put<PersonalDashboardCubit>(() => make<PersonalDashboardCubit>());
     await tester.runAsync(() async {
       home = make<TimeTrackerHomeCubit>();

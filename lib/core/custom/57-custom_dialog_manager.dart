@@ -724,6 +724,10 @@ class CustomDialogManager {
     EdgeInsetsGeometry? padding,
     BorderRadius? borderRadius,
     bool barrierDismissible = true,
+    // ADDED 13/10/2026 (Time Tracker owner V2): the content scrolls when the
+    // phone keyboard leaves too little room (it overflowed). Opt-in — a child
+    // that sizes itself with Expanded / Flexible must keep the default.
+    bool scrollable = false,
   }) {
     final bool isLight = Theme.of(context).brightness == Brightness.light;
 
@@ -743,9 +747,11 @@ class CustomDialogManager {
           ),
           child: Padding(
             padding: padding ?? EdgeInsets.all(12.sp),
-            child: width == null
-                ? child
-                : SizedBox(width: width, child: child),
+            child: scrollable
+                ? SingleChildScrollView(
+                    child: width == null ? child : SizedBox(width: width, child: child),
+                  )
+                : (width == null ? child : SizedBox(width: width, child: child)),
           ),
         );
       },

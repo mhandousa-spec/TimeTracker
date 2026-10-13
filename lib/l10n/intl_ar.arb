@@ -4823,5 +4823,17 @@
   "timeTrackerSectionAddress": "العنوان",
   "timeTrackerSectionMap": "الموقع على الخريطة",
   "timeTrackerOpenInGoogleMaps": "فتح في خرائط جوجل",
-  "timeTrackerSectionAttendanceRules": "قواعد الحضور"
+  "timeTrackerSectionAttendanceRules": "قواعد الحضور",
+  "timeTrackerImportStep1Title": "حمّل النموذج",
+  "timeTrackerImportStep1Locations": "ملف جدول (CSV) فيه سطر لكل موقع، معبّأ مسبقاً بمواقعك الحالية. كل عمود حقل: الاسم، رابط الخريطة، العنوان، ساعات العمل، القواعد.",
+  "timeTrackerImportStep1Balances": "ملف جدول (CSV) فيه سطر لكل موظف: البريد والسنة وإجمالي الأيام، معبّأ مسبقاً بالأرصدة الحالية.",
+  "timeTrackerImportStep2Title": "عبّئ البيانات",
+  "timeTrackerImportStep2Locations": "أضف سطراً لكل موقع جديد أو عدّل القيم في سطر موجود (نفس الاسم = تحديث). الخانة الفارغة تُبقي القيمة المحفوظة. لا يُحذف أي شيء.",
+  "timeTrackerImportStep2Balances": "عدّل إجمالي الأيام لكل موظف لسنة {year}. السنة الفارغة تعني {year}، والسنوات الأخرى تُتخطّى. لا يُحذف أي شيء.",
+  "timeTrackerImportStep3Title": "ارفع الملف",
+  "timeTrackerImportStep3Body": "اختر الملف بعد تعبئته (CSV أو Excel). سترى ما سيُضاف أو يُحدّث أو يُتخطّى قبل حفظ أي شيء.",
+  "timeTrackerVacationHistory": "سجل الإجازات",
+  "timeTrackerNoVacationsInYear": "لا توجد طلبات إجازة في {year}.",
+  "timeTrackerDeductedFromBalance": "المخصوم من الرصيد",
+  "timeTrackerVacationRequestsCount": "الطلبات: {count}"
 }

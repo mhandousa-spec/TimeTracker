@@ -23,7 +23,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
 
 import 'package:knowticed_plus/core/constants/app_assets.dart';
-import 'package:knowticed_plus/core/custom/5-custom_button.dart';
 import 'package:knowticed_plus/core/custom/57-custom_dialog_manager.dart';
 import 'package:knowticed_plus/core/custom/66-circle_progress.dart';
 import 'package:knowticed_plus/core/helper/main_helper/localized_number.dart';
@@ -141,29 +140,13 @@ class _LocationImportDialogState extends State<LocationImportDialog> {
         children: <Widget>[
           TtDialogHeader(title: s.timeTrackerImportLocations, icon: AppAssets.upload),
           SizedBox(height: 12.h),
-          Text(s.timeTrackerImportHelp,
-              style: StyleText.fontSize12Weight400.copyWith(color: AppColors.secondaryText)),
-          SizedBox(height: 15.h),
-          TtPair(
-            start: KeyedSubtree(
-              key: const ValueKey<String>('locationImportTemplate'),
-              child: customButton(
-                title: s.timeTrackerDownloadTemplate,
-                function: _template,
-                fullWidth: true,
-                color: AppColors.secondaryAction,
-                textStyle: StyleText.fontSize14Weight500.copyWith(color: AppColors.onSecondaryAction),
-              ),
-            ),
-            end: ShrinkOnTap(
-              child: customButton(
-                title: s.timeTrackerUploadFile,
-                function: _reading ? () {} : _upload,
-                fullWidth: true,
-                color: AppColors.primary,
-                textStyle: StyleText.fontSize14Weight500.copyWith(color: AppColors.textButton),
-              ),
-            ),
+          TtImportSteps(
+            templateKey: const ValueKey<String>('locationImportTemplate'),
+            uploadKey: const ValueKey<String>('locationImportUpload'),
+            templateBody: s.timeTrackerImportStep1Locations,
+            fillBody: s.timeTrackerImportStep2Locations,
+            onTemplate: _template,
+            onUpload: _reading ? () {} : _upload,
           ),
           if (_reading) ...<Widget>[
             SizedBox(height: 15.h),

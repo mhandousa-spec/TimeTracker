@@ -37,6 +37,7 @@ import 'package:knowticed_plus/core/custom/16-custom_card_styles.dart';
 import 'package:knowticed_plus/core/custom/2-custom_textfield.dart';
 import 'package:knowticed_plus/core/custom/32-custom_svg.dart';
 import 'package:knowticed_plus/core/custom/5-custom_button.dart';
+import 'package:knowticed_plus/core/helper/main_helper/localized_number.dart';
 import 'package:knowticed_plus/core/custom/57-custom_dialog_manager.dart';
 import 'package:knowticed_plus/core/custom/58-default_switch_button.dart';
 import 'package:knowticed_plus/core/custom/6-custom_button_with_svg.dart';
@@ -752,24 +753,130 @@ class TtDetailRule extends StatelessWidget {
 
 /// A status as a coloured chip: tinted container, dot, label.
 class TtStatusChip extends StatelessWidget {
-  const TtStatusChip({super.key, required this.label, required this.color});
+  const TtStatusChip({super.key, required this.label, required this.color, this.small = false});
 
   final String label;
   final Color color;
 
+  /// Inside a list card (12 text, tighter padding).
+  final bool small;
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsetsDirectional.symmetric(horizontal: 14.w, vertical: 7.h),
+      padding: small
+          ? EdgeInsetsDirectional.symmetric(horizontal: 10.w, vertical: 4.h)
+          : EdgeInsetsDirectional.symmetric(horizontal: 14.w, vertical: 7.h),
       decoration: BoxDecoration(color: color.withValues(alpha: 0.14), borderRadius: BorderRadius.circular(20.r)),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Container(width: 9.r, height: 9.r, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
-          SizedBox(width: 8.w),
-          Text(label, style: StyleText.fontSize16Weight500.copyWith(color: color)),
+          Container(
+              width: small ? 7.r : 9.r,
+              height: small ? 7.r : 9.r,
+              decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+          SizedBox(width: small ? 6.w : 8.w),
+          Text(label,
+              style: (small ? StyleText.fontSize12Weight500 : StyleText.fontSize16Weight500).copyWith(color: color)),
         ],
       ),
+    );
+  }
+}
+
+/// ADDED 13/10/2026 (owner S3): the Import dialogs explain themselves —
+/// three numbered steps: 1 Download the template (what it is), 2 Fill it in
+/// (what a row means), 3 Upload the file (a preview comes before saving),
+/// with the template and upload buttons inside their steps.
+class TtImportSteps extends StatelessWidget {
+  const TtImportSteps({
+    super.key,
+    required this.templateBody,
+    required this.fillBody,
+    required this.onTemplate,
+    required this.onUpload,
+    this.templateKey,
+    this.uploadKey,
+  });
+
+  final String templateBody;
+  final String fillBody;
+  final VoidCallback onTemplate;
+  final VoidCallback onUpload;
+  final Key? templateKey;
+  final Key? uploadKey;
+
+  @override
+  Widget build(BuildContext context) {
+    final S s = S.of(context);
+    Widget step(int n, String title, String body, Widget? action) => Container(
+          padding: EdgeInsetsDirectional.all(12.r),
+          decoration: BoxDecoration(color: AppColors.background, borderRadius: CardStyles.radius()),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                width: 28.r,
+                height: 28.r,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(color: AppColors.primary, shape: BoxShape.circle),
+                child: Text(LocalizedNumber.of(context, n),
+                    style: StyleText.fontSize14Weight500.copyWith(color: AppColors.textButton)),
+              ),
+              SizedBox(width: 10.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    Text(title, style: StyleText.fontSize14Weight500.copyWith(color: AppColors.text)),
+                    SizedBox(height: 4.h),
+                    Text(body, style: StyleText.fontSize12Weight400.copyWith(color: AppColors.secondaryText)),
+                    if (action != null) ...<Widget>[SizedBox(height: 10.h), action],
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        step(
+          1,
+          s.timeTrackerImportStep1Title,
+          templateBody,
+          KeyedSubtree(
+            key: templateKey,
+            child: customButton(
+              title: s.timeTrackerDownloadTemplate,
+              function: onTemplate,
+              fullWidth: true,
+              color: AppColors.secondaryAction,
+              textStyle: StyleText.fontSize14Weight500.copyWith(color: AppColors.onSecondaryAction),
+            ),
+          ),
+        ),
+        SizedBox(height: 10.h),
+        step(2, s.timeTrackerImportStep2Title, fillBody, null),
+        SizedBox(height: 10.h),
+        step(
+          3,
+          s.timeTrackerImportStep3Title,
+          s.timeTrackerImportStep3Body,
+          KeyedSubtree(
+            key: uploadKey,
+            child: ShrinkOnTap(
+              child: customButton(
+                title: s.timeTrackerUploadFile,
+                function: onUpload,
+                fullWidth: true,
+                color: AppColors.primary,
+                textStyle: StyleText.fontSize14Weight500.copyWith(color: AppColors.textButton),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

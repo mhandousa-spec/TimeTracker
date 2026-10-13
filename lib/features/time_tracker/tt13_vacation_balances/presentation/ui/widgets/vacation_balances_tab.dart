@@ -59,6 +59,7 @@ import 'package:knowticed_plus/features/time_tracker/tt13_vacation_balances/pres
 import 'package:knowticed_plus/features/time_tracker/tt13_vacation_balances/presentation/ui/widgets/vacation_balance_edit_dialog.dart';
 import 'package:knowticed_plus/features/time_tracker/tt13_vacation_balances/presentation/ui/widgets/vacation_balance_import_dialog.dart';
 import 'package:knowticed_plus/features/time_tracker/tt13_vacation_balances/presentation/ui/widgets/vacation_balance_text.dart';
+import 'package:knowticed_plus/features/time_tracker/tt13_vacation_balances/presentation/ui/pages/vacation_history_page.dart';
 import 'package:knowticed_plus/generated/l10n.dart';
 
 class VacationBalancesTab extends StatefulWidget {
@@ -99,6 +100,11 @@ class _VacationBalancesTabState extends State<VacationBalancesTab> {
       ],
     );
   }
+
+  /// 13/10/2026 (owner V1): tap an employee → their vacation history.
+  void _history(VacationBalanceRow row) => Navigator.of(context).push<void>(
+        MaterialPageRoute<void>(builder: (_) => VacationHistoryPage(employeeEmail: row.employee.email)),
+      );
 
   void _edit(VacationBalanceRow row) {
     if (!_access.canEditVacationBalance) return;
@@ -269,14 +275,22 @@ class _VacationBalancesTabState extends State<VacationBalancesTab> {
         rows: <List<TtCell>>[
           for (int i = 0; i < rows.length; i++) VacationBalanceText.tableCells(context, i, rows[i]),
         ],
-        onRowTap: canEdit ? (int i) => _edit(rows[i]) : null,
+        onRowTap: (int i) => _history(rows[i]),
       );
     }
     // UI quality pass (9/10/2026): cards hug their content (`TtCardGrid`).
     return TtCardGrid(
       key: const ValueKey<String>('vacationGrid'),
       children: <Widget>[
-        for (final VacationBalanceRow r in rows) _VacationCard(row: r, onEdit: canEdit ? () => _edit(r) : null),
+        for (final VacationBalanceRow r in rows)
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () {
+              HapticController.low();
+              _history(r);
+            },
+            child: _VacationCard(row: r, onEdit: canEdit ? () => _edit(r) : null),
+          ),
       ],
     );
   }

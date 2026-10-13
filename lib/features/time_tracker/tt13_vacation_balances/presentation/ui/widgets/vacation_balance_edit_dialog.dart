@@ -47,6 +47,8 @@ Future<void> showVacationBalanceEdit(BuildContext context, VacationBalanceRow ro
   final double? total = await CustomDialogManager.showContent<double>(
     context: context,
     width: 520,
+    // 13/10/2026 (owner V2): scrolls above the keyboard instead of overflowing.
+    scrollable: true,
     child: VacationBalanceEditDialog(row: row),
   );
   if (total == null || !context.mounted) return;

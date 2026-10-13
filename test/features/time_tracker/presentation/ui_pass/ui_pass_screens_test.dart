@@ -21,6 +21,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:knowticed_plus/features/time_tracker/tt13_vacation_balances/presentation/ui/pages/vacation_history_page.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/entities/request_type.dart';
 import 'package:knowticed_plus/features/time_tracker/tt10_request_form/presentation/controller/request_form_cubit.dart';
 import 'package:knowticed_plus/features/time_tracker/tt4_transaction_form/presentation/controller/transaction_form_cubit.dart';
@@ -370,6 +371,10 @@ void main() {
         await _run(tester, v, (_Ctx c) async {
           await c.tab(TimeTrackerTab.locations);
           await c.shot('50_locations');
+          // 13/10/2026 (owner S3): the self-explaining Import.
+          await c.tap('locationsImportButton');
+          await c.shot('50b_location_import');
+          await c.closeDialog();
           await c.push(const LocationFormPage());
           await c.shot('51_location_form');
           await c.scroll();
@@ -431,6 +436,25 @@ void main() {
         await _run(tester, v, (_Ctx c) async {
           await c.tab(TimeTrackerTab.vacationBalances);
           await c.shot('70_vacation_balances_cards');
+          // 13/10/2026 (owner V2 / S3): the Edit and Import dialogs.
+          await c.tap('vacationEdit_${kTtPeople.first.email}');
+          await c.shot('72_vacation_edit');
+          // The keyboard is up (owner V2: it overflowed).
+          c.tester.view.viewInsets = FakeViewPadding(bottom: 320 * c.tester.view.devicePixelRatio);
+          await c.settle();
+          await c.shot('72b_vacation_edit_keyboard');
+          c.tester.view.resetViewInsets();
+          await c.settle();
+          await c.closeDialog();
+          await c.tap('vacationImportButton');
+          await c.shot('73_vacation_import');
+          await c.closeDialog();
+          // 13/10/2026 (owner V1): an employee's vacation history.
+          await c.push(VacationHistoryPage(employeeEmail: kTtPeople.first.email));
+          await c.shot('74_vacation_history');
+          await c.scroll();
+          await c.shot('74_vacation_history_s1');
+          await c.back();
           c.h.vacations!.setGrid(false);
           await c.settle();
           await c.shot('71_vacation_balances_table');

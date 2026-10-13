@@ -41015,6 +41015,126 @@ class S {
       args: [],
     );
   }
+
+  /// `Download The Template`
+  String get timeTrackerImportStep1Title {
+    return Intl.message(
+      'Download The Template',
+      name: 'timeTrackerImportStep1Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `A spreadsheet (CSV) with one row per location, already filled with your current locations. Each column is one field: name, map link, address, work hours, rules.`
+  String get timeTrackerImportStep1Locations {
+    return Intl.message(
+      'A spreadsheet (CSV) with one row per location, already filled with your current locations. Each column is one field: name, map link, address, work hours, rules.',
+      name: 'timeTrackerImportStep1Locations',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `A spreadsheet (CSV) with one row per employee: Email, Year and Total Days, already filled with the current balances.`
+  String get timeTrackerImportStep1Balances {
+    return Intl.message(
+      'A spreadsheet (CSV) with one row per employee: Email, Year and Total Days, already filled with the current balances.',
+      name: 'timeTrackerImportStep1Balances',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fill It In`
+  String get timeTrackerImportStep2Title {
+    return Intl.message(
+      'Fill It In',
+      name: 'timeTrackerImportStep2Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add a row for each new location, or change values in an existing row (same name = update). An empty cell keeps the saved value. Nothing is ever deleted.`
+  String get timeTrackerImportStep2Locations {
+    return Intl.message(
+      'Add a row for each new location, or change values in an existing row (same name = update). An empty cell keeps the saved value. Nothing is ever deleted.',
+      name: 'timeTrackerImportStep2Locations',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Change Total Days for each employee for {year}. A blank Year means {year}; other years are skipped. Nothing is ever deleted.`
+  String timeTrackerImportStep2Balances(Object year) {
+    return Intl.message(
+      'Change Total Days for each employee for $year. A blank Year means $year; other years are skipped. Nothing is ever deleted.',
+      name: 'timeTrackerImportStep2Balances',
+      desc: '',
+      args: [year],
+    );
+  }
+
+  /// `Upload The File`
+  String get timeTrackerImportStep3Title {
+    return Intl.message(
+      'Upload The File',
+      name: 'timeTrackerImportStep3Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose the filled file (CSV or Excel). You will see what will be added, updated or skipped before anything is saved.`
+  String get timeTrackerImportStep3Body {
+    return Intl.message(
+      'Choose the filled file (CSV or Excel). You will see what will be added, updated or skipped before anything is saved.',
+      name: 'timeTrackerImportStep3Body',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Vacation History`
+  String get timeTrackerVacationHistory {
+    return Intl.message(
+      'Vacation History',
+      name: 'timeTrackerVacationHistory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No vacation requests in {year}.`
+  String timeTrackerNoVacationsInYear(Object year) {
+    return Intl.message(
+      'No vacation requests in $year.',
+      name: 'timeTrackerNoVacationsInYear',
+      desc: '',
+      args: [year],
+    );
+  }
+
+  /// `Deducted From Balance`
+  String get timeTrackerDeductedFromBalance {
+    return Intl.message(
+      'Deducted From Balance',
+      name: 'timeTrackerDeductedFromBalance',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Requests: {count}`
+  String timeTrackerVacationRequestsCount(Object count) {
+    return Intl.message(
+      'Requests: $count',
+      name: 'timeTrackerVacationRequestsCount',
+      desc: '',
+      args: [count],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
