@@ -146,7 +146,8 @@ class RequestFlows {
       context: context,
       confirmWidth: 411,
       scaleIn: true,
-      confirmLottie: AppAssets.lottieConfirmation,
+      // 13/10/2026 (owner I6): a green tick, not the "+" document.
+      confirmLottie: AppAssets.lottieApproved,
       confirmTitle: review ? s.timeTrackerApproveCancellation : s.timeTrackerApproveRequest,
       confirmSubtitle: review ? s.timeTrackerApproveCancellationConfirm : s.timeTrackerApproveRequestConfirm,
       confirmYesText: s.yes,

@@ -298,19 +298,19 @@ class _RequestTypeCard extends StatelessWidget {
                 ),
               ],
             ),
-            line(const TtGlyph.svg(TtAssets.group), s.timeTrackerHrApproval,
+            line(const TtGlyph.svg(TtAssets.rtHr), s.timeTrackerHrApproval,
                 text(RequestTypeText.required(context, type.isHrApprovalRequired))),
-            line(const TtGlyph.icon(Icons.work_outline), s.timeTrackerManagerApproval,
+            line(const TtGlyph.svg(TtAssets.rtManager), s.timeTrackerManagerApproval,
                 text(RequestTypeText.required(context, type.isManagerApprovalRequired))),
-            line(const TtGlyph.svg(TtAssets.description), s.timeTrackerDescription,
+            line(const TtGlyph.svg(TtAssets.rtDescription), s.timeTrackerDescription,
                 text(RequestTypeText.optional(context, type.isDescriptionRequired))),
-            line(const TtGlyph.svg(TtAssets.attachment), s.timeTrackerAttachments,
+            line(const TtGlyph.svg(TtAssets.rtAttachments), s.timeTrackerAttachments,
                 text(RequestTypeText.optional(context, type.isAttachmentRequired))),
             // Fills only when a neighbour in the row is taller (TtCardGrid).
             const Spacer(),
             Row(
               children: <Widget>[
-                Expanded(child: line(const TtGlyph.svg(TtAssets.status), s.timeTrackerStatus,
+                Expanded(child: line(const TtGlyph.svg(TtAssets.rtStatus), s.timeTrackerStatus,
                     RequestTypeStatusText(status: type.status, maxLines: 1, small: true))),
                 // 9/10/2026: the date shares the row (it squeezed the status
                 // into a tall column on a phone).

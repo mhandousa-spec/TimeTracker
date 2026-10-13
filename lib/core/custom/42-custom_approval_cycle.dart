@@ -56,11 +56,20 @@ class CustomApprovalCycle extends StatelessWidget {
   /// Force one layout regardless of screen size (null = auto by device).
   final bool? forceMobileLayout;
 
+  /// Opt-in Figma connectors (Time Tracker owner I4, 13/10/2026): the mobile
+  /// elbow arrow in [arrowColor] with a FILLED head, and [tabletArrow]
+  /// (e.g. the Figma → SVG) between tablet steps instead of the chevron.
+  /// Null keeps the original look for every other module.
+  final Color? arrowColor;
+  final Widget? tabletArrow;
+
   const CustomApprovalCycle({
     super.key,
     required this.steps,
     this.itemsPerRow = 3,
     this.forceMobileLayout,
+    this.arrowColor,
+    this.tabletArrow,
   });
 
   bool _isMobile(BuildContext context) =>
@@ -96,10 +105,12 @@ class CustomApprovalCycle extends StatelessWidget {
                 child: CustomPaint(
                   size: const Size(0, 60),
                   painter: _CurvedArrowPainter(
-                    color: isLight
-                        ? AppColors.blackButton
-                        : AppColors.whiteShadow,
+                    color: arrowColor ??
+                        (isLight
+                            ? AppColors.blackButton
+                            : AppColors.whiteShadow),
                     isArabic: isArabic,
+                    filledHead: arrowColor != null,
                   ),
                 ),
               )
@@ -150,7 +161,8 @@ class CustomApprovalCycle extends StatelessWidget {
                 if (index != steps.length - 1)
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 10.w),
-                    child: CustomSvgImage(assetPath: "assets/icons_assets/main_icons_assets/chevron_right.svg",color: AppColors.secondaryText,),
+                    child: tabletArrow ??
+                        CustomSvgImage(assetPath: "assets/icons_assets/main_icons_assets/chevron_right.svg",color: AppColors.secondaryText,),
                   ),
               ],
             ],
@@ -205,13 +217,16 @@ class _CurvedArrowPainter extends CustomPainter {
   final Color color;
   final bool isArabic;
 
-  _CurvedArrowPainter({required this.color, required this.isArabic});
+  /// Figma style: thinner line and a solid triangular head.
+  final bool filledHead;
+
+  _CurvedArrowPainter({required this.color, required this.isArabic, this.filledHead = false});
 
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..color = color
-      ..strokeWidth = 2.5
+      ..strokeWidth = filledHead ? 2 : 2.5
       ..style = PaintingStyle.stroke;
 
     final path = Path();
@@ -243,10 +258,17 @@ class _CurvedArrowPainter extends CustomPainter {
     }
 
     canvas.drawPath(path, paint);
-    canvas.drawPath(arrowPath, paint);
+    if (filledHead) {
+      arrowPath.close();
+      canvas.drawPath(arrowPath, Paint()..color = color..style = PaintingStyle.fill);
+    } else {
+      canvas.drawPath(arrowPath, paint);
+    }
   }
 
   @override
   bool shouldRepaint(covariant _CurvedArrowPainter oldDelegate) =>
-      oldDelegate.color != color || oldDelegate.isArabic != isArabic;
+      oldDelegate.color != color ||
+      oldDelegate.isArabic != isArabic ||
+      oldDelegate.filledHead != filledHead;
 }

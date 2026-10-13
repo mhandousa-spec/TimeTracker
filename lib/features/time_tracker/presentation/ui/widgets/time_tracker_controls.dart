@@ -119,6 +119,17 @@ abstract class TtAssets {
   static const String btnReject = '$_dir/tt_btn_reject.svg';
   static const String btnCancel = '$_dir/tt_btn_cancel.svg';
 
+  /// 13/10/2026 (owner I4): the approval-cycle arrow (Figma `661:23090`).
+  static const String cycleArrow = '$_dir/tt_cycle_arrow.svg';
+
+  /// 13/10/2026 (owner R-1): the Request Type card row icons (Figma
+  /// `661:35531`).
+  static const String rtHr = '$_dir/tt_rt_hr.svg';
+  static const String rtManager = '$_dir/tt_rt_manager.svg';
+  static const String rtDescription = '$_dir/tt_rt_description.svg';
+  static const String rtAttachments = '$_dir/tt_rt_attachments.svg';
+  static const String rtStatus = '$_dir/tt_rt_status.svg';
+
   /// Red filled circle with a white minus (drawn in its own colours).
   static const String minusCircle = '$_main/minus_circle_red.svg';
 

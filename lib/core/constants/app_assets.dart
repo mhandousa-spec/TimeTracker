@@ -148,6 +148,11 @@ abstract class AppAssets {
       'assets/lottie_assets/main_lottie_assets/lottie_confirmation.json';
   static const String trash = 'assets/lottie_assets/main_lottie_assets/trash.json';
 
+  /// Green tick that draws in — the "Approve …?" confirm step. ADDED
+  /// 13/10/2026 (Time Tracker owner I6: [lottieConfirmation] starts as a
+  /// small "+" dot and is a "create document" animation).
+  static const String lottieApproved = 'assets/lottie_assets/main_lottie_assets/approved.json';
+
   /// The "editing an existing record" confirm step. ADDED 13/9/2026; the file
   /// was already in assets/ and already inlined as a raw path string by
   /// app_dialogs.dart and two services screens — named here so the GRC module

@@ -173,15 +173,15 @@ class _Details extends StatelessWidget {
                 delay: const Duration(milliseconds: 80),
                 child: TtPair(
                   start: _section(s.timeTrackerApprovalCycle, TtAssets.group, <Widget>[
-                    _rule(const TtGlyph.svg(TtAssets.group), s.timeTrackerHrApproval,
+                    _rule(const TtGlyph.svg(TtAssets.rtHr), s.timeTrackerHrApproval,
                         RequestTypeText.required(context, type.isHrApprovalRequired), type.isHrApprovalRequired),
-                    _rule(const TtGlyph.svg(TtAssets.person), s.timeTrackerManagerApproval,
+                    _rule(const TtGlyph.svg(TtAssets.rtManager), s.timeTrackerManagerApproval,
                         RequestTypeText.required(context, type.isManagerApprovalRequired), type.isManagerApprovalRequired),
                   ]),
                   end: _section(s.timeTrackerSectionRequirements, TtAssets.description, <Widget>[
-                    _rule(const TtGlyph.svg(TtAssets.description), s.timeTrackerDescription,
+                    _rule(const TtGlyph.svg(TtAssets.rtDescription), s.timeTrackerDescription,
                         RequestTypeText.optional(context, type.isDescriptionRequired), type.isDescriptionRequired),
-                    _rule(const TtGlyph.svg(TtAssets.attachment), s.timeTrackerAttachments,
+                    _rule(const TtGlyph.svg(TtAssets.rtAttachments), s.timeTrackerAttachments,
                         RequestTypeText.optional(context, type.isAttachmentRequired), type.isAttachmentRequired),
                     _rule(const TtGlyph.svg(TtAssets.calendar), s.timeTrackerDeductsFromVacation,
                         type.isDeductedFromVacationBalance ? s.timeTrackerYes : s.timeTrackerNo,

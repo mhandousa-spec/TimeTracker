@@ -147,10 +147,14 @@ class RequestDetailsCard extends StatelessWidget {
       ),
       ...RequestCardLines.timeLines(context, request),
     ];
+    // 13/10/2026 (owner I3): the rows split EVENLY over the two columns
+    // (it used to be 3 on the left and 5 on the right).
+    final List<Widget> all = <Widget>[...person, ...details];
+    final int half = (all.length + 1) ~/ 2;
     final Widget info = asApprover && !context.isPhone
         ? TtPair(
-            start: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: person),
-            end: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: details),
+            start: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: all.sublist(0, half)),
+            end: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: all.sublist(half)),
           )
         : Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -177,6 +181,8 @@ class RequestDetailsCard extends StatelessWidget {
           ProductWarrantyCard(
             title: '',
             width: context.isPhone ? double.infinity : 300.w,
+            // 13/10/2026: the Figma file card (size left, "Uploaded On" right).
+            removeOnCorner: true,
             fileName: a.name,
             fileSize: TimeTrackerFormat.fileSize(context, a.sizeBytes),
             date: s.timeTrackerUploadedOn(TimeTrackerFormat.date(context, a.uploadedAt ?? request.startAt)),
@@ -205,6 +211,12 @@ class RequestDetailsCard extends StatelessWidget {
       SizedBox(height: 8.h),
       CustomApprovalCycle(
         key: const ValueKey<String>('requestApprovalCycle'),
+        // 13/10/2026 (owner I4): the Figma orange arrows.
+        arrowColor: AppColors.orange,
+        tabletArrow: Transform.flip(
+          flipX: ar,
+          child: TtIcon(const TtGlyph.svg(TtAssets.cycleArrow, tinted: false), size: 25.r),
+        ),
         steps: <ApprovalStep>[
           for (final RequestApprovalStep st in steps)
             ApprovalStep(
