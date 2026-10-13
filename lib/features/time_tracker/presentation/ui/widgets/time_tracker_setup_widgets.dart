@@ -413,6 +413,35 @@ class TtDialogHeader extends StatelessWidget {
   }
 }
 
+/// ADDED 12/10/2026 (owner rule R8): on a PHONE the form's action row
+/// (Discard · Create / Submit / Save) stays fixed at the bottom of the screen
+/// and only the fields scroll (the page title is already fixed by the core
+/// frame). Put it in the page `Scaffold.bottomNavigationBar` when
+/// `context.isPhone`; on tablets the row stays under the form.
+class TtPinnedFormActions extends StatelessWidget {
+  const TtPinnedFormActions({super.key, required this.child});
+
+  /// The action row (`TimeTrackerFormActions` / `TransactionFormActions`).
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: AppColors.background,
+        border: Border(top: BorderSide(color: AppColors.card)),
+      ),
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(15.sp, 10.h, 15.sp, 10.h),
+          child: child,
+        ),
+      ),
+    );
+  }
+}
+
 /// Grey Discard (start) · yellow primary (end, grey until [canSubmit]).
 class TimeTrackerFormActions extends StatelessWidget {
   const TimeTrackerFormActions({

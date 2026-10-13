@@ -31,6 +31,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
 
+import 'package:knowticed_plus/core/extensions/context_extensions.dart';
 import 'package:knowticed_plus/core/constants/app_assets.dart';
 import 'package:knowticed_plus/core/custom/1-custom_dropdown.dart';
 import 'package:knowticed_plus/core/custom/2-custom_textfield.dart';
@@ -202,11 +203,32 @@ class _LocationFormViewState extends State<_LocationFormView> {
     await showTimeTrackerFailure(context, denied: denied);
   }
 
+  /// The Discard · primary row (pinned on a phone, under the form on a tablet).
+  Widget _actions(LocationFormState state) {
+    final S s = S.of(context);
+    return TimeTrackerFormActions(
+      primaryKey: const ValueKey<String>('locationSubmitButton'),
+      primaryTitle: state.isEdit ? s.save : s.create,
+      canSubmit: state.canSubmit,
+      onDiscard: () => Navigator.of(context).maybePop(),
+      onSubmit: _submit,
+      onDisabledTap: _cubit.revealErrors,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final S s = S.of(context);
     return Scaffold(
       backgroundColor: AppColors.background,
+      // 12/10/2026 (owner R8): phone — the action row stays fixed.
+      bottomNavigationBar: context.isPhone
+          ? TtPinnedFormActions(
+              child: BlocBuilder<LocationFormCubit, LocationFormState>(
+                builder: (BuildContext context, LocationFormState state) => _actions(state),
+              ),
+            )
+          : null,
       body: SideFrameMasterServices(
         titleText: s.timeTrackerTitle,
         secondTitle: _cubit.state.isEdit ? s.timeTrackerEditingLocation : s.timeTrackerCreatingNewLocation,
@@ -242,16 +264,11 @@ class _LocationFormViewState extends State<_LocationFormView> {
                   delay: const Duration(milliseconds: 120),
                   child: TtFormCard(title: s.timeTrackerLocationSetting, child: _settings(state)),
                 ),
-                SizedBox(height: 20.h),
-                TimeTrackerFormActions(
-                  primaryKey: const ValueKey<String>('locationSubmitButton'),
-                  primaryTitle: state.isEdit ? s.save : s.create,
-                  canSubmit: state.canSubmit,
-                  onDiscard: () => Navigator.of(context).maybePop(),
-                  onSubmit: _submit,
-                  onDisabledTap: _cubit.revealErrors,
-                ),
-                SizedBox(height: 20.h),
+                if (!context.isPhone) ...<Widget>[
+                  SizedBox(height: 20.h),
+                  _actions(state),
+                  SizedBox(height: 20.h),
+                ],
               ],
             ),
           ),

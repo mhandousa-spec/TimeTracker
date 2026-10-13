@@ -31,6 +31,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
 
+import 'package:knowticed_plus/core/extensions/context_extensions.dart';
 import 'package:knowticed_plus/core/constants/app_assets.dart';
 import 'package:knowticed_plus/core/custom/1-custom_dropdown.dart';
 import 'package:knowticed_plus/core/custom/2-custom_textfield.dart';
@@ -111,11 +112,32 @@ class _RequestFormViewState extends State<_RequestFormView> {
     await showTimeTrackerFailure(context, denied: denied);
   }
 
+  /// The Discard · primary row (pinned on a phone, under the form on a tablet).
+  Widget _actions(RequestFormState state) {
+    final S s = S.of(context);
+    return TimeTrackerFormActions(
+      primaryKey: const ValueKey<String>('requestSubmitButton'),
+      primaryTitle: s.submit,
+      canSubmit: state.canSubmit,
+      onDiscard: () => Navigator.of(context).maybePop(),
+      onSubmit: _submit,
+      onDisabledTap: _cubit.revealErrors,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final S s = S.of(context);
     return Scaffold(
       backgroundColor: AppColors.background,
+      // 12/10/2026 (owner R8): phone — the action row stays fixed.
+      bottomNavigationBar: context.isPhone
+          ? TtPinnedFormActions(
+              child: BlocBuilder<RequestFormCubit, RequestFormState>(
+                builder: (BuildContext context, RequestFormState state) => _actions(state),
+              ),
+            )
+          : null,
       body: SideFrameMasterServices(
         titleText: s.timeTrackerTitle,
         secondTitle: s.timeTrackerCreatingNewRequest,
@@ -127,19 +149,11 @@ class _RequestFormViewState extends State<_RequestFormView> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   SlideInContent(child: TtFormCard(child: _fields(state))),
+                if (!context.isPhone) ...<Widget>[
                   SizedBox(height: 20.h),
-                  SlideInContent(
-                    delay: const Duration(milliseconds: 100),
-                    child: TimeTrackerFormActions(
-                      primaryKey: const ValueKey<String>('requestSubmitButton'),
-                      primaryTitle: s.submit,
-                      canSubmit: state.canSubmit,
-                      onDiscard: () => Navigator.of(context).maybePop(),
-                      onSubmit: _submit,
-                      onDisabledTap: _cubit.revealErrors,
-                    ),
-                  ),
+                  _actions(state),
                   SizedBox(height: 20.h),
+                ],
                 ],
               ),
             );

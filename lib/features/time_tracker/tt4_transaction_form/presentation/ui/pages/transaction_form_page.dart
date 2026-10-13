@@ -23,6 +23,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
 
+import 'package:knowticed_plus/core/extensions/context_extensions.dart';
 import 'package:knowticed_plus/core/constants/app_assets.dart';
 import 'package:knowticed_plus/core/custom/16-custom_card_styles.dart';
 import 'package:knowticed_plus/core/custom/2-custom_textfield.dart';
@@ -31,6 +32,7 @@ import 'package:knowticed_plus/core/custom/57-custom_dialog_manager.dart';
 import 'package:knowticed_plus/core/theme/app_animations.dart';
 import 'package:knowticed_plus/core/theme/app_colors.dart';
 import 'package:knowticed_plus/core/theme/app_theme.dart';
+import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_setup_widgets.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/rules/transaction_rules.dart';
 import 'package:knowticed_plus/features/time_tracker/tt4_transaction_form/presentation/controller/transaction_form_cubit.dart';
 import 'package:knowticed_plus/features/time_tracker/tt4_transaction_form/presentation/ui/widgets/transaction_form_fields.dart';
@@ -142,11 +144,29 @@ class _TransactionFormViewState extends State<_TransactionFormView> {
     return null;
   }
 
+  /// The Discard · primary row (pinned on a phone, under the form on a tablet).
+  Widget _actions(TransactionFormState state) {
+    return TransactionFormActions(
+      canSubmit: state.canSubmit,
+      onDiscard: () => Navigator.of(context).maybePop(),
+      onSubmit: _submit,
+      onDisabledTap: _cubit.revealErrors,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final S s = S.of(context);
     return Scaffold(
       backgroundColor: AppColors.background,
+      // 12/10/2026 (owner R8): phone — the action row stays fixed.
+      bottomNavigationBar: context.isPhone
+          ? TtPinnedFormActions(
+              child: BlocBuilder<TransactionFormCubit, TransactionFormState>(
+                builder: (BuildContext context, TransactionFormState state) => _actions(state),
+              ),
+            )
+          : null,
       body: SideFrameMasterServices(
         titleText: s.timeTrackerTitle,
         secondTitle: s.timeTrackerCreatingTransaction,
@@ -157,17 +177,11 @@ class _TransactionFormViewState extends State<_TransactionFormView> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 SlideInContent(child: _card(state)),
-                SizedBox(height: 20.h),
-                SlideInContent(
-                  delay: const Duration(milliseconds: 100),
-                  child: TransactionFormActions(
-                    canSubmit: state.canSubmit,
-                    onDiscard: () => Navigator.of(context).maybePop(),
-                    onSubmit: _submit,
-                    onDisabledTap: _cubit.revealErrors,
-                  ),
-                ),
-                SizedBox(height: 20.h),
+                if (!context.isPhone) ...<Widget>[
+                  SizedBox(height: 20.h),
+                  _actions(state),
+                  SizedBox(height: 20.h),
+                ],
               ],
             ),
           ),
