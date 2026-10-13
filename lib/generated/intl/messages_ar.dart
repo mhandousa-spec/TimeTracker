@@ -7549,7 +7549,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "التوفر حسب القسم",
     ),
     "timeTrackerDescription": MessageLookupByLibrary.simpleMessage("الوصف"),
-    "timeTrackerDescriptionAr": MessageLookupByLibrary.simpleMessage("وصف طلب"),
+    "timeTrackerDescriptionAr": MessageLookupByLibrary.simpleMessage(
+      "وصف الطلب",
+    ),
     "timeTrackerDescriptionRequired": MessageLookupByLibrary.simpleMessage(
       "يتطلب نوع الطلب هذا كتابة وصف.",
     ),
@@ -7945,6 +7947,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerNeedsAttention": MessageLookupByLibrary.simpleMessage(
       "يحتاج إلى متابعة",
     ),
+    "timeTrackerNo": MessageLookupByLibrary.simpleMessage("لا"),
     "timeTrackerNoAccess": MessageLookupByLibrary.simpleMessage(
       "ليس لديك صلاحية الوصول إلى تتبع الوقت.",
     ),
@@ -8075,6 +8078,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "هل أنت متأكد أنك تريد إزالة نوع الطلب هذا؟",
     ),
     "timeTrackerRemoved": MessageLookupByLibrary.simpleMessage("تمت الإزالة"),
+    "timeTrackerRemovedBy": MessageLookupByLibrary.simpleMessage("أزيل بواسطة"),
+    "timeTrackerRemovedDate": MessageLookupByLibrary.simpleMessage(
+      "تاريخ الإزالة",
+    ),
     "timeTrackerRemovingAssignment": MessageLookupByLibrary.simpleMessage(
       "إزالة التعيين",
     ),
@@ -8109,7 +8116,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "تفاصيل الطلب",
     ),
     "timeTrackerRequestName": MessageLookupByLibrary.simpleMessage("اسم الطلب"),
-    "timeTrackerRequestNameAr": MessageLookupByLibrary.simpleMessage("اسم طلب"),
+    "timeTrackerRequestNameAr": MessageLookupByLibrary.simpleMessage(
+      "اسم الطلب",
+    ),
     "timeTrackerRequestNotFound": MessageLookupByLibrary.simpleMessage(
       "هذا الطلب غير متاح.",
     ),
@@ -8159,6 +8168,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerRequestTypeRequired": MessageLookupByLibrary.simpleMessage(
       "اختر نوع الطلب.",
     ),
+    "timeTrackerRequestTypeRestored": MessageLookupByLibrary.simpleMessage(
+      "أصبح نوع الطلب نشطًا مرة أخرى.",
+    ),
+    "timeTrackerRequestTypeRestoredTitle": MessageLookupByLibrary.simpleMessage(
+      "تمت استعادة نوع الطلب",
+    ),
     "timeTrackerRequestTypeStatusChanged": MessageLookupByLibrary.simpleMessage(
       "لقد غيرت حالة نوع الطلب هذا بنجاح",
     ),
@@ -8183,6 +8198,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerRequiresDescription": MessageLookupByLibrary.simpleMessage(
       "يتطلب وصفا",
     ),
+    "timeTrackerRestore": MessageLookupByLibrary.simpleMessage("استعادة"),
+    "timeTrackerRestoreRequestTypeConfirm":
+        MessageLookupByLibrary.simpleMessage(
+          "سيعود نوع الطلب نشطًا ويمكن للموظفين استخدامه في الطلبات الجديدة.",
+        ),
+    "timeTrackerRestoringRequestType": MessageLookupByLibrary.simpleMessage(
+      "استعادة نوع الطلب",
+    ),
     "timeTrackerResume": MessageLookupByLibrary.simpleMessage("استئناف"),
     "timeTrackerRetry": MessageLookupByLibrary.simpleMessage("إعادة المحاولة"),
     "timeTrackerRulesFromLocation": m55,
@@ -8196,8 +8219,15 @@ class MessageLookup extends MessageLookupByLibrary {
       "ابحث عن عنوان أو مكان",
     ),
     "timeTrackerSearching": MessageLookupByLibrary.simpleMessage("جارٍ البحث…"),
+    "timeTrackerSectionAvailability": MessageLookupByLibrary.simpleMessage(
+      "الإتاحة",
+    ),
     "timeTrackerSectionComingSoon": MessageLookupByLibrary.simpleMessage(
       "هذا القسم قادم قريبا.",
+    ),
+    "timeTrackerSectionHistory": MessageLookupByLibrary.simpleMessage("السجل"),
+    "timeTrackerSectionRequirements": MessageLookupByLibrary.simpleMessage(
+      "متطلبات الطلب",
     ),
     "timeTrackerSelectLocation": MessageLookupByLibrary.simpleMessage(
       "اختر الموقع",
@@ -8317,6 +8347,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "timeTrackerUnitHours": MessageLookupByLibrary.simpleMessage("ساعة"),
     "timeTrackerUnitMins": MessageLookupByLibrary.simpleMessage("دقيقة"),
+    "timeTrackerUpdatedBy": MessageLookupByLibrary.simpleMessage(
+      "آخر تعديل بواسطة",
+    ),
     "timeTrackerUploadFailed": MessageLookupByLibrary.simpleMessage(
       "تعذر رفع الملف. يرجى المحاولة مرة أخرى.",
     ),
@@ -8332,6 +8365,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerVacation": MessageLookupByLibrary.simpleMessage("إجازة"),
     "timeTrackerVacationBalancePermissions":
         MessageLookupByLibrary.simpleMessage("رصيد الإجازات"),
+    "timeTrackerVacationBalanceShort": MessageLookupByLibrary.simpleMessage(
+      "رصيد الإجازات",
+    ),
     "timeTrackerVacationBalancesExportName":
         MessageLookupByLibrary.simpleMessage("أرصدة الإجازات"),
     "timeTrackerVacationEdited": MessageLookupByLibrary.simpleMessage(
@@ -8427,6 +8463,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "موقع غير صحيح",
     ),
     "timeTrackerYearBalanceShort": m61,
+    "timeTrackerYes": MessageLookupByLibrary.simpleMessage("نعم"),
     "timeTrackerYourTabs": MessageLookupByLibrary.simpleMessage(
       "أقسام تتبع الوقت المتاحة لك",
     ),

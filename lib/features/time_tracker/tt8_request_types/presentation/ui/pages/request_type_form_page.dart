@@ -25,6 +25,7 @@ import 'package:get_it/get_it.dart';
 
 import 'package:knowticed_plus/core/extensions/context_extensions.dart';
 import 'package:knowticed_plus/core/constants/app_assets.dart';
+import 'package:knowticed_plus/core/custom/1-custom_dropdown.dart';
 import 'package:knowticed_plus/core/custom/2-custom_textfield.dart';
 import 'package:knowticed_plus/core/custom/31-custom_multi_select_dropdown.dart';
 import 'package:knowticed_plus/core/custom/50-custom_side_frame_master.dart';
@@ -190,7 +191,7 @@ class _RequestTypeFormViewState extends State<_RequestTypeFormView> {
   Widget _text(TextEditingController c, String label, {required bool arabic, String? error,
       bool multiline = false, required ValueChanged<String> onChanged, Key? key}) {
     final S s = S.of(context);
-    return CustomTextField(
+    final Widget field = CustomTextField(
       key: key,
       controller: c,
       label: label,
@@ -205,6 +206,7 @@ class _RequestTypeFormViewState extends State<_RequestTypeFormView> {
       valueStyle: StyleText.fontSize12Weight400.copyWith(color: AppColors.text),
       onChanged: onChanged,
     );
+    return arabic ? TtArabicField(child: field) : field;
   }
 
   Widget _fields(RequestTypeFormState state) {
@@ -287,6 +289,10 @@ class _RequestTypeFormViewState extends State<_RequestTypeFormView> {
                 start: CustomMultiSelectDropdown<String>(
                   hint: s.timeTrackerChooseHere,
                   alwaysShowHint: true,
+                  // 12/10/2026 (owner K1): the normal field fill (the core
+                  // default is the card colour) and a centred hint.
+                  fillColor: kDropdownFillColor,
+                  heightSizesWholeTrigger: true,
                   height: 36,
                   itemStyle: StyleText.fontSize12Weight400,
                   values: values,

@@ -141,9 +141,7 @@ class _GroupFormViewState extends State<_GroupFormView> {
         isBreakAllowed: r.isCustom && (breaks ?? r.isBreakAllowed),
         breakMinutes: r.isCustom ? TtBreakLengthField.minutesOf(_break.text, _unit) : 0,
         isPauseAllowed: r.isCustom && (pause ?? r.isPauseAllowed),
-        pauseMinutes: r.isCustom && (pause ?? r.isPauseAllowed)
-            ? TtPauseLimitField.minutesOf(_pauseLimit.text)
-            : 0,
+        pauseMinutes: r.isCustom && (pause ?? r.isPauseAllowed) ? TtPauseLimitField.minutesOf(_pauseLimit.text) : 0,
         isDifferentLocationAllowed: different ?? r.isDifferentLocationAllowed,
         allowedLocationIds: allowed ?? r.allowedLocationIds,
         isCustom: r.isCustom,
@@ -177,15 +175,15 @@ class _GroupFormViewState extends State<_GroupFormView> {
   void _setUseLocation(bool use, WorkLocation? location) {
     final AttendanceRules r = _draft.rules;
     if (use) {
-      _cubit.update(_draft.copyWith(rules: AttendanceRules.fromLocation.copyWith(
+      _cubit.update(_draft.copyWith(
+          rules: AttendanceRules.fromLocation.copyWith(
         isDifferentLocationAllowed: r.isDifferentLocationAllowed,
         allowedLocationIds: r.allowedLocationIds,
       )));
       return;
     }
-    final AttendanceRules from = location == null
-        ? const AttendanceRules()
-        : EffectiveRulesResolver.locationRules(location);
+    final AttendanceRules from =
+        location == null ? const AttendanceRules() : EffectiveRulesResolver.locationRules(location);
     final bool hours = from.breakMinutes > 0 && from.breakMinutes % 60 == 0;
     setState(() {
       _rulesTouched = false;
@@ -193,7 +191,8 @@ class _GroupFormViewState extends State<_GroupFormView> {
       _break.text = from.breakMinutes <= 0 ? '' : '${hours ? from.breakMinutes ~/ 60 : from.breakMinutes}';
       _pauseLimit.text = from.pauseMinutes <= 0 ? '' : '${from.pauseMinutes}';
     });
-    _cubit.update(_draft.copyWith(rules: from.copyWith(
+    _cubit.update(_draft.copyWith(
+        rules: from.copyWith(
       isCustom: true,
       isDifferentLocationAllowed: r.isDifferentLocationAllowed,
       allowedLocationIds: r.allowedLocationIds,
@@ -243,7 +242,9 @@ class _GroupFormViewState extends State<_GroupFormView> {
       onSubmit: _submit,
       onDisabledTap: _cubit.revealErrors,
       // 12/10/2026 (owner R4 / K2): an unchanged Edit form says why Save is grey.
-      hint: state.isEdit && state.showErrors && state.groupErrors.isEmpty && state.ruleErrors.isEmpty && !state.isDirty ? s.noChangeFound : null,
+      hint: state.isEdit && state.showErrors && state.groupErrors.isEmpty && state.ruleErrors.isEmpty && !state.isDirty
+          ? s.noChangeFound
+          : null,
     );
   }
 
@@ -306,8 +307,7 @@ class _GroupFormViewState extends State<_GroupFormView> {
                 onImagePicked: _cubit.uploadImageFile,
                 onError: (_) => _cubit.markUploadFailed(),
               ),
-              if (state.isUploading)
-                SizedBox(width: 24.r, height: 24.r, child: const CircleProgressMaster()),
+              if (state.isUploading) SizedBox(width: 24.r, height: 24.r, child: const CircleProgressMaster()),
             ],
           ),
         ),
@@ -345,17 +345,19 @@ class _GroupFormViewState extends State<_GroupFormView> {
             valueStyle: StyleText.fontSize12Weight400.copyWith(color: AppColors.text),
             onChanged: (String v) => _cubit.update(_draft.copyWith(name: v)),
           ),
-          end: CustomTextField(
-            key: const ValueKey<String>('groupNameArField'),
-            controller: _nameAr,
-            label: s.timeTrackerGroupNameAr,
-            labelStyle: _label,
-            hint: s.timeTrackerTextHereAr,
-            height: 36,
-            textDirection: TextDirection.rtl,
-            errorText: state.shows(GroupFormError.nameArRequired) ? s.timeTrackerArabicNameRequired : null,
-            valueStyle: StyleText.fontSize12Weight400.copyWith(color: AppColors.text),
-            onChanged: (String v) => _cubit.update(_draft.copyWith(nameAr: v)),
+          end: TtArabicField(
+            child: CustomTextField(
+              key: const ValueKey<String>('groupNameArField'),
+              controller: _nameAr,
+              label: s.timeTrackerGroupNameAr,
+              labelStyle: _label,
+              hint: s.timeTrackerTextHereAr,
+              height: 36,
+              textDirection: TextDirection.rtl,
+              errorText: state.shows(GroupFormError.nameArRequired) ? s.timeTrackerArabicNameRequired : null,
+              valueStyle: StyleText.fontSize12Weight400.copyWith(color: AppColors.text),
+              onChanged: (String v) => _cubit.update(_draft.copyWith(nameAr: v)),
+            ),
           ),
         ),
         SizedBox(height: 15.h),
@@ -374,20 +376,22 @@ class _GroupFormViewState extends State<_GroupFormView> {
             valueStyle: StyleText.fontSize12Weight400.copyWith(color: AppColors.text),
             onChanged: (String v) => _cubit.update(_draft.copyWith(description: v)),
           ),
-          end: CustomTextField(
-            key: const ValueKey<String>('groupDescriptionArField'),
-            controller: _descriptionAr,
-            label: s.timeTrackerGroupDescriptionAr,
-            labelStyle: _label,
-            hint: s.timeTrackerTextHereAr,
-            height: 72,
-            maxLines: 3,
-            minLines: 3,
-            maxLength: GroupFormState.maxDescriptionLength,
-            keyboardType: TextInputType.multiline,
-            textDirection: TextDirection.rtl,
-            valueStyle: StyleText.fontSize12Weight400.copyWith(color: AppColors.text),
-            onChanged: (String v) => _cubit.update(_draft.copyWith(descriptionAr: v)),
+          end: TtArabicField(
+            child: CustomTextField(
+              key: const ValueKey<String>('groupDescriptionArField'),
+              controller: _descriptionAr,
+              label: s.timeTrackerGroupDescriptionAr,
+              labelStyle: _label,
+              hint: s.timeTrackerTextHereAr,
+              height: 72,
+              maxLines: 3,
+              minLines: 3,
+              maxLength: GroupFormState.maxDescriptionLength,
+              keyboardType: TextInputType.multiline,
+              textDirection: TextDirection.rtl,
+              valueStyle: StyleText.fontSize12Weight400.copyWith(color: AppColors.text),
+              onChanged: (String v) => _cubit.update(_draft.copyWith(descriptionAr: v)),
+            ),
           ),
         ),
         SizedBox(height: 15.h),

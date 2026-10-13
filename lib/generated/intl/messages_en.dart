@@ -7868,7 +7868,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerDescription": MessageLookupByLibrary.simpleMessage(
       "Description",
     ),
-    "timeTrackerDescriptionAr": MessageLookupByLibrary.simpleMessage("وصف طلب"),
+    "timeTrackerDescriptionAr": MessageLookupByLibrary.simpleMessage(
+      "وصف الطلب",
+    ),
     "timeTrackerDescriptionRequired": MessageLookupByLibrary.simpleMessage(
       "This request type needs a description.",
     ),
@@ -8254,6 +8256,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerNeedsAttention": MessageLookupByLibrary.simpleMessage(
       "Needs Attention",
     ),
+    "timeTrackerNo": MessageLookupByLibrary.simpleMessage("No"),
     "timeTrackerNoAccess": MessageLookupByLibrary.simpleMessage(
       "You don\'t have access to the Time Tracker.",
     ),
@@ -8384,6 +8387,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Are You Sure You Want To Remove This Request Type ?",
     ),
     "timeTrackerRemoved": MessageLookupByLibrary.simpleMessage("Removed"),
+    "timeTrackerRemovedBy": MessageLookupByLibrary.simpleMessage("Removed By"),
+    "timeTrackerRemovedDate": MessageLookupByLibrary.simpleMessage(
+      "Removed Date",
+    ),
     "timeTrackerRemovingAssignment": MessageLookupByLibrary.simpleMessage(
       "Removing Assignment",
     ),
@@ -8420,7 +8427,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerRequestName": MessageLookupByLibrary.simpleMessage(
       "Request Name",
     ),
-    "timeTrackerRequestNameAr": MessageLookupByLibrary.simpleMessage("اسم طلب"),
+    "timeTrackerRequestNameAr": MessageLookupByLibrary.simpleMessage(
+      "اسم الطلب",
+    ),
     "timeTrackerRequestNotFound": MessageLookupByLibrary.simpleMessage(
       "This request is not available.",
     ),
@@ -8472,6 +8481,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerRequestTypeRequired": MessageLookupByLibrary.simpleMessage(
       "Choose the request type.",
     ),
+    "timeTrackerRequestTypeRestored": MessageLookupByLibrary.simpleMessage(
+      "The request type is active again.",
+    ),
+    "timeTrackerRequestTypeRestoredTitle": MessageLookupByLibrary.simpleMessage(
+      "Request Type Restored",
+    ),
     "timeTrackerRequestTypeStatusChanged": MessageLookupByLibrary.simpleMessage(
       "You Successfully Changed the Status Of This Request Type",
     ),
@@ -8498,6 +8513,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerRequiresDescription": MessageLookupByLibrary.simpleMessage(
       "Requires Description",
     ),
+    "timeTrackerRestore": MessageLookupByLibrary.simpleMessage("Restore"),
+    "timeTrackerRestoreRequestTypeConfirm":
+        MessageLookupByLibrary.simpleMessage(
+          "This request type will be active again and employees can use it in new requests.",
+        ),
+    "timeTrackerRestoringRequestType": MessageLookupByLibrary.simpleMessage(
+      "Restoring Request Type",
+    ),
     "timeTrackerResume": MessageLookupByLibrary.simpleMessage("Resume"),
     "timeTrackerRetry": MessageLookupByLibrary.simpleMessage("Try Again"),
     "timeTrackerRulesFromLocation": m55,
@@ -8511,8 +8534,17 @@ class MessageLookup extends MessageLookupByLibrary {
       "Search An Address Or Place",
     ),
     "timeTrackerSearching": MessageLookupByLibrary.simpleMessage("Searching…"),
+    "timeTrackerSectionAvailability": MessageLookupByLibrary.simpleMessage(
+      "Availability",
+    ),
     "timeTrackerSectionComingSoon": MessageLookupByLibrary.simpleMessage(
       "This section is coming soon.",
+    ),
+    "timeTrackerSectionHistory": MessageLookupByLibrary.simpleMessage(
+      "History",
+    ),
+    "timeTrackerSectionRequirements": MessageLookupByLibrary.simpleMessage(
+      "Request Requirements",
     ),
     "timeTrackerSelectLocation": MessageLookupByLibrary.simpleMessage(
       "Select Location",
@@ -8632,6 +8664,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "timeTrackerUnitHours": MessageLookupByLibrary.simpleMessage("Hours"),
     "timeTrackerUnitMins": MessageLookupByLibrary.simpleMessage("Mins"),
+    "timeTrackerUpdatedBy": MessageLookupByLibrary.simpleMessage("Updated By"),
     "timeTrackerUploadFailed": MessageLookupByLibrary.simpleMessage(
       "Could not upload the file. Please try again.",
     ),
@@ -8649,6 +8682,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerVacation": MessageLookupByLibrary.simpleMessage("Vacation"),
     "timeTrackerVacationBalancePermissions":
         MessageLookupByLibrary.simpleMessage("Vacation Balance"),
+    "timeTrackerVacationBalanceShort": MessageLookupByLibrary.simpleMessage(
+      "Vacation Balance",
+    ),
     "timeTrackerVacationBalancesExportName":
         MessageLookupByLibrary.simpleMessage("Vacation Balances"),
     "timeTrackerVacationEdited": MessageLookupByLibrary.simpleMessage(
@@ -8744,6 +8780,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Wrong Location",
     ),
     "timeTrackerYearBalanceShort": m61,
+    "timeTrackerYes": MessageLookupByLibrary.simpleMessage("Yes"),
     "timeTrackerYourTabs": MessageLookupByLibrary.simpleMessage(
       "Your Time Tracker sections",
     ),

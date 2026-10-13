@@ -29,6 +29,8 @@ import 'package:knowticed_plus/core/custom/89-custom_empty_state.dart';
 import 'package:knowticed_plus/core/theme/app_animations.dart';
 import 'package:knowticed_plus/core/theme/app_colors.dart';
 import 'package:knowticed_plus/core/theme/app_theme.dart';
+import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_controls.dart';
+import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_formatters.dart';
 import 'package:knowticed_plus/features/time_tracker/data/services/time_tracker_access.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/entities/request_type.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/enums/setup_status.dart';
@@ -94,17 +96,38 @@ class _Details extends StatelessWidget {
     if (context.mounted) await _afterFlow(context);
   }
 
+  Future<void> _restore(BuildContext context) async {
+    final S s = S.of(context);
+    final RequestTypesCubit cubit = context.read<RequestTypesCubit>();
+    await CustomDialogManager.showDialogFlow(
+      context: context,
+      confirmWidth: 411,
+      confirmLottie: AppAssets.lottieWarning,
+      confirmTitle: s.timeTrackerRestoringRequestType,
+      confirmSubtitle: s.timeTrackerRestoreRequestTypeConfirm,
+      confirmYesText: s.yes,
+      confirmNoText: s.no,
+      onConfirm: () => cubit.restore(type),
+      successLottie: AppAssets.successful,
+      successTitle: s.timeTrackerRequestTypeRestoredTitle,
+      successSubtitle: s.timeTrackerRequestTypeRestored,
+    );
+    if (context.mounted) await _afterFlow(context);
+  }
+
+  /// Redesigned 12/10/2026 (owner J2 / R-3 / R-5): a header card (icon tile,
+  /// name, description, the status as a coloured chip — no loose "Removed"
+  /// text), then sections with icons: Approval Cycle · Request Requirements ·
+  /// Availability · History (created by / date, last update by / date and,
+  /// once removed, removed by / date).
   @override
   Widget build(BuildContext context) {
     final S s = S.of(context);
-    final List<String> headers = RequestTypeText.headers(context);
-    final List<String> cells = RequestTypeText.cells(context, type, state);
     final bool ar = Localizations.localeOf(context).languageCode == 'ar';
-    final List<(String, String)> items = <(String, String)>[
-      for (int i = 0; i < headers.length; i++) (headers[i], cells[i]),
-    ];
     final String description = type.description(isArabic: ar);
-    if (description.isNotEmpty) items.insert(1, (s.timeTrackerRequestDescription, description));
+    String person(String email) =>
+        email.isEmpty ? TimeTrackerFormat.dash : (state.employeeByEmail(email)?.name(isArabic: ar) ?? email);
+    final bool removed = type.status == RequestTypeStatus.removed;
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SideFrameMasterServices(
@@ -118,17 +141,79 @@ class _Details extends StatelessWidget {
               SlideInContent(child: _actions(context, s)),
               SizedBox(height: 15.h),
               SlideInContent(
-                delay: const Duration(milliseconds: 60),
+                delay: const Duration(milliseconds: 40),
                 child: TtFormCard(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      for (int i = 0; i < items.length; i += 2) ...<Widget>[
-                        if (i > 0) SizedBox(height: 12.h),
-                        TtPair(start: _value(items[i]), end: i + 1 < items.length ? _value(items[i + 1]) : null),
-                      ],
+                      RequestTypeIconTile(type: type, size: 56.r),
+                      SizedBox(width: 12.w),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(RequestTypeText.name(context, type),
+                                style: StyleText.fontSize18Weight500.copyWith(color: AppColors.text)),
+                            if (description.isNotEmpty) ...<Widget>[
+                              SizedBox(height: 4.h),
+                              Text(description,
+                                  style: StyleText.fontSize14Weight400.copyWith(color: AppColors.secondaryText)),
+                            ],
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 10.w),
+                      RequestTypeStatusChip(key: const ValueKey<String>('requestTypeDetailsStatus'), status: type.status),
                     ],
                   ),
+                ),
+              ),
+              SizedBox(height: 15.h),
+              SlideInContent(
+                delay: const Duration(milliseconds: 80),
+                child: TtPair(
+                  start: _section(s.timeTrackerApprovalCycle, TtAssets.group, <Widget>[
+                    _rule(const TtGlyph.svg(TtAssets.group), s.timeTrackerHrApproval,
+                        RequestTypeText.required(context, type.isHrApprovalRequired), type.isHrApprovalRequired),
+                    _rule(const TtGlyph.svg(TtAssets.person), s.timeTrackerManagerApproval,
+                        RequestTypeText.required(context, type.isManagerApprovalRequired), type.isManagerApprovalRequired),
+                  ]),
+                  end: _section(s.timeTrackerSectionRequirements, TtAssets.description, <Widget>[
+                    _rule(const TtGlyph.svg(TtAssets.description), s.timeTrackerDescription,
+                        RequestTypeText.optional(context, type.isDescriptionRequired), type.isDescriptionRequired),
+                    _rule(const TtGlyph.svg(TtAssets.attachment), s.timeTrackerAttachments,
+                        RequestTypeText.optional(context, type.isAttachmentRequired), type.isAttachmentRequired),
+                    _rule(const TtGlyph.svg(TtAssets.calendar), s.timeTrackerDeductsFromVacation,
+                        type.isDeductedFromVacationBalance ? s.timeTrackerYes : s.timeTrackerNo,
+                        type.isDeductedFromVacationBalance),
+                  ]),
+                ),
+              ),
+              SizedBox(height: 15.h),
+              SlideInContent(
+                delay: const Duration(milliseconds: 120),
+                child: TtPair(
+                  start: _section(s.timeTrackerSectionAvailability, TtAssets.location, <Widget>[
+                    _info(TtAssets.location, s.timeTrackerLocationAvailability,
+                        RequestTypeText.locations(context, type, state)),
+                    _info(TtAssets.department, s.timeTrackerDepartmentAvailability,
+                        RequestTypeText.departments(context, type, state)),
+                  ]),
+                  end: _section(s.timeTrackerSectionHistory, TtAssets.clock, <Widget>[
+                    _info(TtAssets.person, s.timeTrackerAddedBy, person(type.audit.createdBy)),
+                    _info(TtAssets.calendar, s.timeTrackerCreationDate,
+                        TimeTrackerFormat.date(context, type.audit.createdAt)),
+                    if (removed) ...<Widget>[
+                      _info(TtAssets.person, s.timeTrackerRemovedBy, person(type.audit.modifiedBy),
+                          key: const ValueKey<String>('requestTypeRemovedBy')),
+                      _info(TtAssets.calendar, s.timeTrackerRemovedDate,
+                          TimeTrackerFormat.date(context, type.audit.updatedAt)),
+                    ] else ...<Widget>[
+                      _info(TtAssets.person, s.timeTrackerUpdatedBy, person(type.audit.modifiedBy)),
+                      _info(TtAssets.clock, s.timeTrackerLastUpdate,
+                          TimeTrackerFormat.date(context, type.audit.updatedAt)),
+                    ],
+                  ]),
                 ),
               ),
               SizedBox(height: 20.h),
@@ -140,14 +225,14 @@ class _Details extends StatelessWidget {
   }
 
   Widget _actions(BuildContext context, S s) {
-    // UI quality pass (owner 13:45 #7 / #8): the status shows here as text
-    // only — it is changed inside Edit (`TtStatusSwitch`); Remove is red
-    // with a white trash + text.
+    // UI quality pass (owner 13:45 #7 / #8): the status is changed inside
+    // Edit (`TtStatusSwitch`); Remove is red with a white trash + text.
+    // 12/10/2026 (owner R-4): a removed type shows Restore instead.
+    final bool removed = type.status == RequestTypeStatus.removed;
     return Row(
       children: <Widget>[
-        RequestTypeStatusText(status: type.status),
         const Spacer(),
-        if (_access.canEditRequestType)
+        if (_access.canEditRequestType && !removed)
           CustomEditIcon(
             key: const ValueKey<String>('requestTypeEditButton'),
             title: s.edit,
@@ -155,7 +240,7 @@ class _Details extends StatelessWidget {
               MaterialPageRoute<void>(builder: (_) => RequestTypeFormPage(original: type)),
             ),
           ),
-        if (_access.canRemoveRequestType && type.status != RequestTypeStatus.removed) ...<Widget>[
+        if (_access.canRemoveRequestType && !removed) ...<Widget>[
           SizedBox(width: 10.w),
           TtDeleteButton(
             key: const ValueKey<String>('requestTypeRemoveButton'),
@@ -163,16 +248,80 @@ class _Details extends StatelessWidget {
             onTap: () => _remove(context),
           ),
         ],
+        if (_access.canChangeRequestTypeStatus && removed)
+          TtToolbarButton(
+            key: const ValueKey<String>('requestTypeRestoreButton'),
+            title: s.timeTrackerRestore,
+            icon: TtAssets.import,
+            onTap: () => _restore(context),
+          ),
       ],
     );
   }
 
-  Widget _value((String, String) item) => Column(
+  /// A titled card section with an icon.
+  Widget _section(String title, String icon, List<Widget> rows) => TtFormCard(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Container(
+                  width: 28.r,
+                  height: 28.r,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(color: AppColors.primary, shape: BoxShape.circle),
+                  child: TtIcon(TtGlyph.svg(icon), size: 15.r, color: AppColors.textButton),
+                ),
+                SizedBox(width: 8.w),
+                Expanded(
+                  child: Text(title, style: StyleText.fontSize16Weight500.copyWith(color: AppColors.text)),
+                ),
+              ],
+            ),
+            for (final Widget r in rows) ...<Widget>[SizedBox(height: 10.h), r],
+          ],
+        ),
+      );
+
+  /// icon · label ............ coloured value (Required / Optional / Yes).
+  Widget _rule(TtGlyph icon, String label, String value, bool on) => Row(
+        children: <Widget>[
+          TtIcon(icon, size: 16.r, color: AppColors.secondaryText),
+          SizedBox(width: 8.w),
+          Expanded(child: Text(label, style: StyleText.fontSize14Weight400.copyWith(color: AppColors.text))),
+          Container(
+            padding: EdgeInsetsDirectional.symmetric(horizontal: 8.w, vertical: 3.h),
+            decoration: BoxDecoration(
+              color: on ? AppColors.blue.withValues(alpha: 0.12) : AppColors.background,
+              borderRadius: BorderRadius.circular(6.r),
+            ),
+            child: Text(value,
+                style: StyleText.fontSize12Weight500.copyWith(color: on ? AppColors.blue : AppColors.secondaryText)),
+          ),
+        ],
+      );
+
+  /// icon · label / value (the value wraps).
+  Widget _info(String icon, String label, String value, {Key? key}) => Row(
+        key: key,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(item.$1, style: StyleText.fontSize12Weight400.copyWith(color: AppColors.secondaryText)),
-          SizedBox(height: 4.h),
-          Text(item.$2, style: StyleText.fontSize14Weight500.copyWith(color: AppColors.text)),
+          Padding(
+            padding: EdgeInsetsDirectional.only(top: 2.h),
+            child: TtIcon(TtGlyph.svg(icon), size: 16.r, color: AppColors.secondaryText),
+          ),
+          SizedBox(width: 8.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(label, style: StyleText.fontSize12Weight400.copyWith(color: AppColors.secondaryText)),
+                SizedBox(height: 2.h),
+                Text(value, style: StyleText.fontSize14Weight500.copyWith(color: AppColors.text)),
+              ],
+            ),
+          ),
         ],
       );
 }

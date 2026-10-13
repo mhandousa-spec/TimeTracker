@@ -442,6 +442,18 @@ class TtPinnedFormActions extends StatelessWidget {
   }
 }
 
+/// ADDED 12/10/2026 (owner K3 / U1 / R11): an ARABIC-language field always
+/// lays out right-to-left — label on the RIGHT, character counter on the
+/// LEFT — also when the app runs in English.
+class TtArabicField extends StatelessWidget {
+  const TtArabicField({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Directionality(textDirection: TextDirection.rtl, child: child);
+}
+
 /// Grey Discard (start) · yellow primary (end, grey until [canSubmit]).
 class TimeTrackerFormActions extends StatelessWidget {
   const TimeTrackerFormActions({

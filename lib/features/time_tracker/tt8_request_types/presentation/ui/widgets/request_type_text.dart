@@ -16,6 +16,9 @@
 
 import 'package:flutter/material.dart';
 
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_controls.dart';
+import 'package:knowticed_plus/core/custom/24-custom_chart_card.dart';
 import 'package:knowticed_plus/core/theme/app_colors.dart';
 import 'package:knowticed_plus/core/theme/app_theme.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/entities/request_type.dart';
@@ -177,4 +180,96 @@ class RequestTypeStatusText extends StatelessWidget {
         style: (small ? StyleText.fontSize12Weight500 : StyleText.fontSize14Weight500)
             .copyWith(color: colorOf(status)),
       );
+}
+
+/// ADDED 12/10/2026 (owner J1 / J2): the status as a COLOURED CHIP (a tinted
+/// container with a dot) — Active green, Inactive orange, Removed red — on
+/// the cards and the details page.
+class RequestTypeStatusChip extends StatelessWidget {
+  const RequestTypeStatusChip({super.key, required this.status});
+
+  final RequestTypeStatus status;
+
+  @override
+  Widget build(BuildContext context) {
+    final Color c = RequestTypeStatusText.colorOf(status);
+    return Container(
+      padding: EdgeInsetsDirectional.symmetric(horizontal: 10.w, vertical: 4.h),
+      decoration: BoxDecoration(
+        color: c.withValues(alpha: 0.14),
+        borderRadius: BorderRadius.circular(20.r),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Container(width: 6.r, height: 6.r, decoration: BoxDecoration(color: c, shape: BoxShape.circle)),
+          SizedBox(width: 6.w),
+          Text(RequestTypeText.status(context, status), style: StyleText.fontSize12Weight500.copyWith(color: c)),
+        ],
+      ),
+    );
+  }
+}
+
+/// ADDED 12/10/2026 (owner J1 / R12): one rule of a request type as an icon
+/// chip — blue with a tick when it applies ("HR Approval"), grey with a dash
+/// when it does not.
+class RequestTypeRuleChip extends StatelessWidget {
+  const RequestTypeRuleChip({super.key, required this.icon, required this.label, required this.on});
+
+  final TtGlyph icon;
+  final String label;
+  final bool on;
+
+  @override
+  Widget build(BuildContext context) {
+    final Color c = on ? AppColors.blue : AppColors.secondaryText;
+    return Container(
+      padding: EdgeInsetsDirectional.symmetric(horizontal: 8.w, vertical: 5.h),
+      decoration: BoxDecoration(
+        color: on ? AppColors.blue.withValues(alpha: 0.12) : AppColors.background,
+        borderRadius: BorderRadius.circular(6.r),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          TtIcon(icon, size: 13.r, color: c),
+          SizedBox(width: 5.w),
+          Text(label, style: StyleText.fontSize10Weight500.copyWith(color: on ? AppColors.text : AppColors.secondaryText)),
+          SizedBox(width: 4.w),
+          Icon(on ? Icons.check_rounded : Icons.remove_rounded, size: 13.r, color: c),
+        ],
+      ),
+    );
+  }
+}
+
+/// ADDED 12/10/2026 (owner J1): the coloured icon tile of a request type —
+/// yellow calendar when it uses the vacation balance, blue document else.
+class RequestTypeIconTile extends StatelessWidget {
+  const RequestTypeIconTile({super.key, required this.type, this.size});
+
+  final RequestType type;
+  final double? size;
+
+  @override
+  Widget build(BuildContext context) {
+    final double side = size ?? 40.r;
+    final bool vacation = type.isDeductedFromVacationBalance;
+    final Color c = vacation ? AppColors.primary : AppColors.blue;
+    return Container(
+      width: side,
+      height: side,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: vacation ? c : c.withValues(alpha: 0.16),
+        borderRadius: BorderRadius.circular(10.r),
+      ),
+      child: TtIcon(
+        TtGlyph.svg(vacation ? TtAssets.calendar : ChartSvg.request),
+        size: side * 0.5,
+        color: vacation ? AppColors.textButton : AppColors.blue,
+      ),
+    );
+  }
 }

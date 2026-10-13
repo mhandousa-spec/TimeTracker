@@ -292,7 +292,7 @@ class _LocationFormViewState extends State<_LocationFormView> {
     ValueChanged<String>? onChanged,
   }) {
     final S s = S.of(context);
-    return CustomTextField(
+    final Widget field = CustomTextField(
       key: ValueKey<String>('locationField_$key'),
       controller: _c[key],
       label: label,
@@ -305,6 +305,7 @@ class _LocationFormViewState extends State<_LocationFormView> {
       valueStyle: StyleText.fontSize12Weight400.copyWith(color: AppColors.text),
       onChanged: onChanged,
     );
+    return arabic ? TtArabicField(child: field) : field;
   }
 
   // ── Address: Country → State → City dropdowns (owner, 9/10/2026) ─────────

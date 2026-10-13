@@ -37941,20 +37941,20 @@ class S {
     );
   }
 
-  /// `اسم طلب`
+  /// `اسم الطلب`
   String get timeTrackerRequestNameAr {
     return Intl.message(
-      'اسم طلب',
+      'اسم الطلب',
       name: 'timeTrackerRequestNameAr',
       desc: '',
       args: [],
     );
   }
 
-  /// `وصف طلب`
+  /// `وصف الطلب`
   String get timeTrackerDescriptionAr {
     return Intl.message(
-      'وصف طلب',
+      'وصف الطلب',
       name: 'timeTrackerDescriptionAr',
       desc: '',
       args: [],
@@ -39284,6 +39284,136 @@ class S {
       desc: '',
       args: [],
     );
+  }
+
+  /// `Vacation Balance`
+  String get timeTrackerVacationBalanceShort {
+    return Intl.message(
+      'Vacation Balance',
+      name: 'timeTrackerVacationBalanceShort',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Request Requirements`
+  String get timeTrackerSectionRequirements {
+    return Intl.message(
+      'Request Requirements',
+      name: 'timeTrackerSectionRequirements',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Availability`
+  String get timeTrackerSectionAvailability {
+    return Intl.message(
+      'Availability',
+      name: 'timeTrackerSectionAvailability',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `History`
+  String get timeTrackerSectionHistory {
+    return Intl.message(
+      'History',
+      name: 'timeTrackerSectionHistory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Updated By`
+  String get timeTrackerUpdatedBy {
+    return Intl.message(
+      'Updated By',
+      name: 'timeTrackerUpdatedBy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Removed By`
+  String get timeTrackerRemovedBy {
+    return Intl.message(
+      'Removed By',
+      name: 'timeTrackerRemovedBy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Removed Date`
+  String get timeTrackerRemovedDate {
+    return Intl.message(
+      'Removed Date',
+      name: 'timeTrackerRemovedDate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Restore`
+  String get timeTrackerRestore {
+    return Intl.message(
+      'Restore',
+      name: 'timeTrackerRestore',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Restoring Request Type`
+  String get timeTrackerRestoringRequestType {
+    return Intl.message(
+      'Restoring Request Type',
+      name: 'timeTrackerRestoringRequestType',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This request type will be active again and employees can use it in new requests.`
+  String get timeTrackerRestoreRequestTypeConfirm {
+    return Intl.message(
+      'This request type will be active again and employees can use it in new requests.',
+      name: 'timeTrackerRestoreRequestTypeConfirm',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Request Type Restored`
+  String get timeTrackerRequestTypeRestoredTitle {
+    return Intl.message(
+      'Request Type Restored',
+      name: 'timeTrackerRequestTypeRestoredTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The request type is active again.`
+  String get timeTrackerRequestTypeRestored {
+    return Intl.message(
+      'The request type is active again.',
+      name: 'timeTrackerRequestTypeRestored',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Yes`
+  String get timeTrackerYes {
+    return Intl.message('Yes', name: 'timeTrackerYes', desc: '', args: []);
+  }
+
+  /// `No`
+  String get timeTrackerNo {
+    return Intl.message('No', name: 'timeTrackerNo', desc: '', args: []);
   }
 
   /// `Checked In Now`

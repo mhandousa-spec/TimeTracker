@@ -129,6 +129,18 @@ class RequestTypesCubit extends Cubit<RequestTypesState> {
         _log.log(TimeTrackerLogService.actionRemoveRequestType);
       });
 
+  /// Function Name: [restore]
+  ///
+  /// Purpose: ADDED 12/10/2026 (owner R-4) — a removed type back to active
+  /// (`Change_Request_Type_Status`).
+  ///
+  /// Return type: [Future<bool>] — saved.
+  Future<bool> restore(RequestType type) => _run(() async {
+        if (!_access.canChangeRequestTypeStatus) throw const TimeTrackerPermissionDenied();
+        await _types.updateRequestType(type: type.copyWith(status: RequestTypeStatus.active));
+        _log.log(TimeTrackerLogService.actionChangeRequestTypeStatus);
+      });
+
   void acknowledgeFailure() => emit(state.copyWith(failure: TimeTrackerActionFailure.none));
 
   Future<bool> _run(Future<void> Function() action) async {
