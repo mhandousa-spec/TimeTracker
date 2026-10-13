@@ -272,16 +272,20 @@ class BarChartCard extends StatelessWidget {
           const AxisTitles hiddenAxis =
               AxisTitles(sideTitles: SideTitles(showTitles: false));
 
-          final chart = SizedBox(
-            width: scrollable ? needed : available,
+          // 13/10/2026 (owner N3): when the bars scroll, the value axis stays
+          // FIXED beside them — [axisOnly] draws just the numbers (no bars,
+          // no gridlines) and the scrolling chart hides its own axis.
+          Widget chartOf({required double width, required bool showAxis, bool axisOnly = false}) => SizedBox(
+            width: width,
             height: chartHeight.h,
             child: BarChart(
           BarChartData(
             maxY: _maxY,
+            minY: 0,
             alignment: BarChartAlignment.spaceAround,
             borderData: FlBorderData(show: false),
             gridData: FlGridData(
-              show: true,
+              show: !axisOnly,
               drawVerticalLine: false,
               // Whole-number spacing → no 0.5 / 1.5 gridlines.
               horizontalInterval: _step,
@@ -295,15 +299,15 @@ class BarChartCard extends StatelessWidget {
               topTitles:
                   const AxisTitles(sideTitles: SideTitles(showTitles: false)),
               // Value axis on the right in RTL (Arabic), on the left in LTR.
-              leftTitles: isRtl ? hiddenAxis : yAxisTitles,
-              rightTitles: isRtl ? yAxisTitles : hiddenAxis,
+              leftTitles: showAxis && !isRtl ? yAxisTitles : hiddenAxis,
+              rightTitles: showAxis && isRtl ? yAxisTitles : hiddenAxis,
               bottomTitles: AxisTitles(
                 sideTitles: SideTitles(
                   showTitles: true,
                   reservedSize: 26.h,
                   getTitlesWidget: (v, meta) {
                     final i = v.toInt();
-                    if (i < 0 || i >= bars.length) return const SizedBox();
+                    if (axisOnly || i < 0 || i >= bars.length) return const SizedBox();
                     return Padding(
                       padding: EdgeInsets.only(top: 4.h),
                       child: Text(
@@ -332,7 +336,7 @@ class BarChartCard extends StatelessWidget {
               ),
             ),
             barGroups: [
-              for (int i = 0; i < bars.length; i++)
+              for (int i = 0; i < (axisOnly ? 0 : bars.length); i++)
                 BarChartGroupData(
                   x: i,
                   // A zero bar shows no number: the "0"s floated over an empty
@@ -352,10 +356,18 @@ class BarChartCard extends StatelessWidget {
           ),
             ),
           );
-          if (!scrollable) return chart;
-          return SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: chart,
+          if (!scrollable) return chartOf(width: available, showAxis: true);
+          final double axisWidth = 40.w;
+          return Row(
+            children: [
+              chartOf(width: axisWidth, showAxis: true, axisOnly: true),
+              Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: chartOf(width: needed, showAxis: false),
+                ),
+              ),
+            ],
           );
             },
           ),

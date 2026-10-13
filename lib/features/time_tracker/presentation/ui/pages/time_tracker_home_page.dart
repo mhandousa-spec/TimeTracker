@@ -154,27 +154,36 @@ class _TitleRow extends StatelessWidget {
           ),
           // UI quality pass (9/10/2026): on a phone the collapsed check-in
           // control gets its own row, so "Tracking Time" never wraps.
+          // 13/10/2026 (owner N4): that row also holds Expand — same line.
           if (collapsed && state.canCheckIn && context.isPhone) ...<Widget>[
             SizedBox(height: 8.h),
-            const Align(
-              alignment: AlignmentDirectional.centerStart,
-              child: CheckInControl(compact: true),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                const Expanded(
+                  child: Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: CheckInControl(compact: true),
+                  ),
+                ),
+                SizedBox(width: 10.w),
+                _link(context, s, collapsed),
+              ],
             ),
-          ],
-          Align(
-            alignment: AlignmentDirectional.centerEnd,
-            // 12/10/2026 (owner R9): `TtLink` — the underline clears the text.
-            child: TtLink(
-              key: const ValueKey<String>('timeTrackerHideExpand'),
-              label: collapsed ? s.expand : s.hide,
-              padding: EdgeInsetsDirectional.only(top: 6.h, bottom: 4.h),
-              onTap: () => context.read<TimeTrackerHomeCubit>().toggleHeader(),
-            ),
-          ),
+          ] else
+            Align(alignment: AlignmentDirectional.centerEnd, child: _link(context, s, collapsed)),
         ],
       ),
     );
   }
+
+  // 12/10/2026 (owner R9): `TtLink` — the underline clears the text.
+  Widget _link(BuildContext context, S s, bool collapsed) => TtLink(
+        key: const ValueKey<String>('timeTrackerHideExpand'),
+        label: collapsed ? s.expand : s.hide,
+        padding: EdgeInsetsDirectional.only(top: 6.h, bottom: 4.h),
+        onTap: () => context.read<TimeTrackerHomeCubit>().toggleHeader(),
+      );
 }
 
 class _Body extends StatelessWidget {

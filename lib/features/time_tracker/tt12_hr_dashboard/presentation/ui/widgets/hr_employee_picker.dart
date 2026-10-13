@@ -24,7 +24,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:knowticed_plus/core/constants/app_assets.dart';
 import 'package:knowticed_plus/core/custom/1-custom_dropdown.dart';
-import 'package:knowticed_plus/core/custom/16-custom_card_styles.dart';
+import 'package:knowticed_plus/core/custom/19-Custom_Employee_Card.dart';
 import 'package:knowticed_plus/core/custom/23-custom_check_box.dart';
 import 'package:knowticed_plus/core/extensions/context_extensions.dart';
 import 'package:knowticed_plus/core/theme/app_animations.dart';
@@ -131,20 +131,23 @@ class _HrEmployeePickerState extends State<HrEmployeePicker> {
                   style: StyleText.fontSize14Weight400.copyWith(color: AppColors.secondaryText)),
             )
           else
+            // 13/10/2026 (owner C1): the core person card; cards hug their
+            // content (no fixed cell height) so the avatar's padding is equal
+            // on the left, top and bottom.
             ConstrainedBox(
               constraints: BoxConstraints(maxHeight: 320.h),
-              child: GridView.builder(
-                key: const ValueKey<String>('hrPickerGrid'),
-                shrinkWrap: true,
-                padding: EdgeInsets.zero,
-                itemCount: rows.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: phone ? 1 : 2,
-                  crossAxisSpacing: 15.w,
-                  mainAxisSpacing: 15.h,
-                  mainAxisExtent: 78.h,
-                ),
-                itemBuilder: (BuildContext context, int i) => _card(rows[i], ar),
+              child: LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints c) {
+                  final double w = phone ? c.maxWidth : (c.maxWidth - 15.w) / 2;
+                  return SingleChildScrollView(
+                    key: const ValueKey<String>('hrPickerGrid'),
+                    child: Wrap(
+                      spacing: 15.w,
+                      runSpacing: 15.h,
+                      children: <Widget>[for (final TimeTrackerEmployee e in rows) _card(e, ar, w)],
+                    ),
+                  );
+                },
               ),
             ),
         ],
@@ -171,42 +174,21 @@ class _HrEmployeePickerState extends State<HrEmployeePicker> {
     );
   }
 
-  /// photo · name · department · job title · tick box.
-  Widget _card(TimeTrackerEmployee e, bool ar) {
+  /// photo · name · department · job title · tick box (core `PersonChipCard`).
+  Widget _card(TimeTrackerEmployee e, bool ar, double width) {
     final bool on = _picked.contains(e.email.trim().toLowerCase());
-    final TextStyle small = StyleText.fontSize12Weight400.copyWith(color: AppColors.secondaryText, height: 1.4);
-    return GestureDetector(
+    return KeyedSubtree(
       key: ValueKey<String>('hrPickerRow_${e.email}'),
-      behavior: HitTestBehavior.opaque,
-      onTap: () => _toggle(e.email),
-      child: Container(
-        padding: EdgeInsetsDirectional.all(10.r),
-        decoration: BoxDecoration(color: AppColors.background, borderRadius: CardStyles.radius()),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            TimeTrackerAvatar(photo: e.photo, size: 40.r),
-            SizedBox(width: 10.w),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text(e.name(isArabic: ar),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: StyleText.fontSize14Weight500.copyWith(color: AppColors.text, height: 1.4)),
-                  Text(TimeTrackerFormat.orDash(e.department(isArabic: ar)),
-                      maxLines: 1, overflow: TextOverflow.ellipsis, style: small),
-                  Text(e.jobTitle(isArabic: ar),
-                      maxLines: 1, overflow: TextOverflow.ellipsis, style: small),
-                ],
-              ),
-            ),
-            SizedBox(width: 8.w),
-            CustomCheckBox(key: ValueKey<String>('hrPickerTick_${e.email}'), isSelected: on),
-          ],
-        ),
+      child: PersonChipCard(
+        width: width,
+        name: e.name(isArabic: ar),
+        subtitle1: TimeTrackerFormat.orDash(e.department(isArabic: ar)),
+        subtitle2: e.jobTitle(isArabic: ar),
+        avatar: e.photo.startsWith('http') ? NetworkImage(e.photo) : null,
+        avatarRadius: 24,
+        backgroundColor: AppColors.background,
+        trailing: CustomCheckBox(key: ValueKey<String>('hrPickerTick_${e.email}'), isSelected: on),
+        onTap: () => _toggle(e.email),
       ),
     );
   }

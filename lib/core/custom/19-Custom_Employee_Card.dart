@@ -56,6 +56,11 @@ class PersonChipCard extends StatelessWidget {
   final Color? backgroundColor;
   final double? width;
 
+  /// Avatar radius (default 20). 24 makes the avatar as tall as the three
+  /// text lines, so its padding is equal left / top / bottom (Time Tracker
+  /// owner review C1, 13/10/2026).
+  final double avatarRadius;
+
   const PersonChipCard({
     super.key,
     required this.name,
@@ -69,6 +74,7 @@ class PersonChipCard extends StatelessWidget {
     this.onTap,
     this.backgroundColor,
     this.width,
+    this.avatarRadius = 20,
   });
 
   @override
@@ -84,19 +90,20 @@ class PersonChipCard extends StatelessWidget {
           borderRadius: CardStyles.radius(),
         ),
         child: Stack(
-          alignment: Alignment.topRight,
+          // Directional: the tick box sits top-LEFT in Arabic.
+          alignment: AlignmentDirectional.topEnd,
           children: [
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 CircleAvatar(
-                  radius: 20.r,
+                  radius: avatarRadius.r,
                   backgroundColor: AppColors.barrierColor,
                   foregroundImage: avatar,
                   child: ClipOval(
                     child: CardSvg.icon(
                       avatarPlaceholderAsset ?? CardSvg.male,
-                      size: 40,
+                      size: avatarRadius * 2,
                     ),
                   ),
                 ),

@@ -17,6 +17,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:knowticed_plus/core/theme/app_colors.dart';
 import 'package:knowticed_plus/core/custom/16-custom_card_styles.dart';
 import 'package:knowticed_plus/core/custom/24-custom_chart_card.dart';
+import 'package:knowticed_plus/core/extensions/context_extensions.dart';
 
 /// One group of bars (e.g. "iPhone 18" with one value per series).
 class GroupedBarData {
@@ -127,9 +128,15 @@ class GroupedBarChartCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 13/10/2026 (owner R1): same rule as `BarChartCard` — on a phone the
+    // trailing control gets its own row so the full title fits.
+    final bool trailingOnOwnRow = ContextExtension(context).isPhone &&
+        trailing != null &&
+        (height == null || expandChild);
+    final bool isRtl = Directionality.of(context) == TextDirection.rtl;
     return ChartCard(
       title: title,
-      trailing: trailing,
+      trailing: trailingOnOwnRow ? null : trailing,
       width: width,
       height: height,
       padding: padding,
@@ -139,6 +146,10 @@ class GroupedBarChartCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (trailingOnOwnRow) ...[
+            Align(alignment: AlignmentDirectional.centerEnd, child: trailing!),
+            SizedBox(height: 8.h),
+          ],
           ChartLegendInline(items: series),
           SizedBox(height: 10.h),
           LayoutBuilder(
@@ -149,16 +160,19 @@ class GroupedBarChartCard extends StatelessWidget {
               final slot = math.max(_groupWidth, _maxLabelWidth) + 10.w;
               final needed = slot * groups.length;
               final scrollable = needed > available;
-              final chart = SizedBox(
-                width: scrollable ? needed : available,
+              // 13/10/2026 (owner N3): when the groups scroll, the value axis
+              // stays FIXED beside them ([axisOnly]: numbers only).
+              Widget chartOf({required double width, required bool showAxis, bool axisOnly = false}) => SizedBox(
+                width: width,
                 height: chartHeight.h,
                 child: BarChart(
               BarChartData(
                 maxY: _maxY,
+                minY: 0,
                 alignment: BarChartAlignment.spaceAround,
                 borderData: FlBorderData(show: false),
                 gridData: FlGridData(
-                  show: true,
+                  show: !axisOnly,
                   drawVerticalLine: false,
                   getDrawingHorizontalLine: (v) => FlLine(
                     color: AppColors.border.withOpacity(.4),
@@ -173,11 +187,11 @@ class GroupedBarChartCard extends StatelessWidget {
                       sideTitles: SideTitles(showTitles: false)),
                   leftTitles: AxisTitles(
                     sideTitles: SideTitles(
-                      showTitles: true,
+                      showTitles: showAxis,
                       reservedSize: 34.w,
                       getTitlesWidget: (v, meta) {
                         if (v >= meta.max) return const SizedBox.shrink();
-                        return Text(meta.formattedValue,
+                        return Text(_localizeDigits(meta.formattedValue, isRtl),
                             style: CardStyles.label(9));
                       },
                     ),
@@ -188,7 +202,7 @@ class GroupedBarChartCard extends StatelessWidget {
                       reservedSize: 26.h,
                       getTitlesWidget: (v, meta) {
                         final i = v.toInt();
-                        if (i < 0 || i >= groups.length) {
+                        if (axisOnly || i < 0 || i >= groups.length) {
                           return const SizedBox();
                         }
                         return Padding(
@@ -208,7 +222,7 @@ class GroupedBarChartCard extends StatelessWidget {
                 ),
                 barTouchData: BarTouchData(enabled: false),
                 barGroups: [
-                  for (int i = 0; i < groups.length; i++)
+                  for (int i = 0; i < (axisOnly ? 0 : groups.length); i++)
                     BarChartGroupData(
                       x: i,
                       barsSpace: 3.w,
@@ -230,10 +244,17 @@ class GroupedBarChartCard extends StatelessWidget {
               ),
                 ),
               );
-              if (!scrollable) return chart;
-              return SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: chart,
+              if (!scrollable) return chartOf(width: available, showAxis: true);
+              return Row(
+                children: [
+                  chartOf(width: 40.w, showAxis: true, axisOnly: true),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: chartOf(width: needed, showAxis: false),
+                    ),
+                  ),
+                ],
               );
             },
           ),
@@ -241,4 +262,16 @@ class GroupedBarChartCard extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Western → Arabic-Indic digits for the value axis in Arabic (as 26).
+String _localizeDigits(String value, bool arabic) {
+  if (!arabic) return value;
+  const western = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+  const eastern = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+  var out = value;
+  for (var i = 0; i < western.length; i++) {
+    out = out.replaceAll(western[i], eastern[i]);
+  }
+  return out;
 }
