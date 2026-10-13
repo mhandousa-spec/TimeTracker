@@ -30,12 +30,18 @@ class AttendanceItem {
   final Widget? icon;
   final VoidCallback? onTap;
 
+  /// [icon] is a complete Figma badge (its own coloured circle): drawn as
+  /// is at 32, without the tinted circle (Time Tracker owner F1,
+  /// 13/10/2026).
+  final bool iconIsBadge;
+
   const AttendanceItem({
     required this.label,
     required this.count,
     this.color,
     this.icon,
     this.onTap,
+    this.iconIsBadge = false,
   });
 }
 
@@ -148,24 +154,27 @@ class _AttendanceRow extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: 8.h),
         child: Row(
           children: [
-            Container(
-              width: 28.r,
-              height: 28.r,
-              decoration: BoxDecoration(
-                color: accent.withOpacity(.12),
-                shape: BoxShape.circle,
-              ),
-              child: Center(
-                child: SizedBox(
-                  width: 16.r,
-                  height: 16.r,
-                  child: FittedBox(
-                    child: item.icon ??
-                        Icon(Icons.person_outline, color: accent),
+            if (item.iconIsBadge && item.icon != null)
+              SizedBox(width: 32.r, height: 32.r, child: item.icon)
+            else
+              Container(
+                width: 28.r,
+                height: 28.r,
+                decoration: BoxDecoration(
+                  color: accent.withOpacity(.12),
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: SizedBox(
+                    width: 16.r,
+                    height: 16.r,
+                    child: FittedBox(
+                      child: item.icon ??
+                          Icon(Icons.person_outline, color: accent),
+                    ),
                   ),
                 ),
               ),
-            ),
             SizedBox(width: 8.w),
             Expanded(
               child: Text(

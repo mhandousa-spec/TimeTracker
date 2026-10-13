@@ -13,7 +13,9 @@
 /// Created at: 9/10/2026
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:knowticed_plus/features/time_tracker/tt10_request_form/presentation/controller/request_form_cubit.dart';
 
 import 'package:knowticed_plus/core/custom/10-custom_tabs.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/entities/request_parts.dart';
@@ -143,6 +145,13 @@ void main() {
       await tester.tap(_key('requestSubmitButton'));
       await h.settle(tester);
       expect(find.text(S.current.timeTrackerRequestTypeRequired), findsOneWidget);
+      // 13/10/2026 (owner P2): only the type picker until a type is chosen.
+      expect(_key('requestDescription'), findsNothing);
+      final RequestFormCubit form = tester.element(_key('requestTypeDropdown')).read<RequestFormCubit>();
+      form.typeChanged(const RequestType(id: 'plain', nameEn: 'Plain'));
+      await h.settle(tester);
+      expect(find.text('${S.current.timeTrackerRequestDescription} (${S.current.timeTrackerOptional})', findRichText: true), findsOneWidget);
+      expect(_key('requestUploadBox'), findsNothing);
       expect(find.text(S.current.timeTrackerEndDateRequired), findsOneWidget);
       await tester.tap(find.descendant(of: _key('requestAllDaySwitch'), matching: find.byType(GestureDetector)).last);
       await h.settle(tester);

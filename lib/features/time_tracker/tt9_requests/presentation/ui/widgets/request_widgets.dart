@@ -31,15 +31,19 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:knowticed_plus/core/custom/41-custom_button_sizing.dart';
 import 'package:knowticed_plus/core/custom/8-custom_filter_app.dart';
+import 'package:knowticed_plus/core/extensions/context_extensions.dart';
+import 'package:knowticed_plus/core/helper/main_helper/localized_number.dart';
 import 'package:knowticed_plus/core/theme/app_animations.dart';
 import 'package:knowticed_plus/core/theme/app_colors.dart';
 import 'package:knowticed_plus/core/theme/app_theme.dart';
 import 'package:knowticed_plus/core/theme/haptic_controller.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/enums/request_status.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/rules/request_list_rules.dart';
+import 'package:knowticed_plus/features/time_tracker/domain/rules/request_reminder_rule.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_tab_strip.dart';
 import 'package:knowticed_plus/features/time_tracker/tt9_requests/presentation/ui/widgets/request_text.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_controls.dart';
+import 'package:knowticed_plus/generated/l10n.dart';
 
 /// The grey square with the "request" icon.
 class RequestIconBox extends StatelessWidget {
@@ -166,6 +170,7 @@ class RequestOutlinedButton extends StatelessWidget {
     required this.onTap,
     this.high = false,
     this.filled = false,
+    this.fillColor,
   });
 
   final String label;
@@ -177,9 +182,14 @@ class RequestOutlinedButton extends StatelessWidget {
   /// Yellow filled (Send Reminder) instead of outlined.
   final bool filled;
 
+  /// 13/10/2026 (owner Q1, Figma `661:22112`): a solid [fillColor] with white
+  /// content — the red "Cancel" (an outlined Cancel read as disabled).
+  final Color? fillColor;
+
   @override
   Widget build(BuildContext context) {
-    final Color fg = filled ? AppColors.textButton : color;
+    final Color? solid = fillColor;
+    final Color fg = solid != null ? AppColors.white : (filled ? AppColors.textButton : color);
     return ShrinkOnTap(
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
@@ -191,15 +201,15 @@ class RequestOutlinedButton extends StatelessWidget {
           height: ButtonSizing.height,
           padding: EdgeInsetsDirectional.symmetric(horizontal: 12.w),
           decoration: BoxDecoration(
-            color: filled ? AppColors.primary : AppColors.card,
+            color: solid ?? (filled ? AppColors.primary : AppColors.card),
             borderRadius: BorderRadiusDirectional.circular(8.r),
-            border: filled ? null : Border.all(color: color),
+            border: filled || solid != null ? null : Border.all(color: color),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              TtIcon(icon, size: 18.r, color: fg),
+              TtIcon(icon, size: icon.tinted ? 18.r : 22.r, color: fg),
               SizedBox(width: 6.w),
               Flexible(
                 child: Text(label,
@@ -260,6 +270,64 @@ class RequestStatusPill extends StatelessWidget {
               style: StyleText.fontSize14Weight500.copyWith(color: color)),
         ],
       ),
+    );
+  }
+}
+
+/// ADDED 13/10/2026 (owner Q1 / Q2 / I2): the details' action buttons. On a
+/// phone ONE row of EQUAL columns across the full width (content centred);
+/// on a tablet equal fixed-width buttons at the end of the card.
+class RequestActionRow extends StatelessWidget {
+  const RequestActionRow({super.key, required this.children});
+
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    final bool phone = context.isPhone;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: <Widget>[
+        for (int i = 0; i < children.length; i++) ...<Widget>[
+          if (i > 0) SizedBox(width: 12.w),
+          if (phone) Expanded(child: children[i]) else SizedBox(width: 170.w, child: children[i]),
+        ],
+      ],
+    );
+  }
+}
+
+/// ADDED 13/10/2026 (owner H3): "You Can Remind Again In 23 h 59 m" — shown
+/// instead of Send Reminder while the 24-hour window is still running.
+class RequestReminderCountdown extends StatelessWidget {
+  const RequestReminderCountdown({super.key, required this.left});
+
+  final Duration left;
+
+  /// The wait for [lastReminderAt] now (null = a reminder may go now).
+  static Duration? leftFor(DateTime? lastReminderAt) => RequestReminderRule.waitLeft(lastReminderAt, DateTime.now());
+
+  @override
+  Widget build(BuildContext context) {
+    final S s = S.of(context);
+    // Whole minutes, rounded up (never "0 m" while still waiting).
+    final int minutes = (left.inSeconds + 59) ~/ 60;
+    final String time = s.timeTrackerHoursMinutesShort(
+      LocalizedNumber.of(context, minutes ~/ 60),
+      LocalizedNumber.of(context, minutes % 60),
+    );
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        TtIcon(const TtGlyph.svg(TtAssets.clock), size: 16.r, color: AppColors.secondaryText),
+        SizedBox(width: 6.w),
+        Flexible(
+          child: Text(
+            s.timeTrackerRemindAgainIn(time),
+            style: StyleText.fontSize12Weight500.copyWith(color: AppColors.secondaryText),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -255,10 +255,33 @@ class RequestDetailsCard extends StatelessWidget {
     ];
   }
 
+  /// 13/10/2026 (owner Q1 / Q2 / I2 / H3): one row of equal buttons
+  /// (`RequestActionRow`); while a reminder cannot go yet, the countdown
+  /// sits under the row instead of the Send Reminder button.
   Widget _actions(BuildContext context) {
     final List<Widget> buttons = asApprover ? _approverButtons(context) : _requesterButtons(context);
-    if (buttons.isEmpty) return RequestStatusPill(status: request.status);
-    return Wrap(spacing: 12.w, runSpacing: 10.h, alignment: WrapAlignment.end, children: buttons);
+    final Duration? wait = asApprover || !_mayRemind ? null : RequestReminderCountdown.leftFor(request.lastReminderAt);
+    final Widget? note = wait == null
+        ? null
+        : Align(
+            alignment: context.isPhone ? Alignment.center : AlignmentDirectional.centerEnd,
+            child: RequestReminderCountdown(key: const ValueKey<String>('requestReminderCountdown'), left: wait),
+          );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        if (buttons.isEmpty) RequestStatusPill(status: request.status) else RequestActionRow(children: buttons),
+        if (note != null) ...<Widget>[SizedBox(height: 10.h), note],
+      ],
+    );
+  }
+
+  /// Send Reminder applies: the switch, a pending request, the requester.
+  bool get _mayRemind {
+    final TimeTrackerAccess access = GetIt.instance<TimeTrackerAccess>();
+    return access.canSendRequestReminder &&
+        request.status == RequestStatus.pending &&
+        RequestCycleRules.isRequester(request, access.currentUserEmail);
   }
 
   List<Widget> _requesterButtons(BuildContext context) {
@@ -268,17 +291,17 @@ class RequestDetailsCard extends StatelessWidget {
     final bool cancelSwitch = request.isTransaction ? access.canCancelTransaction : access.canCancelRequest;
     final bool canCancel = cancelSwitch &&
         (RequestCycleRules.canCancelPending(request, me) || RequestCycleRules.canRequestCancellation(request, me));
-    final bool canRemind = access.canSendRequestReminder &&
-        request.status == RequestStatus.pending &&
-        RequestCycleRules.isRequester(request, me);
+    final bool canRemind = _mayRemind && RequestReminderCountdown.leftFor(request.lastReminderAt) == null;
     return <Widget>[
       if (canCancel)
         KeyedSubtree(
           key: const ValueKey<String>('requestCancelButton'),
           child: RequestOutlinedButton(
-            label: s.cancel,
-            icon: const TtGlyph.icon(Icons.cancel_outlined),
+            // 13/10/2026 (owner Q1): "Cancel Request", not a bare "Cancel".
+            label: s.timeTrackerCancelRequest,
+            icon: const TtGlyph.svg(TtAssets.btnCancel, tinted: false),
             color: AppColors.red,
+            fillColor: AppColors.red,
             high: true,
             onTap: () => RequestFlows.cancel(context, request),
           ),
@@ -306,7 +329,7 @@ class RequestDetailsCard extends StatelessWidget {
           key: const ValueKey<String>('approvalRejectButton'),
           child: RequestOutlinedButton(
             label: s.reject,
-            icon: const TtGlyph.icon(Icons.block),
+            icon: const TtGlyph.svg(TtAssets.btnReject, tinted: false),
             color: AppColors.red,
             high: true,
             onTap: () => RequestFlows.reject(context, request),
@@ -316,7 +339,7 @@ class RequestDetailsCard extends StatelessWidget {
           key: const ValueKey<String>('approvalApproveButton'),
           child: RequestOutlinedButton(
             label: s.approve,
-            icon: const TtGlyph.icon(Icons.check_circle_outline),
+            icon: const TtGlyph.svg(TtAssets.btnApprove, tinted: false),
             color: AppColors.lightGreen,
             onTap: () => RequestFlows.approve(context, request),
           ),
@@ -327,8 +350,9 @@ class RequestDetailsCard extends StatelessWidget {
           key: const ValueKey<String>('approvalCancelButton'),
           child: RequestOutlinedButton(
             label: s.cancel,
-            icon: const TtGlyph.icon(Icons.cancel_outlined),
+            icon: const TtGlyph.svg(TtAssets.btnCancel, tinted: false),
             color: AppColors.red,
+            fillColor: AppColors.red,
             high: true,
             onTap: () => RequestFlows.cancelAfterApproving(context, request),
           ),

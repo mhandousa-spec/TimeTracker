@@ -149,11 +149,11 @@ class _RequestFormViewState extends State<_RequestFormView> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   SlideInContent(child: TtFormCard(child: _fields(state))),
-                if (!context.isPhone) ...<Widget>[
-                  SizedBox(height: 20.h),
-                  _actions(state),
-                  SizedBox(height: 20.h),
-                ],
+                  if (!context.isPhone) ...<Widget>[
+                    SizedBox(height: 20.h),
+                    _actions(state),
+                    SizedBox(height: 20.h),
+                  ],
                 ],
               ),
             );
@@ -187,9 +187,9 @@ class _RequestFormViewState extends State<_RequestFormView> {
     );
     if (short == null) return null;
     return S.of(context).timeTrackerYearBalanceShort(
-      LocalizedNumber.digits(context, '${short.year}'),
-      LocalizedNumber.digits(context, VacationBalanceList.days(short.daysLeft)),
-    );
+          LocalizedNumber.digits(context, '${short.year}'),
+          LocalizedNumber.digits(context, VacationBalanceList.days(short.daysLeft)),
+        );
   }
 
   Widget _fields(RequestFormState state) {
@@ -198,6 +198,7 @@ class _RequestFormViewState extends State<_RequestFormView> {
     final RequestDraft d = state.draft;
     final String? yearShort = _yearShortMessage(state, d);
     final List<RequestType> types = state.setup.types;
+    final RequestType? type = d.type;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -227,113 +228,135 @@ class _RequestFormViewState extends State<_RequestFormView> {
             child: Text(s.timeTrackerNoRequestTypesAvailable,
                 style: StyleText.fontSize12Weight400.copyWith(color: AppColors.secondaryText)),
           ),
-        SizedBox(height: 15.h),
-        CustomTextField(
-          key: const ValueKey<String>('requestDescription'),
-          controller: _description,
-          label: s.timeTrackerRequestDescription,
-          hint: s.textHere,
-          height: 72,
-          maxLines: 3,
-          minLines: 3,
-          maxLength: RequestFormRules.maxDescriptionLength,
-          keyboardType: TextInputType.multiline,
+        // 13/10/2026 (owner P2): nothing else until a type is chosen; then
+        // only what THAT type needs.
+        if (type == null && !(types.isEmpty && state.setupReady))
+          Padding(
+            key: const ValueKey<String>('requestPickTypeFirst'),
+            padding: EdgeInsetsDirectional.only(top: 8.h),
+            child: Text(s.timeTrackerPickTypeFirst,
+                style: StyleText.fontSize12Weight400.copyWith(color: AppColors.secondaryText)),
+          ),
+        if (type != null) ..._typeFields(state, s, d, type, yearShort),
+      ],
+    );
+  }
+
+  /// The fields of the chosen [type]: Description ("Optional" unless the
+  /// type requires it), dates, times and — only when the type requires
+  /// them — Attachments.
+  List<Widget> _typeFields(RequestFormState state, S s, RequestDraft d, RequestType type, String? yearShort) {
+    return <Widget>[
+      SizedBox(height: 15.h),
+      CustomTextField(
+        key: const ValueKey<String>('requestDescription'),
+        controller: _description,
+        label: type.isDescriptionRequired
+            ? s.timeTrackerRequestDescription
+            : '${s.timeTrackerRequestDescription} (${s.timeTrackerOptional})',
+        hint: s.textHere,
+        height: 72,
+        maxLines: 3,
+        minLines: 3,
+        maxLength: RequestFormRules.maxDescriptionLength,
+        keyboardType: TextInputType.multiline,
+        errorText: _error(state, <RequestFormError, String>{
+          RequestFormError.descriptionRequired: s.timeTrackerDescriptionRequired,
+        }),
+        valueStyle: StyleText.fontSize12Weight400.copyWith(color: AppColors.text),
+        onChanged: _cubit.descriptionChanged,
+      ),
+      SizedBox(height: 15.h),
+      TtPair(
+        start: CustomDropdownCalendar(
+          key: const ValueKey<String>('requestStartDate'),
+          label: s.timeTrackerStartDate,
+          hint: s.chooseDate,
+          value: d.startDate,
+          height: 36,
           errorText: _error(state, <RequestFormError, String>{
-            RequestFormError.descriptionRequired: s.timeTrackerDescriptionRequired,
+            RequestFormError.startDateRequired: s.timeTrackerStartDateRequired,
           }),
-          valueStyle: StyleText.fontSize12Weight400.copyWith(color: AppColors.text),
-          onChanged: _cubit.descriptionChanged,
+          dateFormatter: (DateTime x) => LocalizedDate.of(context, x),
+          onChanged: (DateTime? x) {
+            if (x != null) _cubit.startDateChanged(x);
+          },
         ),
+        end: CustomDropdownCalendar(
+          key: const ValueKey<String>('requestEndDate'),
+          label: s.timeTrackerEndDate,
+          hint: s.chooseDate,
+          value: d.endDate,
+          height: 36,
+          errorText: _error(state, <RequestFormError, String>{
+            RequestFormError.endDateRequired: s.timeTrackerEndDateRequired,
+            RequestFormError.endBeforeStart: s.timeTrackerEndAfterStart,
+          }),
+          dateFormatter: (DateTime x) => LocalizedDate.of(context, x),
+          onChanged: (DateTime? x) {
+            if (x != null) _cubit.endDateChanged(x);
+          },
+        ),
+      ),
+      SizedBox(height: 15.h),
+      TtPair(
+        start: TtSwitchRow(
+          key: const ValueKey<String>('requestAllDaySwitch'),
+          label: s.timeTrackerAllDay,
+          value: d.isAllDay,
+          onChanged: _cubit.allDayChanged,
+        ),
+      ),
+      if (!d.isAllDay) ...<Widget>[
         SizedBox(height: 15.h),
         TtPair(
-          start: CustomDropdownCalendar(
-            key: const ValueKey<String>('requestStartDate'),
-            label: s.timeTrackerStartDate,
-            hint: s.chooseDate,
-            value: d.startDate,
-            height: 36,
-            errorText: _error(state, <RequestFormError, String>{
-              RequestFormError.startDateRequired: s.timeTrackerStartDateRequired,
+          start: RequestTimeField(
+            key: const ValueKey<String>('requestStartTime'),
+            label: s.timeTrackerStartTime,
+            minutes: d.startMinutes,
+            error: _error(state, <RequestFormError, String>{
+              RequestFormError.startTimeRequired: s.timeTrackerStartTimeRequired,
             }),
-            dateFormatter: (DateTime x) => LocalizedDate.of(context, x),
-            onChanged: (DateTime? x) {
-              if (x != null) _cubit.startDateChanged(x);
-            },
+            onChanged: _cubit.startTimeChanged,
           ),
-          end: CustomDropdownCalendar(
-            key: const ValueKey<String>('requestEndDate'),
-            label: s.timeTrackerEndDate,
-            hint: s.chooseDate,
-            value: d.endDate,
-            height: 36,
-            errorText: _error(state, <RequestFormError, String>{
-              RequestFormError.endDateRequired: s.timeTrackerEndDateRequired,
-              RequestFormError.endBeforeStart: s.timeTrackerEndAfterStart,
+          end: RequestTimeField(
+            key: const ValueKey<String>('requestEndTime'),
+            label: s.timeTrackerEndTime,
+            minutes: d.endMinutes,
+            error: _error(state, <RequestFormError, String>{
+              RequestFormError.endTimeRequired: s.timeTrackerEndTimeRequired,
             }),
-            dateFormatter: (DateTime x) => LocalizedDate.of(context, x),
-            onChanged: (DateTime? x) {
-              if (x != null) _cubit.endDateChanged(x);
-            },
+            onChanged: _cubit.endTimeChanged,
           ),
         ),
-        SizedBox(height: 15.h),
-        TtPair(
-          start: TtSwitchRow(
-            key: const ValueKey<String>('requestAllDaySwitch'),
-            label: s.timeTrackerAllDay,
-            value: d.isAllDay,
-            onChanged: _cubit.allDayChanged,
-          ),
+      ],
+      // 9/10/2026 (owner round 9 b): a draft over two years names the year.
+      if (yearShort != null &&
+          (state.shows(RequestFormError.exceedsBalance) || state.shows(RequestFormError.noBalance)))
+        KeyedSubtree(
+          key: const ValueKey<String>('requestYearBalanceError'),
+          child: TtFieldError(yearShort),
         ),
-        if (!d.isAllDay) ...<Widget>[
-          SizedBox(height: 15.h),
-          TtPair(
-            start: RequestTimeField(
-              key: const ValueKey<String>('requestStartTime'),
-              label: s.timeTrackerStartTime,
-              minutes: d.startMinutes,
-              error: _error(state, <RequestFormError, String>{
-                RequestFormError.startTimeRequired: s.timeTrackerStartTimeRequired,
-              }),
-              onChanged: _cubit.startTimeChanged,
-            ),
-            end: RequestTimeField(
-              key: const ValueKey<String>('requestEndTime'),
-              label: s.timeTrackerEndTime,
-              minutes: d.endMinutes,
-              error: _error(state, <RequestFormError, String>{
-                RequestFormError.endTimeRequired: s.timeTrackerEndTimeRequired,
-              }),
-              onChanged: _cubit.endTimeChanged,
-            ),
-          ),
-        ],
-        // 9/10/2026 (owner round 9 b): a draft over two years names the year.
-        if (yearShort != null &&
-            (state.shows(RequestFormError.exceedsBalance) || state.shows(RequestFormError.noBalance)))
-          KeyedSubtree(
-            key: const ValueKey<String>('requestYearBalanceError'),
-            child: TtFieldError(yearShort),
-          ),
-        if (yearShort == null && state.shows(RequestFormError.exceedsBalance))
-          KeyedSubtree(
-            key: const ValueKey<String>('requestBalanceError'),
-            child: TtFieldError(s.timeTrackerExceedsBalance(
-              TimeTrackerFormat.count(context, _days(RequestFormRules.requestedDays(d, schedule: state.setup.schedule))),
-              TimeTrackerFormat.count(context, _days(state.setup.balanceForDraft(d)?.remainingDays ?? 0)),
-            )),
-          ),
-        // 9/10/2026 (code review finding 10 + overlap check).
-        if (yearShort == null && state.shows(RequestFormError.noBalance))
-          KeyedSubtree(
-            key: const ValueKey<String>('requestNoBalanceError'),
-            child: TtFieldError(s.timeTrackerNoBalanceEmployee),
-          ),
-        if (state.shows(RequestFormError.overlapsExisting))
-          KeyedSubtree(
-            key: const ValueKey<String>('requestOverlapError'),
-            child: TtFieldError(s.timeTrackerRequestOverlaps),
-          ),
+      if (yearShort == null && state.shows(RequestFormError.exceedsBalance))
+        KeyedSubtree(
+          key: const ValueKey<String>('requestBalanceError'),
+          child: TtFieldError(s.timeTrackerExceedsBalance(
+            TimeTrackerFormat.count(context, _days(RequestFormRules.requestedDays(d, schedule: state.setup.schedule))),
+            TimeTrackerFormat.count(context, _days(state.setup.balanceForDraft(d)?.remainingDays ?? 0)),
+          )),
+        ),
+      // 9/10/2026 (code review finding 10 + overlap check).
+      if (yearShort == null && state.shows(RequestFormError.noBalance))
+        KeyedSubtree(
+          key: const ValueKey<String>('requestNoBalanceError'),
+          child: TtFieldError(s.timeTrackerNoBalanceEmployee),
+        ),
+      if (state.shows(RequestFormError.overlapsExisting))
+        KeyedSubtree(
+          key: const ValueKey<String>('requestOverlapError'),
+          child: TtFieldError(s.timeTrackerRequestOverlaps),
+        ),
+      if (type.isAttachmentRequired || d.attachments.isNotEmpty) ...<Widget>[
         SizedBox(height: 15.h),
         RequestAttachmentsField(
           files: d.attachments,
@@ -350,6 +373,6 @@ class _RequestFormViewState extends State<_RequestFormView> {
                     }),
         ),
       ],
-    );
+    ];
   }
 }

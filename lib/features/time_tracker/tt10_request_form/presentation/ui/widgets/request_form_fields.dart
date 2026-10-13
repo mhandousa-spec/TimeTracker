@@ -104,6 +104,9 @@ class RequestAttachmentsField extends StatelessWidget {
             key: ValueKey<String>('requestFileCard_$i'),
             title: '',
             width: double.infinity,
+            // 13/10/2026 (owner G3): remove (–) in the top corner; name, size
+            // and date aligned.
+            removeOnCorner: true,
             fileName: files[i].name,
             fileSize: TimeTrackerFormat.fileSize(context, files[i].sizeBytes),
             date: s.timeTrackerUploadedOn(TimeTrackerFormat.date(context, files[i].uploadedAt ?? DateTime.now())),
@@ -137,7 +140,8 @@ class RequestAttachmentsField extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Expanded(child: Padding(padding: EdgeInsetsDirectional.only(top: 8.h), child: label)),
+        // The label sits level with the file card's middle (G3).
+        Expanded(child: Padding(padding: EdgeInsetsDirectional.only(top: files.isNotEmpty ? 18.h : 8.h), child: label)),
         SizedBox(width: 15.w),
         Expanded(child: content),
       ],

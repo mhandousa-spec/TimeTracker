@@ -77,7 +77,7 @@ class TimeTrackerRequest {
   final ApprovalStepKind? currentStep;
   final String cancellationReason;
 
-  /// Last "Send Reminder" (once every two days — `RequestReminderRule`).
+  /// Last "Send Reminder" (once every 24 hours — `RequestReminderRule`).
   final DateTime? lastReminderAt;
 
   /// 9/10/2026: the embedded `Comments` list of an OLD request document

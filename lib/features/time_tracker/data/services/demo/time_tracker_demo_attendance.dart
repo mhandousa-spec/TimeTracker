@@ -210,7 +210,9 @@ class TtDemoAttendance {
     final AttendanceDay openDay = AttendanceCalculator.apply(
       AttendanceDay(id: _id(e, d), employeeEmail: e.email, date: d, sessions: <AttendanceSession>[open]),
       schedule: s,
-      now: s.endOn(d),
+      // 13/10/2026: no check-out → no total yet (it used to count to the
+      // schedule's end, so the row showed "Leaving –" next to "8:04 Hrs").
+      now: tx.startAt,
     );
     final List<TtDemoAlert> missed = <TtDemoAlert>[
       TtDemoAlert(type: 'missed_check_out', at: s.endOn(d).add(const Duration(minutes: 30))),

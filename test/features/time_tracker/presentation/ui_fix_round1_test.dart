@@ -23,7 +23,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:knowticed_plus/features/time_tracker/tt10_request_form/presentation/controller/request_form_cubit.dart';
 
 import 'package:knowticed_plus/core/custom/10-custom_tabs.dart';
 import 'package:knowticed_plus/core/custom/27-custom_donut_chart_card.dart';
@@ -302,6 +304,11 @@ void main() {
       await h.pump(tester, const TimeTrackerHomePage(), size: _ipadH);
       await _open(tester, h, S.current.timeTrackerTabRequests);
       await tester.tap(_key('requestsAddButton'));
+      await h.settle(tester);
+      // 13/10/2026 (owner P2): Attachments show once a type that needs them is chosen.
+      expect(_key('requestUploadBox'), findsNothing);
+      final RequestFormCubit form = tester.element(_key('requestTypeDropdown')).read<RequestFormCubit>();
+      form.typeChanged(const RequestType(id: 'doc', nameEn: 'Doc', isAttachmentRequired: true));
       await h.settle(tester);
       expect(tester.widget(_key('requestUploadBox')), isA<TtUploadButton>());
       expect(find.descendant(of: _key('requestUploadBox'), matching: find.text(S.current.upload)), findsOneWidget);

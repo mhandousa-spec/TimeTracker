@@ -38846,10 +38846,10 @@ class S {
     );
   }
 
-  /// `You Can Only Send A Reminder Once Every Two Days. Feel Free To Contact Your Supervisor Directly For Assistance`
+  /// `You Can Only Send A Reminder Once Every 24 Hours. Feel Free To Contact Your Supervisor Directly For Assistance`
   String get timeTrackerReminderRule {
     return Intl.message(
-      'You Can Only Send A Reminder Once Every Two Days. Feel Free To Contact Your Supervisor Directly For Assistance',
+      'You Can Only Send A Reminder Once Every 24 Hours. Feel Free To Contact Your Supervisor Directly For Assistance',
       name: 'timeTrackerReminderRule',
       desc: '',
       args: [],
@@ -40923,6 +40923,46 @@ class S {
       name: 'timeTrackerAbsencesMany',
       desc: '',
       args: [count],
+    );
+  }
+
+  /// `Choose the request type first — the form then shows only what it needs.`
+  String get timeTrackerPickTypeFirst {
+    return Intl.message(
+      'Choose the request type first — the form then shows only what it needs.',
+      name: 'timeTrackerPickTypeFirst',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Approved By`
+  String get timeTrackerApprovedByColumn {
+    return Intl.message(
+      'Approved By',
+      name: 'timeTrackerApprovedByColumn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You Can Remind Again In {time}`
+  String timeTrackerRemindAgainIn(Object time) {
+    return Intl.message(
+      'You Can Remind Again In $time',
+      name: 'timeTrackerRemindAgainIn',
+      desc: '',
+      args: [time],
+    );
+  }
+
+  /// `{h} h {m} m`
+  String timeTrackerHoursMinutesShort(Object h, Object m) {
+    return Intl.message(
+      '$h h $m m',
+      name: 'timeTrackerHoursMinutesShort',
+      desc: '',
+      args: [h, m],
     );
   }
 }

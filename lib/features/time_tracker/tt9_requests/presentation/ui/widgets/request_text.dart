@@ -207,7 +207,20 @@ class RequestText {
       s.timeTrackerEndDate,
       s.timeTrackerTotalTime,
       s.timeTrackerStatus,
+      // 13/10/2026 (owner H1).
+      s.timeTrackerApprovedByColumn,
     ];
+  }
+
+  /// "Approved By": who approved so far (manager, then HR), "–" if nobody.
+  static String approvedBy(BuildContext context, TimeTrackerRequest r, RequestsState state) {
+    final bool ar = Localizations.localeOf(context).languageCode == 'ar';
+    final List<String> names = <String>[
+      for (final RequestApprovalStep st in r.approvalSteps)
+        if (st.decision == ApprovalDecision.approved && !st.isCancellation && st.approverEmail.isNotEmpty)
+          state.employeeOf(st.approverEmail)?.name(isArabic: ar) ?? st.approverEmail,
+    ];
+    return names.isEmpty ? TimeTrackerFormat.dash : names.toSet().join(' · ');
   }
 
   /// Function Name: [cells]
@@ -224,10 +237,11 @@ class RequestText {
       when(r.endAt),
       totalTime(context, r),
       statusLabel(context, r.status),
+      approvedBy(context, r, state),
     ];
   }
 
-  static const List<double> _widths = <double>[50, 130, 160, 190, 190, 110, 130];
+  static const List<double> _widths = <double>[50, 130, 160, 190, 190, 110, 130, 170];
 
   /// Table columns: "No" + [headers].
   static List<TtColumn> columns(BuildContext context) {
@@ -241,7 +255,7 @@ class RequestText {
     return <TtCell>[
       TtCell(TimeTrackerFormat.count(context, index + 1)),
       for (int i = 0; i < c.length; i++)
-        TtCell(c[i], color: i == c.length - 1 ? statusColor(r.status) : null),
+        TtCell(c[i], color: i == c.length - 2 ? statusColor(r.status) : null),
     ];
   }
 }

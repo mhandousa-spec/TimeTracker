@@ -255,7 +255,7 @@ class RequestCycleRules {
   /// Function Name: [canRemind] / [remind]
   ///
   /// Purpose: "Send Reminder" — requester only, pending only, once every
-  /// two days (`RequestReminderRule`).
+  /// 24 hours (`RequestReminderRule`).
   ///
   /// Return type: [bool] / [TimeTrackerRequest] — `remind` throws
   /// `StateError` when not allowed now.

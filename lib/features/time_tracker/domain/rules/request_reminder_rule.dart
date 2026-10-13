@@ -3,12 +3,13 @@
 ///*************************** FILE INFO ****************************///
 /// File Name: request_reminder_rule.dart
 /// Purpose: Declares `RequestReminderRule` — "You Can Only Send A Reminder
-///          Once Every Two Days" (Figma `661:16796`).
+///          Once Every 24 Hours" (Figma `661:16796`; owner H3, 13/10/2026:
+///          two days → 24 hours).
 /// Author: Knowticed Plus team
 /// Created at: 8/10/2026
 ///
 /// Only a PENDING request can be reminded about (the Send Reminder button is
-/// drawn on Pending cards / details only). The window is a rolling 48 hours
+/// drawn on Pending cards / details only). The window is a rolling 24 hours
 /// from `Last_Reminder_Date_Time`.
 
 import 'package:knowticed_plus/features/time_tracker/domain/enums/request_status.dart';
@@ -17,7 +18,19 @@ class RequestReminderRule {
   const RequestReminderRule._();
 
   /// Minimum gap between two reminders for the same request.
-  static const Duration interval = Duration(days: 2);
+  static const Duration interval = Duration(hours: 24);
+
+  /// Function Name: [waitLeft]
+  ///
+  /// Purpose: How long until the next reminder may go (null = it may go
+  /// now) — the "You Can Remind Again In 23 h 59 m" countdown.
+  ///
+  /// Return type: [Duration?]
+  static Duration? waitLeft(DateTime? lastReminderAt, DateTime now) {
+    final DateTime? next = nextAllowedAt(lastReminderAt);
+    if (next == null || !now.isBefore(next)) return null;
+    return next.difference(now);
+  }
 
   /// Function Name: [canSend]
   ///

@@ -257,15 +257,15 @@ void main() {
       expect(RequestCycleRules.cancelByHr(_approved(), reason: 'Audit').status, RequestStatus.canceledByHr);
     });
 
-    test('reminder: requester, pending, once every two days', () {
+    test('reminder: requester, pending, once every 24 hours (owner H3)', () {
       final TimeTrackerRequest r = _submitted();
       expect(RequestCycleRules.canRemind(r, 'me@co.com', t), isTrue);
       expect(RequestCycleRules.canRemind(r, 'boss@co.com', t), isFalse);
       final TimeTrackerRequest sent = RequestCycleRules.remind(r, now: t);
       expect(sent.lastReminderAt, t);
-      expect(RequestCycleRules.canRemind(sent, 'me@co.com', t.add(const Duration(hours: 47))), isFalse);
-      expect(() => RequestCycleRules.remind(sent, now: t.add(const Duration(days: 1))), throwsStateError);
-      expect(RequestCycleRules.canRemind(sent, 'me@co.com', t.add(const Duration(days: 2))), isTrue);
+      expect(RequestCycleRules.canRemind(sent, 'me@co.com', t.add(const Duration(hours: 23))), isFalse);
+      expect(() => RequestCycleRules.remind(sent, now: t.add(const Duration(hours: 12))), throwsStateError);
+      expect(RequestCycleRules.canRemind(sent, 'me@co.com', t.add(const Duration(hours: 24))), isTrue);
       expect(RequestCycleRules.canRemind(_approved(), 'me@co.com', t), isFalse);
     });
 

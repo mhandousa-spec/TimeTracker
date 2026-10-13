@@ -4541,7 +4541,7 @@
   "timeTrackerRequestCanceledTitle": "تم إلغاء الطلب",
   "timeTrackerRequestCanceled": "لقد ألغيت هذا الطلب بنجاح",
   "timeTrackerReminderSentOn": "تم إرسال التذكير في {date}",
-  "timeTrackerReminderRule": "يمكنك إرسال تذكير مرة واحدة كل يومين فقط. لا تتردد في التواصل مع مشرفك مباشرة للمساعدة",
+  "timeTrackerReminderRule": "يمكنك إرسال تذكير مرة واحدة كل ٢٤ ساعة فقط. لا تتردد في التواصل مع مشرفك مباشرة للمساعدة",
   "timeTrackerApproveRequest": "قبول الطلب",
   "timeTrackerApproveRequestConfirm": "هل أنت متأكد أنك تريد قبول هذا الطلب؟",
   "timeTrackerRequestApproved": "لقد قبلت هذا الطلب بنجاح",
@@ -4813,5 +4813,9 @@
   "timeTrackerOneAbsence": "غياب واحد",
   "timeTrackerTwoAbsences": "غيابان",
   "timeTrackerAbsencesFew": "{count} غيابات",
-  "timeTrackerAbsencesMany": "{count} غيابا"
+  "timeTrackerAbsencesMany": "{count} غيابا",
+  "timeTrackerPickTypeFirst": "اختر نوع الطلب أولاً — وسيعرض النموذج ما يحتاجه فقط.",
+  "timeTrackerApprovedByColumn": "تمت الموافقة بواسطة",
+  "timeTrackerRemindAgainIn": "يمكنك التذكير مرة أخرى بعد {time}",
+  "timeTrackerHoursMinutesShort": "{h} س {m} د"
 }

@@ -154,6 +154,9 @@ class TransactionDocumentField extends StatelessWidget {
         key: const ValueKey<String>('transactionFileCard'),
         title: '',
         width: double.infinity,
+        // 13/10/2026 (owner G3): remove (–) in the top corner; name, size
+        // and date aligned.
+        removeOnCorner: true,
         fileName: file.name,
         fileSize: TimeTrackerFormat.fileSize(context, file.sizeBytes),
         date: s.timeTrackerUploadedOn(
@@ -201,7 +204,8 @@ class TransactionDocumentField extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Expanded(child: Padding(padding: EdgeInsetsDirectional.only(top: 8.h), child: label)),
+        // The label sits level with the file card's middle (G3).
+        Expanded(child: Padding(padding: EdgeInsetsDirectional.only(top: file != null ? 18.h : 8.h), child: label)),
         SizedBox(width: 15.w),
         Expanded(child: content),
       ],

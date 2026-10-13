@@ -4,7 +4,7 @@
 /// File Name: request_rules_test.dart
 /// Purpose: Unit tests for the request rules — `RequestStatusMachine`
 ///          (lifecycle), `ApprovalRouter` (manager → HR cycle, who may act)
-///          and `RequestReminderRule` (once every two days).
+///          and `RequestReminderRule` (once every 24 hours).
 /// Author: Knowticed Plus team
 /// Created at: 8/10/2026
 
@@ -333,12 +333,16 @@ void main() {
       );
     });
 
-    test('once every two days', () {
+    test('once every 24 hours (owner H3) + the countdown', () {
       bool at(DateTime now) => RequestReminderRule.canSend(
           status: RequestStatus.pending, lastReminderAt: last, now: now);
-      expect(at(last.add(const Duration(hours: 47, minutes: 59))), isFalse);
-      expect(at(last.add(const Duration(days: 2))), isTrue);
-      expect(RequestReminderRule.nextAllowedAt(last), DateTime(2026, 10, 3, 9));
+      expect(at(last.add(const Duration(hours: 23, minutes: 59))), isFalse);
+      expect(at(last.add(const Duration(hours: 24))), isTrue);
+      expect(RequestReminderRule.nextAllowedAt(last), DateTime(2026, 10, 2, 9));
+      expect(RequestReminderRule.waitLeft(last, last.add(const Duration(minutes: 1))),
+          const Duration(hours: 23, minutes: 59));
+      expect(RequestReminderRule.waitLeft(last, last.add(const Duration(hours: 24))), isNull);
+      expect(RequestReminderRule.waitLeft(null, last), isNull);
     });
 
     test('only pending requests can be reminded about', () {

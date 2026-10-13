@@ -28,6 +28,7 @@ import 'package:knowticed_plus/core/theme/app_animations.dart';
 import 'package:knowticed_plus/core/theme/app_colors.dart';
 import 'package:knowticed_plus/core/theme/app_theme.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/entities/attendance_day.dart';
+import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_controls.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_formatters.dart';
 import 'package:knowticed_plus/features/time_tracker/presentation/ui/widgets/time_tracker_table.dart';
 import 'package:knowticed_plus/generated/l10n.dart';
@@ -70,7 +71,9 @@ class AttendanceRowText {
 }
 
 /// Column weights (No · Date · Status · In · Out · Break · Total).
-const List<int> _flex = <int>[5, 12, 10, 11, 11, 9, 9];
+/// 13/10/2026 (owner F2): the six data columns are EQUAL; only "No" is
+/// narrow.
+const List<int> _flex = <int>[4, 10, 10, 10, 10, 10, 10];
 
 class AttendanceTableView extends StatelessWidget {
   const AttendanceTableView({super.key, required this.days});
@@ -173,50 +176,69 @@ class AttendanceCardList extends StatelessWidget {
     );
   }
 
+  /// 13/10/2026 (owner O1, Figma mobile card): icon + "Label: value" on
+  /// every line — Attendance Date, then Oncoming / Leaving / Break / Total
+  /// — and "Status: Present" at the top end.
   Widget _card(
     BuildContext context,
     List<String> headers,
     List<String> cells,
     AttendanceDay day,
   ) {
+    // Figma icons (exported from the mobile attendance card).
+    const List<String> icons = <String>[TtAssets.dayOncoming, TtAssets.dayLeaving, TtAssets.dayBreak, TtAssets.dayTotal];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Expanded(
-              child: Text(
-                cells[0],
-                style: StyleText.fontSize14Weight500.copyWith(color: AppColors.text),
+            Expanded(child: _line(TtAssets.dayCalendar, headers[1], cells[0])),
+            SizedBox(width: 8.w),
+            Text.rich(
+              TextSpan(
+                text: '${headers[2]}: ',
+                style: StyleText.fontSize12Weight400.copyWith(color: AppColors.secondaryText),
+                children: <InlineSpan>[
+                  TextSpan(
+                    text: cells[1],
+                    style: StyleText.fontSize12Weight400
+                        .copyWith(color: TimeTrackerFormat.statusColor(day.status)),
+                  ),
+                ],
               ),
-            ),
-            Text(
-              cells[1],
-              style: StyleText.fontSize14Weight500
-                  .copyWith(color: TimeTrackerFormat.statusColor(day.status)),
             ),
           ],
         ),
-        SizedBox(height: 8.h),
         for (int i = 2; i < cells.length; i++)
           Padding(
-            padding: EdgeInsetsDirectional.only(top: 4.h),
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: Text(
-                    headers[i + 1],
-                    style: StyleText.fontSize12Weight400
-                        .copyWith(color: AppColors.secondaryText),
-                  ),
-                ),
-                Text(
-                  cells[i],
-                  style: StyleText.fontSize12Weight400.copyWith(color: AppColors.text),
+            padding: EdgeInsetsDirectional.only(top: 8.h),
+            child: _line(icons[i - 2], headers[i + 1], cells[i]),
+          ),
+      ],
+    );
+  }
+
+  /// [icon] "Label: value".
+  Widget _line(String icon, String label, String value) {
+    return Row(
+      children: <Widget>[
+        TtIcon(TtGlyph.svg(icon), size: 20.r, color: AppColors.secondaryText),
+        SizedBox(width: 8.w),
+        Flexible(
+          child: Text.rich(
+            TextSpan(
+              text: '$label: ',
+              style: StyleText.fontSize14Weight400.copyWith(color: AppColors.secondaryText),
+              children: <InlineSpan>[
+                TextSpan(
+                  text: value,
+                  style: StyleText.fontSize14Weight400.copyWith(color: AppColors.text),
                 ),
               ],
             ),
           ),
+        ),
       ],
     );
   }

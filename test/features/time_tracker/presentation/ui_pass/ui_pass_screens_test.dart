@@ -19,7 +19,11 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:knowticed_plus/features/time_tracker/domain/entities/request_type.dart';
+import 'package:knowticed_plus/features/time_tracker/tt10_request_form/presentation/controller/request_form_cubit.dart';
+import 'package:knowticed_plus/features/time_tracker/tt4_transaction_form/presentation/controller/transaction_form_cubit.dart';
 import 'package:get_it/get_it.dart';
 
 import 'package:knowticed_plus/features/time_tracker/domain/constants/time_tracker_firestore_paths.dart';
@@ -266,6 +270,13 @@ void main() {
           // 12/10/2026 (owner R4 / G1): a tap on the grey Submit shows every missing field.
           await c.tap('transactionSubmitButton');
           await c.shot('12_transaction_form_required');
+          // 13/10/2026 (owner G3): the file card after an upload.
+          await c.tester.runAsync(() => c.tester
+              .element(find.byKey(const ValueKey<String>('transactionUploadBox')))
+              .read<TransactionFormCubit>()
+              .uploadAttachment('Attendance_Proof_11_Oct.pdf', List<int>.filled(240000, 0)));
+          await c.settle();
+          await c.shot('12_transaction_form_file');
         });
       });
 
@@ -284,6 +295,14 @@ void main() {
           await c.shot('22_requests_table');
           await c.push(const RequestFormPage());
           await c.shot('23_request_form');
+          // 13/10/2026 (owner P2): the fields appear for the chosen type.
+          final RequestFormCubit form =
+              c.tester.element(find.byKey(const ValueKey<String>('requestTypeDropdown'))).read<RequestFormCubit>();
+          final List<RequestType> types = form.state.setup.types;
+          form.typeChanged(types.firstWhere((RequestType t) => t.isAttachmentRequired,
+              orElse: () => const RequestType(id: 'sick', nameEn: 'Sick Leave', nameAr: 'إجازة مرضية', isAttachmentRequired: true)));
+          await c.settle();
+          await c.shot('23_request_form_type');
           await c.back();
           for (final (String id, String name) in <(String, String)>[
             (TtDemoIds.request(1), 'pending'),

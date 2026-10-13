@@ -65,6 +65,11 @@ class ProductWarrantyCard extends StatelessWidget {
   final VoidCallback? onTapFile;
   final double? width;
 
+  /// Opt-in layout (Time Tracker owner review G3, 13/10/2026): the remove
+  /// icon in the card's top-end CORNER, and size + date on one line under
+  /// the name (date at the end), so name and date line up.
+  final bool removeOnCorner;
+
   const ProductWarrantyCard({
     super.key,
     required this.title,
@@ -76,6 +81,7 @@ class ProductWarrantyCard extends StatelessWidget {
     this.onRemove,
     this.onTapFile,
     this.width,
+    this.removeOnCorner = false,
   });
 
   @override
@@ -86,9 +92,12 @@ class ProductWarrantyCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(title, style: CardStyles.label(12)),
-          SizedBox(height: 6.h),
-          InkWell(
+          // An empty title adds no gap (the card lines up with its label).
+          if (title.isNotEmpty) ...[
+            Text(title, style: CardStyles.label(12)),
+            SizedBox(height: 6.h),
+          ],
+          if (removeOnCorner) _cornerCard() else InkWell(
             onTap: onTapFile,
             borderRadius: CardStyles.radius(),
             child: Container(
@@ -172,6 +181,77 @@ class ProductWarrantyCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  /// [removeOnCorner] layout: icon · name over "size … date", remove (–)
+  /// pinned to the top-end corner.
+  Widget _cornerCard() {
+    return InkWell(
+      onTap: onTapFile,
+      borderRadius: CardStyles.radius(),
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: AppColors.background,
+          borderRadius: CardStyles.radius(),
+          boxShadow: CardStyles.shadow,
+        ),
+        child: Stack(
+          children: [
+            Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(8.r, 8.r, onRemove != null ? 26.r : 8.r, 8.r),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 40.r,
+                    height: 40.r,
+                    child: Center(
+                      child: SizedBox(
+                        width: 30.r,
+                        height: 30.r,
+                        child: FittedBox(child: fileIcon ?? _defaultFileIcon()),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 8.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(fileName, style: CardStyles.value(12), maxLines: 1, overflow: TextOverflow.ellipsis),
+                        SizedBox(height: 2.h),
+                        Row(
+                          children: [
+                            Text(fileSize ?? placeholderFileSize, style: CardStyles.label(10)),
+                            const Spacer(),
+                            if (date != null) Text(date!, style: CardStyles.label(10)),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (onRemove != null)
+              PositionedDirectional(
+                top: 6.r,
+                end: 6.r,
+                child: InkWell(
+                  onTap: onRemove,
+                  customBorder: const CircleBorder(),
+                  child: SizedBox(
+                    width: 15.r,
+                    height: 15.r,
+                    child: CustomSvgImage(assetPath: CardSvg.remove),
+                  ),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

@@ -135,7 +135,7 @@ class ApprovalCard extends StatelessWidget {
             key: ValueKey<String>('approvalCardReject_${request.id}'),
             child: RequestOutlinedButton(
               label: s.reject,
-              icon: const TtGlyph.icon(Icons.block),
+              icon: const TtGlyph.svg(TtAssets.btnReject, tinted: false),
               color: AppColors.red,
               high: true,
               onTap: () => RequestFlows.reject(context, request),
@@ -148,7 +148,7 @@ class ApprovalCard extends StatelessWidget {
             key: ValueKey<String>('approvalCardApprove_${request.id}'),
             child: RequestOutlinedButton(
               label: s.approve,
-              icon: const TtGlyph.icon(Icons.check_circle_outline),
+              icon: const TtGlyph.svg(TtAssets.btnApprove, tinted: false),
               color: AppColors.lightGreen,
               onTap: () => RequestFlows.approve(context, request),
             ),

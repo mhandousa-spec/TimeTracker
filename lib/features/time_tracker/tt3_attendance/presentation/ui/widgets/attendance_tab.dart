@@ -26,7 +26,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
 
 import 'package:knowticed_plus/core/constants/app_assets.dart';
-import 'package:knowticed_plus/core/custom/24-custom_chart_card.dart';
 import 'package:knowticed_plus/core/custom/30-custom_attendance_tiles_card.dart';
 import 'package:knowticed_plus/core/custom/32-custom_svg.dart';
 import 'package:knowticed_plus/core/custom/57-custom_dialog_manager.dart';
@@ -213,7 +212,9 @@ class _Tiles extends StatelessWidget {
         label: label,
         count: TimeTrackerFormat.count(context, value).padLeft(2, TimeTrackerFormat.count(context, 0)),
         color: color,
-        icon: CustomSvgImage(assetPath: icon, color: color),
+        // 13/10/2026 (owner F1): the Figma badges (coloured circle + white icon).
+        icon: CustomSvgImage(assetPath: icon, width: 32.r, height: 32.r, fit: BoxFit.contain),
+        iconIsBadge: true,
       );
 
   @override
@@ -224,17 +225,17 @@ class _Tiles extends StatelessWidget {
       itemsPerCard: 2,
       columns: 3,
       items: <AttendanceItem>[
-        _item(context, s.timeTrackerPresent, counts.present, ChartSvg.present,
+        _item(context, s.timeTrackerPresent, counts.present, TtAssets.tilePresent,
             TimeTrackerFormat.statusColor(AttendanceStatus.present)),
-        _item(context, s.timeTrackerAbsent, counts.absent, ChartSvg.absent,
+        _item(context, s.timeTrackerAbsent, counts.absent, TtAssets.tileAbsent,
             TimeTrackerFormat.statusColor(AttendanceStatus.absent)),
-        _item(context, s.timeTrackerLate, counts.late, ChartSvg.late,
+        _item(context, s.timeTrackerLate, counts.late, TtAssets.tileLate,
             TimeTrackerFormat.statusColor(AttendanceStatus.late)),
-        _item(context, s.timeTrackerVacation, counts.vacation, ChartSvg.vacation,
+        _item(context, s.timeTrackerVacation, counts.vacation, TtAssets.tileVacation,
             TimeTrackerFormat.statusColor(AttendanceStatus.vacation)),
-        _item(context, s.timeTrackerSickLeave, counts.sickLeave, ChartSvg.excused,
+        _item(context, s.timeTrackerSickLeave, counts.sickLeave, TtAssets.tileSick,
             TimeTrackerFormat.statusColor(AttendanceStatus.sickLeave)),
-        _item(context, s.timeTrackerExcuseLeave, counts.excused, ChartSvg.excused,
+        _item(context, s.timeTrackerExcuseLeave, counts.excused, TtAssets.tileExcuse,
             TimeTrackerFormat.statusColor(AttendanceStatus.excused)),
       ],
     );

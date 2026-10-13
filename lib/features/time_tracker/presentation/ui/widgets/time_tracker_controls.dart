@@ -45,7 +45,6 @@ import 'package:knowticed_plus/core/custom/35-custom_search_widget_custom.dart';
 import 'package:knowticed_plus/core/custom/41-custom_button_sizing.dart';
 import 'package:knowticed_plus/core/custom/6-custom_button_with_svg.dart';
 import 'package:knowticed_plus/core/custom/9-filter_tab_with_container.dart';
-import 'package:knowticed_plus/core/extensions/context_extensions.dart';
 import 'package:knowticed_plus/core/theme/app_animations.dart';
 import 'package:knowticed_plus/core/theme/app_colors.dart';
 import 'package:knowticed_plus/core/theme/app_theme.dart';
@@ -97,6 +96,28 @@ abstract class TtAssets {
   static const String location = '$_form/location_pin.svg';
   static const String status = '$_main/status_pulse_line.svg';
   static const String logout = '$_main/logout_door_arrow.svg';
+  /// 13/10/2026 (owner O1): the attendance day-card icons, exported from
+  /// Figma (mobile attendance card `661:11059`).
+  static const String dayCalendar = '$_dir/tt_day_calendar.svg';
+  static const String dayOncoming = '$_dir/tt_day_oncoming.svg';
+  static const String dayLeaving = '$_dir/tt_day_leaving.svg';
+  static const String dayBreak = '$_dir/tt_day_break.svg';
+  static const String dayTotal = '$_dir/tt_day_total.svg';
+
+  /// 13/10/2026 (owner F1): the Attendance summary-tile badges, exported
+  /// from Figma (`661:14410`).
+  static const String tilePresent = '$_dir/tt_tile_present.svg';
+  static const String tileAbsent = '$_dir/tt_tile_absent.svg';
+  static const String tileLate = '$_dir/tt_tile_late.svg';
+  static const String tileVacation = '$_dir/tt_tile_vacation.svg';
+  static const String tileSick = '$_dir/tt_tile_sick.svg';
+  static const String tileExcuse = '$_dir/tt_tile_excuse.svg';
+
+  /// 13/10/2026 (owner I1 / Q1): the Approve / Reject / Cancel button icons
+  /// from Figma (`661:46511`, `661:22112`) — full-colour badges, not tinted.
+  static const String btnApprove = '$_dir/tt_btn_approve.svg';
+  static const String btnReject = '$_dir/tt_btn_reject.svg';
+  static const String btnCancel = '$_dir/tt_btn_cancel.svg';
 
   /// Red filled circle with a white minus (drawn in its own colours).
   static const String minusCircle = '$_main/minus_circle_red.svg';
@@ -484,9 +505,9 @@ class TtSegmentedToggle extends StatelessWidget {
 }
 
 /// The yellow Upload button of the attachment fields (owner finding 6):
-/// 36 high, radius 4, upload icon + label; 135 wide on tablet / 175 on a
-/// phone (Figma), wider when the label needs it. A missing required file
-/// draws a red border (owner rule: validation = red border + message).
+/// 36 high, radius 4, upload icon + label. 13/10/2026 (owner G2 / P1): as
+/// WIDE as the fields (the whole column). A missing required file draws a
+/// red border (owner rule: validation = red border + message).
 class TtUploadButton extends StatelessWidget {
   const TtUploadButton({
     super.key,
@@ -501,9 +522,8 @@ class TtUploadButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: AlignmentDirectional.centerStart,
-      child: ShrinkOnTap(
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints box) => ShrinkOnTap(
         child: customButtonWithSvg(
           title: label,
           function: onTap,
@@ -513,7 +533,7 @@ class TtUploadButton extends StatelessWidget {
           widthImage: 16.r,
           heightImage: 16.r,
           svgColor: AppColors.textButton,
-          fixedWidth: context.isPhone ? 175.sp : 135.sp,
+          fixedWidth: box.maxWidth,
           fixedHeight: 36.sp,
           fixedRadius: 4.r,
           textStyle: StyleText.fontSize14Weight500.copyWith(color: AppColors.textButton),

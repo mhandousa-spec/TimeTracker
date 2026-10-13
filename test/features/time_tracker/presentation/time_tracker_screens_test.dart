@@ -257,7 +257,8 @@ void main() {
 
     testWidgets('phone → one card per day', (WidgetTester tester) async {
       final TimeTrackerHarness h = await open(tester, _employee, size: kTimeTrackerPhone);
-      expect(find.text(S.current.timeTrackerOncomingTime), findsNWidgets(3));
+      // 13/10/2026 (owner O1, Figma card): "Oncoming Time: 07:56 AM" lines.
+      expect(find.textContaining('${S.current.timeTrackerOncomingTime}: ', findRichText: true), findsNWidgets(3));
       await h.dispose(tester);
     });
   });
@@ -279,7 +280,7 @@ void main() {
     );
     await tester.tap(_tab('الحضور'));
     await h.settle(tester);
-    expect(find.text('وقت الحضور'), findsOneWidget);
+    expect(find.textContaining('وقت الحضور', findRichText: true), findsWidgets);
     expect(tester.takeException(), isNull);
     await h.dispose(tester);
   });

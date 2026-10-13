@@ -4541,7 +4541,7 @@
   "timeTrackerRequestCanceledTitle": "Request Canceled",
   "timeTrackerRequestCanceled": "You Successfully Canceled This Request",
   "timeTrackerReminderSentOn": "Reminder Was Sent On {date}",
-  "timeTrackerReminderRule": "You Can Only Send A Reminder Once Every Two Days. Feel Free To Contact Your Supervisor Directly For Assistance",
+  "timeTrackerReminderRule": "You Can Only Send A Reminder Once Every 24 Hours. Feel Free To Contact Your Supervisor Directly For Assistance",
   "timeTrackerApproveRequest": "Approve Request",
   "timeTrackerApproveRequestConfirm": "Are You Sure You Want To Approve This Request ?",
   "timeTrackerRequestApproved": "You Successfully Approved This Request",
@@ -4820,5 +4820,9 @@
   "timeTrackerOneAbsence": "1 Absence",
   "timeTrackerTwoAbsences": "2 Absences",
   "timeTrackerAbsencesFew": "{count} Absences",
-  "timeTrackerAbsencesMany": "{count} Absences"
+  "timeTrackerAbsencesMany": "{count} Absences",
+  "timeTrackerPickTypeFirst": "Choose the request type first — the form then shows only what it needs.",
+  "timeTrackerApprovedByColumn": "Approved By",
+  "timeTrackerRemindAgainIn": "You Can Remind Again In {time}",
+  "timeTrackerHoursMinutesShort": "{h} h {m} m"
 }

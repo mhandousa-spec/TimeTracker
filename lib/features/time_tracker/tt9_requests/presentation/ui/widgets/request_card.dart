@@ -50,6 +50,7 @@ class RequestCard extends StatelessWidget {
     final S s = S.of(context);
     final bool canRemind = request.status == RequestStatus.pending &&
         GetIt.instance<TimeTrackerAccess>().canSendRequestReminder;
+    final Duration? wait = canRemind ? RequestReminderCountdown.leftFor(request.lastReminderAt) : null;
     return GestureDetector(
       key: ValueKey<String>('requestCard_${request.id}'),
       behavior: HitTestBehavior.opaque,
@@ -90,11 +91,21 @@ class RequestCard extends StatelessWidget {
             ...RequestCardLines.timeLines(context, request),
             // Fills only when a neighbour in the row is taller (TtCardGrid).
             const Spacer(),
+            // 13/10/2026 (owner H2 / H3): a thin line, then Send Reminder
+            // across the card — or, inside the 24-hour window, the countdown.
             if (canRemind) ...<Widget>[
               SizedBox(height: 10.h),
-              Align(
-                alignment: AlignmentDirectional.centerEnd,
-                child: KeyedSubtree(
+              Divider(height: 1, thickness: 1, color: AppColors.border.withValues(alpha: 0.4)),
+              SizedBox(height: 10.h),
+              if (wait != null)
+                Center(
+                  child: RequestReminderCountdown(
+                    key: ValueKey<String>('requestCardCountdown_${request.id}'),
+                    left: wait,
+                  ),
+                )
+              else
+                KeyedSubtree(
                   key: ValueKey<String>('requestCardReminder_${request.id}'),
                   child: RequestOutlinedButton(
                     label: s.timeTrackerSendRequestReminder,
@@ -104,7 +115,6 @@ class RequestCard extends StatelessWidget {
                     onTap: () => RequestFlows.sendReminder(context, request),
                   ),
                 ),
-              ),
             ],
           ],
         ),

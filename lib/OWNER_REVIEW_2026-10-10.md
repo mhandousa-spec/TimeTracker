@@ -1,5 +1,7 @@
 # Owner review — 10 Oct 2026 (iPad Air 11", dark, EN, demo data)
 
+Figma (Time Tracker page): https://www.figma.com/design/QVFDXSnFPExQVOIycX9ECb/KNOWTICED-PLUS?node-id=6-39427 — node ids in code comments (e.g. `661:11059`) are in this file.
+
 Status key: [ ] open · [x] fixed · [?] question
 
 ## Standing rules (from this review — apply everywhere)
