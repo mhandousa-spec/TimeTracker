@@ -170,7 +170,7 @@ void main() {
   });
 
   group('AssignmentRules', () {
-    test('location, start date, break length and allowed locations', () {
+    test('location, start date and break length (extra locations are optional — owner T5)', () {
       expect(
         AssignmentRules.validate(
           locationId: '',
@@ -181,7 +181,6 @@ void main() {
           AssignmentError.locationRequired,
           AssignmentError.startDateRequired,
           AssignmentError.breakLengthRequired,
-          AssignmentError.allowedLocationsRequired,
         },
       );
       expect(

@@ -388,13 +388,13 @@ void main() {
       ),
     );
 
-    test('only the own location without work-elsewhere', () {
+    test('every active work location without work-elsewhere (owner T5), no Remote / Client Site', () {
       final List<CheckInOption> options = CheckInOptions.build(
         setup: setup,
         companyLocations: const <WorkLocation>[hq, branch, closed],
         mayWorkElsewhere: false,
       );
-      expect(options.map((CheckInOption o) => o.key), <String>['hq']);
+      expect(options.map((CheckInOption o) => o.key), <String>['hq', 'br']);
     });
 
     test('allowed active locations + Remote + Client Site otherwise', () {

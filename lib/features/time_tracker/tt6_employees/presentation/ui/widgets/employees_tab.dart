@@ -304,6 +304,20 @@ class _EmployeesTabState extends State<EmployeesTab> {
     await showTimeTrackerFailure(context, denied: denied);
   }
 
+  /// "Main · Extra · Extra" (names; unknown ids skipped).
+  String _workLocations(EmployeesState state, EmployeeAssignmentRow r, bool ar) {
+    final List<String> ids = <String>[
+      r.locationId,
+      ...?state.effectiveRulesOf(r.employee.email)?.rules.allowedLocationIds,
+    ];
+    final List<String> names = <String>[];
+    for (final String id in ids.toSet()) {
+      final String? name = state.locationById(id)?.name(isArabic: ar);
+      if (name != null && name.isNotEmpty) names.add(name);
+    }
+    return names.join(' · ');
+  }
+
   Widget _list(BuildContext context, EmployeesState state) {
     final S s = S.of(context);
     final bool ar = Localizations.localeOf(context).languageCode == 'ar';
@@ -321,7 +335,9 @@ class _EmployeesTabState extends State<EmployeesTab> {
               key: ValueKey<String>('employeeCard_${r.employee.email}'),
               employee: r.employee,
               assignment: r.assignment,
-              locationName: assignedTab ? (state.locationById(r.locationId)?.name(isArabic: ar) ?? '') : '',
+              // 12/10/2026 (owner T5): every work location, main first.
+              locationName: assignedTab ? _workLocations(state, r, ar) : '',
+              locationLabel: s.timeTrackerWorkLocations,
               rules: assignedTab ? state.effectiveRulesOf(r.employee.email) : null,
               selected: !assignedTab && canAssign ? state.selected.contains(r.employee.email) : null,
               onSelect: () => cubit.toggleSelected(r.employee.email),

@@ -7905,6 +7905,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerLongitudeInvalid": MessageLookupByLibrary.simpleMessage(
       "اكتب خط طول بين -180 و 180.",
     ),
+    "timeTrackerMainLocation": MessageLookupByLibrary.simpleMessage("الرئيسي"),
     "timeTrackerManagerApproval": MessageLookupByLibrary.simpleMessage(
       "موافقة المدير",
     ),
@@ -8384,6 +8385,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "timeTrackerWorkLocations": MessageLookupByLibrary.simpleMessage(
       "مواقع العمل",
+    ),
+    "timeTrackerWorkLocationsHint": MessageLookupByLibrary.simpleMessage(
+      "الموقع الأول هو الموقع الرئيسي، وتطبق ساعاته وقواعده.",
     ),
     "timeTrackerWorkSchedule": MessageLookupByLibrary.simpleMessage(
       "جدول العمل",

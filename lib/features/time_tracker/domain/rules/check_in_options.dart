@@ -58,13 +58,14 @@ class CheckInOptions {
   }) {
     final List<CheckInOption> out = <CheckInOption>[];
     if (setup.location.isActive) out.add(CheckInOption.office(setup.location));
-    if (!mayWorkElsewhere) return List<CheckInOption>.unmodifiable(out);
+    // 12/10/2026 (owner T5): every assigned work location, always.
     for (final String id in setup.rules.allowedLocationIds) {
       if (id == setup.location.id) continue;
       for (final WorkLocation l in companyLocations) {
         if (l.id == id && l.isActive) out.add(CheckInOption.office(l));
       }
     }
+    if (!mayWorkElsewhere) return List<CheckInOption>.unmodifiable(out);
     out
       ..add(const CheckInOption.away(WorkLocationType.remote))
       ..add(const CheckInOption.away(WorkLocationType.clientSite));

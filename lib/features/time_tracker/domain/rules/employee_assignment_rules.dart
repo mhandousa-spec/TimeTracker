@@ -58,8 +58,6 @@ class AssignmentRules {
             rules.isBreakAllowed &&
             (rules.breakMinutes <= 0 || rules.breakMinutes > maxBreakMinutes))
           AssignmentError.breakLengthRequired,
-        if (rules.isDifferentLocationAllowed && rules.allowedLocationIds.isEmpty)
-          AssignmentError.allowedLocationsRequired,
       };
 }
 

@@ -27,6 +27,7 @@ import 'package:knowticed_plus/core/custom/23-custom_check_box.dart';
 import 'package:knowticed_plus/core/custom/3-custom_dropdown_calander.dart';
 import 'package:knowticed_plus/core/theme/app_colors.dart';
 import 'package:knowticed_plus/core/theme/app_theme.dart';
+import 'package:knowticed_plus/features/time_tracker/tt6_employees/presentation/ui/widgets/grant_access_dialog.dart';
 import 'package:knowticed_plus/features/time_tracker/data/models/location_assignment_model.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/constants/time_tracker_firestore_paths.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/entities/employee_assignment.dart';
@@ -225,7 +226,7 @@ void main() {
 
       // No location yet → no preview; pick one → preview + switch ON.
       expect(_key('locationRulesPreview'), findsNothing);
-      tester.widget<CustomDropdown<String>>(_key('groupLocationField')).onChanged!('hq');
+      tester.widget<TtWorkLocationsField>(_key('groupLocationField')).onChanged('hq', const <String>[]);
       await h.settle(tester);
       expect(_key('locationRulesPreview'), findsOneWidget);
       final BuildContext ctx = tester.element(_key('locationRulesPreview'));
@@ -260,7 +261,7 @@ void main() {
     await _open(tester, h, S.current.timeTrackerTabEmployees);
     await _tapIn(tester, h, _key('employeesCounter_unassigned'));
     await _tapIn(tester, h, _key('employeeAssign_khaled@co.com'));
-    tester.widget<CustomDropdown<String>>(_key('grantAccessLocation')).onChanged!('hq');
+    tester.widget<TtWorkLocationsField>(_key('grantAccessLocation')).onChanged('hq', const <String>[]);
     tester.widget<CustomDropdownCalendar>(_key('grantAccessStartDate')).onChanged!(DateTime(2026, 10, 12));
     await h.settle(tester);
     expect(_key('locationRulesPreview'), findsOneWidget);

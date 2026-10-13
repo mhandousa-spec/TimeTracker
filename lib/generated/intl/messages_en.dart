@@ -8212,6 +8212,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "timeTrackerLongitudeInvalid": MessageLookupByLibrary.simpleMessage(
       "Enter a longitude between -180 and 180.",
     ),
+    "timeTrackerMainLocation": MessageLookupByLibrary.simpleMessage("Main"),
     "timeTrackerManagerApproval": MessageLookupByLibrary.simpleMessage(
       "Manager Approval",
     ),
@@ -8701,6 +8702,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "timeTrackerWorkLocations": MessageLookupByLibrary.simpleMessage(
       "Work Locations",
+    ),
+    "timeTrackerWorkLocationsHint": MessageLookupByLibrary.simpleMessage(
+      "The first location is the main one: its hours and rules apply.",
     ),
     "timeTrackerWorkSchedule": MessageLookupByLibrary.simpleMessage(
       "Work Schedule",

@@ -127,8 +127,10 @@ class CheckInGate {
     }
     final bool isOwn =
         assignedLocationId.isNotEmpty && chosen.id == assignedLocationId;
-    final bool isAllowedOther =
-        mayWorkElsewhere && allowedLocationIds.contains(chosen.id);
+    // 12/10/2026 (owner T5): an employee may have SEVERAL work locations —
+    // the extra ones are assigned, so they need no "different location"
+    // permission (that switch now covers Remote / Client Site only).
+    final bool isAllowedOther = allowedLocationIds.contains(chosen.id);
     if (!isOwn && !isAllowedOther) return CheckInDecision.locationNotAllowed;
     if (!chosen.isGeofenceEnabled || !chosen.hasCoordinates) {
       return CheckInDecision.allowed;

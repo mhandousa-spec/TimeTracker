@@ -103,9 +103,10 @@ void main() {
           CheckInDecision.allowed);
     });
 
-    test('another location needs permission AND to be in the allowed list', () {
+    test('another location must be one of the employee\'s work locations (owner T5: no permission needed)', () {
       expect(run(chosen: branch), CheckInDecision.locationNotAllowed);
       expect(run(chosen: branch, elsewhere: true), CheckInDecision.locationNotAllowed);
+      expect(run(chosen: branch, allowed: <String>['b2']), CheckInDecision.allowed);
       expect(
         run(chosen: branch, elsewhere: true, allowed: <String>['b2']),
         CheckInDecision.allowed,

@@ -161,7 +161,8 @@ class _GrantAccessDialogState extends State<GrantAccessDialog> {
         isPauseAllowed: !_useLocation && _pause,
         pauseMinutes: !_useLocation && _pause ? TtPauseLimitField.minutesOf(_pauseLimit.text) : 0,
         isDifferentLocationAllowed: _different,
-        allowedLocationIds: _different ? _allowed : const <String>[],
+        // 12/10/2026 (owner T5): the extra work locations, always kept.
+        allowedLocationIds: _allowed,
         isCustom: !_useLocation,
       );
 
@@ -227,7 +228,9 @@ class _GrantAccessDialogState extends State<GrantAccessDialog> {
             SizedBox(height: 15.h),
             _EmployeeSummary(employees: widget.employees),
             SizedBox(height: 15.h),
-            TtPair(start: _locationField(s), end: _startField(s)),
+            // 12/10/2026 (owner T5 / T6 / U4): Work Locations, then the main
+            // location's rules right under it, then the start date.
+            _locationField(s),
             SizedBox(height: 15.h),
             // Decision 33 (9/10/2026): preview + "Use the location's rules".
             LocationRulesPanel(
@@ -236,6 +239,8 @@ class _GrantAccessDialogState extends State<GrantAccessDialog> {
               onUseLocation: _setUseLocation,
               customTitle: s.timeTrackerCustomRulesEmployee,
             ),
+            SizedBox(height: 15.h),
+            _startField(s),
             SizedBox(height: 15.h),
             _rulesFields(s),
             SizedBox(height: 20.h),
@@ -257,20 +262,17 @@ class _GrantAccessDialogState extends State<GrantAccessDialog> {
 
   Widget _locationField(S s) {
     final bool ar = Localizations.localeOf(context).languageCode == 'ar';
-    return CustomDropdown<String>(
+    return TtWorkLocationsField(
       key: const ValueKey<String>('grantAccessLocation'),
-      label: s.timeTrackerLocation,
-      labelStyle: StyleText.fontSize14Weight500.copyWith(color: AppColors.text),
-      hint: s.timeTrackerChooseLocation,
-      height: 36,
-      itemStyle: StyleText.fontSize12Weight400,
-      value: _locationId.isEmpty ? null : _locationId,
-      errorText: _error(AssignmentError.locationRequired, s.timeTrackerLocationRequired),
-      items: <DropdownItem<String>>[
-        for (final WorkLocation l in widget.locations)
-          DropdownItem<String>(value: l.id, label: l.name(isArabic: ar)),
-      ],
-      onChanged: _pickLocation,
+      mainId: _locationId,
+      extraIds: _allowed,
+      locations: widget.locations,
+      isArabic: ar,
+      error: _error(AssignmentError.locationRequired, s.timeTrackerLocationRequired),
+      onChanged: (String main, List<String> extras) {
+        setState(() => _allowed = extras);
+        if (main != _locationId) _pickLocation(main);
+      },
     );
   }
 
@@ -293,17 +295,14 @@ class _GrantAccessDialogState extends State<GrantAccessDialog> {
       breaks: _breaks,
       pause: _pause,
       different: _different,
-      allowed: _allowed,
       breakController: _break,
       unit: _unit,
       locations: widget.locations,
       isArabic: ar,
       breakError: _error(AssignmentError.breakLengthRequired, s.timeTrackerBreakLengthRequired),
-      allowedError: _error(AssignmentError.allowedLocationsRequired, s.timeTrackerAllowedLocationsRequired),
       onBreaks: (bool v) => _touch(() => _breaks = v),
       onPause: (bool v) => _touch(() => _pause = v),
       onDifferent: (bool v) => _touch(() => _different = v),
-      onAllowed: (List<String> v) => _touch(() => _allowed = v),
       onBreakLength: () => _touch(() {}),
       pauseController: _pauseLimit,
       onPauseLength: (_) => _touch(() {}),
@@ -312,15 +311,116 @@ class _GrantAccessDialogState extends State<GrantAccessDialog> {
   }
 }
 
-/// Allow Breaks (+ length) · Allow Pause · Allow Different Work Location
-/// (+ Select Location) — shared by Grant Access and the group form.
+/// ADDED 12/10/2026 (owner T5 / T6): "Work Locations" — ONE multi-select
+/// for every place the employee (or group) works. The FIRST picked is the
+/// main location (its hours, days and rules apply — tag "Main"); the others
+/// are extra offices they may also check in / out at (stored in
+/// `AttendanceRules.allowedLocationIds`, so no data migration). Removing the
+/// main one promotes the next. Shared by Grant Access and the group form.
+class TtWorkLocationsField extends StatelessWidget {
+  const TtWorkLocationsField({
+    super.key,
+    required this.mainId,
+    required this.extraIds,
+    required this.locations,
+    required this.isArabic,
+    required this.onChanged,
+    this.error,
+    this.labelStyle,
+  });
+
+  final String mainId;
+  final List<String> extraIds;
+  final List<WorkLocation> locations;
+  final bool isArabic;
+
+  /// (main id, extra ids) — main '' when nothing is picked.
+  final void Function(String mainId, List<String> extraIds) onChanged;
+  final String? error;
+  final TextStyle? labelStyle;
+
+  List<String> get _all => <String>[
+        if (mainId.isNotEmpty) mainId,
+        for (final String id in extraIds)
+          if (id != mainId) id,
+      ];
+
+  void _set(List<String> picked) {
+    final String main = picked.isEmpty ? '' : (picked.contains(mainId) ? mainId : picked.first);
+    onChanged(main, <String>[for (final String id in picked) if (id != main) id]);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final S s = S.of(context);
+    final List<String> all = _all;
+    String name(String id) {
+      for (final WorkLocation l in locations) {
+        if (l.id == id) return l.name(isArabic: isArabic);
+      }
+      return id;
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        CustomMultiSelectDropdown<String>(
+          label: s.timeTrackerWorkLocations,
+          labelStyle: labelStyle ?? StyleText.fontSize14Weight500.copyWith(color: AppColors.text),
+          hint: s.timeTrackerChooseLocation,
+          // 12/10/2026 (owner U6): the field fill of every other dropdown
+          // (the core default is the CARD colour — invisible on a card) and
+          // the whole trigger 36 high (else the hint sits on the bottom edge).
+          fillColor: kDropdownFillColor,
+          height: 36,
+          heightSizesWholeTrigger: true,
+          alwaysShowHint: true,
+          itemStyle: StyleText.fontSize12Weight400,
+          values: all,
+          errorText: error,
+          items: <MultiSelectDropdownItem<String>>[
+            for (final WorkLocation l in locations)
+              MultiSelectDropdownItem<String>(value: l.id, label: l.name(isArabic: isArabic)),
+          ],
+          onChanged: _set,
+        ),
+        if (all.isNotEmpty) ...<Widget>[
+          SizedBox(height: 8.h),
+          Wrap(
+            key: const ValueKey<String>('workLocationsChips'),
+            spacing: 8.w,
+            runSpacing: 8.h,
+            children: <Widget>[
+              for (final String id in all)
+                TtRemovableChip(
+                  key: ValueKey<String>('workLocationChip_$id'),
+                  label: id == mainId ? '${name(id)} · ${s.timeTrackerMainLocation}' : name(id),
+                  onRemove: () => _set(<String>[for (final String x in all) if (x != id) x]),
+                ),
+            ],
+          ),
+          if (all.length > 1) ...<Widget>[
+            SizedBox(height: 6.h),
+            Text(s.timeTrackerWorkLocationsHint,
+                style: StyleText.fontSize10Weight400.copyWith(color: AppColors.secondaryText)),
+          ],
+        ],
+      ],
+    );
+  }
+}
+
+/// Allow Breaks (+ length) · Allow Pause · Allow Different Work Location —
+/// shared by Grant Access and the group form.
+/// Updated: 12/10/2026 - owner T6: the extra-location picker under "Allow
+/// Different Work Location" is gone (extra offices live in
+/// [TtWorkLocationsField]); the switch now means Remote / Client Site.
 class AttendanceRulesFields extends StatelessWidget {
   const AttendanceRulesFields({
     super.key,
     required this.breaks,
     required this.pause,
     required this.different,
-    required this.allowed,
     required this.breakController,
     required this.unit,
     required this.locations,
@@ -328,11 +428,9 @@ class AttendanceRulesFields extends StatelessWidget {
     required this.onBreaks,
     required this.onPause,
     required this.onDifferent,
-    required this.onAllowed,
     required this.onBreakLength,
     required this.onUnit,
     this.breakError,
-    this.allowedError,
     this.showBreakPause = true,
     this.pauseController,
     this.onPauseLength,
@@ -350,7 +448,6 @@ class AttendanceRulesFields extends StatelessWidget {
   final bool breaks;
   final bool pause;
   final bool different;
-  final List<String> allowed;
   final TextEditingController breakController;
   final TtDurationUnit unit;
   final List<WorkLocation> locations;
@@ -358,11 +455,9 @@ class AttendanceRulesFields extends StatelessWidget {
   final ValueChanged<bool> onBreaks;
   final ValueChanged<bool> onPause;
   final ValueChanged<bool> onDifferent;
-  final ValueChanged<List<String>> onAllowed;
   final VoidCallback onBreakLength;
   final ValueChanged<TtDurationUnit> onUnit;
   final String? breakError;
-  final String? allowedError;
 
   @override
   Widget build(BuildContext context) {
@@ -425,35 +520,6 @@ class AttendanceRulesFields extends StatelessWidget {
                 value: different,
                 onChanged: onDifferent,
               ),
-              if (different) ...<Widget>[
-                SizedBox(height: 10.h),
-                CustomMultiSelectDropdown<String>(
-                  hint: s.timeTrackerSelectLocation,
-                  height: 36,
-                  alwaysShowHint: true,
-                  itemStyle: StyleText.fontSize12Weight400,
-                  values: allowed,
-                  errorText: allowedError,
-                  items: <MultiSelectDropdownItem<String>>[
-                    for (final WorkLocation l in locations)
-                      MultiSelectDropdownItem<String>(value: l.id, label: l.name(isArabic: isArabic)),
-                  ],
-                  onChanged: onAllowed,
-                ),
-                SizedBox(height: 8.h),
-                Wrap(
-                  spacing: 8.w,
-                  runSpacing: 8.h,
-                  children: <Widget>[
-                    for (final WorkLocation l in locations)
-                      if (allowed.contains(l.id))
-                        TtRemovableChip(
-                          label: l.name(isArabic: isArabic),
-                          onRemove: () => onAllowed(<String>[for (final String id in allowed) if (id != l.id) id]),
-                        ),
-                  ],
-                ),
-              ],
             ],
           ),
         ),

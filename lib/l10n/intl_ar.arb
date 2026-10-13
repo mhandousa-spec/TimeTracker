@@ -4578,6 +4578,8 @@
   "timeTrackerChartMonthlyAttendance": "سجل الحضور الشهري",
   "timeTrackerChartMonthlyRequestsByType": "الطلبات الشهرية حسب النوع",
   "timeTrackerChartMonthlyRequestsVolume": "عدد الطلبات الشهري",
+  "timeTrackerMainLocation": "الرئيسي",
+  "timeTrackerWorkLocationsHint": "الموقع الأول هو الموقع الرئيسي، وتطبق ساعاته وقواعده.",
   "timeTrackerCheckedInNow": "مسجل الحضور الآن",
   "timeTrackerLateToday": "متأخر اليوم",
   "timeTrackerAbsentToday": "غائب اليوم",

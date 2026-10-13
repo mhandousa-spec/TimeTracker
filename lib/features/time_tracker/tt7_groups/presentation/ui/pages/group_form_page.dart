@@ -42,7 +42,6 @@ import 'package:get_it/get_it.dart';
 
 import 'package:knowticed_plus/core/extensions/context_extensions.dart';
 import 'package:knowticed_plus/core/constants/app_assets.dart';
-import 'package:knowticed_plus/core/custom/1-custom_dropdown.dart';
 import 'package:knowticed_plus/core/custom/2-custom_textfield.dart';
 import 'package:knowticed_plus/core/custom/3-custom_dropdown_calander.dart';
 import 'package:knowticed_plus/core/custom/46-custom_image_picker.dart';
@@ -401,36 +400,21 @@ class _GroupFormViewState extends State<_GroupFormView> {
           onChanged: _cubit.setMembers,
         ),
         SizedBox(height: 15.h),
-        TtPair(
-          start: CustomDropdown<String>(
-            key: const ValueKey<String>('groupLocationField'),
-            label: s.timeTrackerLocation,
-            labelStyle: _label,
-            hint: s.timeTrackerChooseLocation,
-            height: 36,
-            itemStyle: StyleText.fontSize12Weight400,
-            value: d.locationId.isEmpty ? null : d.locationId,
-            errorText: state.showsRule(AssignmentError.locationRequired) ? s.timeTrackerLocationRequired : null,
-            items: <DropdownItem<String>>[
-              for (final WorkLocation l in people.activeLocations)
-                DropdownItem<String>(value: l.id, label: l.name(isArabic: ar)),
-            ],
+        // 12/10/2026 (owner T5 / T6 / U4): Work Locations (main first),
+        // the main location's rules right under it, then the start date.
+        TtWorkLocationsField(
+          key: const ValueKey<String>('groupLocationField'),
+          mainId: d.locationId,
+          extraIds: d.rules.allowedLocationIds,
+          locations: people.activeLocations,
+          isArabic: ar,
+          labelStyle: _label,
+          error: state.showsRule(AssignmentError.locationRequired) ? s.timeTrackerLocationRequired : null,
+          onChanged: (String main, List<String> extras) {
+            _rules(allowed: extras);
             // QA KP-TT-008 (9/10/2026): untouched custom rules follow it.
-            onChanged: (String v) => _pickLocation(v, people.activeLocations),
-          ),
-          end: CustomDropdownCalendar(
-            key: const ValueKey<String>('groupStartDateField'),
-            label: s.timeTrackerStartDate,
-            labelStyle: _label,
-            hint: s.timeTrackerChooseTheDate,
-            value: d.startDate,
-            height: 36,
-            errorText: state.showsRule(AssignmentError.startDateRequired) ? s.timeTrackerStartDateRequired : null,
-            dateFormatter: (DateTime x) => LocalizedDate.of(context, x),
-            onChanged: (DateTime? x) {
-              if (x != null) _cubit.update(_draft.copyWith(startDate: x));
-            },
-          ),
+            if (main != d.locationId) _pickLocation(main, people.activeLocations);
+          },
         ),
         SizedBox(height: 15.h),
         // Decision 33 (9/10/2026): the location's rules + the switch.
@@ -441,12 +425,25 @@ class _GroupFormViewState extends State<_GroupFormView> {
           customTitle: s.timeTrackerCustomRulesGroup,
         ),
         SizedBox(height: 15.h),
+        CustomDropdownCalendar(
+          key: const ValueKey<String>('groupStartDateField'),
+          label: s.timeTrackerStartDate,
+          labelStyle: _label,
+          hint: s.timeTrackerChooseTheDate,
+          value: d.startDate,
+          height: 36,
+          errorText: state.showsRule(AssignmentError.startDateRequired) ? s.timeTrackerStartDateRequired : null,
+          dateFormatter: (DateTime x) => LocalizedDate.of(context, x),
+          onChanged: (DateTime? x) {
+            if (x != null) _cubit.update(_draft.copyWith(startDate: x));
+          },
+        ),
+        SizedBox(height: 15.h),
         AttendanceRulesFields(
           showBreakPause: d.rules.isCustom,
           breaks: d.rules.isBreakAllowed,
           pause: d.rules.isPauseAllowed,
           different: d.rules.isDifferentLocationAllowed,
-          allowed: d.rules.allowedLocationIds,
           breakController: _break,
           pauseController: _pauseLimit,
           onPauseLength: (_) => _editRules(),
@@ -454,14 +451,10 @@ class _GroupFormViewState extends State<_GroupFormView> {
           locations: people.activeLocations,
           isArabic: ar,
           breakError: state.showsRule(AssignmentError.breakLengthRequired) ? s.timeTrackerBreakLengthRequired : null,
-          allowedError: state.showsRule(AssignmentError.allowedLocationsRequired)
-              ? s.timeTrackerAllowedLocationsRequired
-              : null,
           // QA KP-TT-008 (9/10/2026): a break / pause edit is the admin's own.
           onBreaks: (bool v) => _editRules(breaks: v),
           onPause: (bool v) => _editRules(pause: v),
           onDifferent: (bool v) => _rules(different: v),
-          onAllowed: (List<String> v) => _rules(allowed: v),
           onBreakLength: _editRules,
           onUnit: (TtDurationUnit u) {
             setState(() => _unit = u);

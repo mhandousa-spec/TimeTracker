@@ -4578,6 +4578,8 @@
   "timeTrackerChartMonthlyAttendance": "Monthly Attendance History",
   "timeTrackerChartMonthlyRequestsByType": "Monthly Requests By Type",
   "timeTrackerChartMonthlyRequestsVolume": "Monthly Requests Volume",
+  "timeTrackerMainLocation": "Main",
+  "timeTrackerWorkLocationsHint": "The first location is the main one: its hours and rules apply.",
   "timeTrackerCheckedInNow": "Checked In Now",
   "timeTrackerLateToday": "Late Today",
   "timeTrackerAbsentToday": "Absent Today",

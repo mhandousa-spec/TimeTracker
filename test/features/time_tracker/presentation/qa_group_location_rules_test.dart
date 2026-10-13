@@ -19,8 +19,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:knowticed_plus/core/custom/1-custom_dropdown.dart';
 import 'package:knowticed_plus/core/custom/10-custom_tabs.dart';
+import 'package:knowticed_plus/features/time_tracker/tt6_employees/presentation/ui/widgets/grant_access_dialog.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/entities/employee_assignment.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/entities/time_tracker_employee.dart';
 import 'package:knowticed_plus/features/time_tracker/domain/entities/work_location.dart';
@@ -98,7 +98,7 @@ void main() {
     await _tapIn(tester, h, _key('employeesCounter_groups'));
     await _tapIn(tester, h, _key('groupsAddButton'));
     GroupFormCubit form() => BlocProvider.of<GroupFormCubit>(tester.element(_key('groupLocationField')));
-    void pick(String id) => tester.widget<CustomDropdown<String>>(_key('groupLocationField')).onChanged!(id);
+    void pick(String id) => tester.widget<TtWorkLocationsField>(_key('groupLocationField')).onChanged(id, const <String>[]);
 
     // Jeddah chosen, "Use the location's rules" ON (default): the group
     // follows the location — what the members get is Jeddah's own rules.

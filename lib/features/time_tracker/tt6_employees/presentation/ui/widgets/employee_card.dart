@@ -50,6 +50,7 @@ class EmployeeCard extends StatelessWidget {
     required this.employee,
     this.assignment,
     this.locationName = '',
+    this.locationLabel,
     this.rules,
     this.action,
     this.onRemove,
@@ -64,6 +65,9 @@ class EmployeeCard extends StatelessWidget {
 
   /// '' = no "Location:" line.
   final String locationName;
+
+  /// ADDED 12/10/2026 (owner T5): the line's label (default "Location").
+  final String? locationLabel;
 
   /// The effective rules + their source (null = no rules line).
   final EffectiveRules? rules;
@@ -161,7 +165,11 @@ class EmployeeCard extends StatelessWidget {
                           value: TimeTrackerFormat.date(context, assigned),
                         ),
                       if (locationName.isNotEmpty)
-                        _Pair(icon: TtAssets.location, label: s.timeTrackerLocation, value: locationName),
+                        _Pair(
+                          icon: TtAssets.location,
+                          label: locationLabel ?? s.timeTrackerLocation,
+                          value: locationName,
+                        ),
                       if (effective != null)
                         Padding(
                           key: ValueKey<String>('employeeRules_${employee.email}'),

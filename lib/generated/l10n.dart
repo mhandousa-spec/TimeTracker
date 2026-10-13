@@ -39216,6 +39216,26 @@ class S {
     );
   }
 
+  /// `Main`
+  String get timeTrackerMainLocation {
+    return Intl.message(
+      'Main',
+      name: 'timeTrackerMainLocation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The first location is the main one: its hours and rules apply.`
+  String get timeTrackerWorkLocationsHint {
+    return Intl.message(
+      'The first location is the main one: its hours and rules apply.',
+      name: 'timeTrackerWorkLocationsHint',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Checked In Now`
   String get timeTrackerCheckedInNow {
     return Intl.message(
